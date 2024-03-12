@@ -138,7 +138,7 @@ export class NodesStateHandler {
         return this.unpackArrangement(arrangement, indexToNode);
     }
 
-    applyArrangement(arrangement) {
+    applyArrangement(arrangement, force=false) {
         const MOVING_SPEED = (this.box.maxX - this.box.minX + this.box.maxY - this.box.minY) * 0.008;
         var allDone = true;
 
@@ -148,7 +148,7 @@ export class NodesStateHandler {
             }
             const center = node.getCircle().center;
             var vector = arrangement.get(label).sub(center);
-            if (vector.length() > MOVING_SPEED) {
+            if (!force && vector.length() > MOVING_SPEED) {
                 vector = vector.normalize(MOVING_SPEED);
                 allDone = false;
             }

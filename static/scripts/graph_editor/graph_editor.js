@@ -124,7 +124,7 @@ export class GraphEditor {
         if (this.#playButton == null) {
             return;
         }
-        this.#betterArrangement = this.nodesStateHandler.betterNodesArrangement(this.edgesStateHandler);
+        this.buildBetterArrangement();
         if (this.isPlaying()) {
             return;
         }
@@ -144,6 +144,12 @@ export class GraphEditor {
         this.renderEdges();
     }
 
+    skipAnimation() {
+        this.buildBetterArrangement();
+        this.nodesStateHandler.applyArrangement(this.#betterArrangement, true);
+        this.renderEdges(true);
+    }
+
     registerPlayPauseButtons(playButton, pauseButton) {
         this.#playButton = playButton;
         this.#pauseButton = pauseButton;
@@ -153,6 +159,13 @@ export class GraphEditor {
         });
         pauseButton.addEventListener("click", function() {
             editor.pause();
+        });
+    }
+
+    registerSkipAnimationButton(skipAnimationButton) {
+        const editor = this;
+        skipAnimationButton.addEventListener("click", function() {
+            editor.skipAnimation();
         });
     }
 
@@ -199,6 +212,10 @@ export class GraphEditor {
     #playButton;          // html <button> element
     #pauseButton;         // html <button>
     #darkModeColor;       // string or null
+
+    buildBetterArrangement() {
+        this.#betterArrangement = this.nodesStateHandler.betterNodesArrangement(this.edgesStateHandler);
+    }
     
     getNodesBoundingBox() {
         const PADDING = 5;
@@ -301,11 +318,11 @@ export class GraphEditor {
         }
     }
 
-    renderEdges() {
-        if (this.isPlaying()) {
+    renderEdges(force) {
+        if (!force && this.isPlaying()) {
             return;
         }
-        if (!this.edgesStateHandler.render()) {
+        if (!this.edgesStateHandler.render(force)) {
             const editor = this;
             setTimeout(function() {
                 editor.renderEdges();

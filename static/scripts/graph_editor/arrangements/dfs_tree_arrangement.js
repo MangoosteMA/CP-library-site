@@ -171,7 +171,6 @@ export class DfsTreeArrangementOption extends ArrangementOptionInterface {
         this.#root = newRoot;
         const nodeToIndex = this.#nodesStateHandler.enumerateVerteces().nodeToIndex;
         if (nodeToIndex.has(newRoot)) {
-            console.log();
             super.getArrangementBuilder().presets.root = nodeToIndex.get(newRoot);
         }
     }

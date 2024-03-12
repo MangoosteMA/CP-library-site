@@ -82,13 +82,13 @@ export class Edge {
         this.#currentHeight = 0;
     }
 
-    render(height, index) {
+    render(height, index, force) {
         this.index = index;
         if (this.node1 == this.node2) {
             this.renderSelfLoop(index);
             return true;
         }
-        this.renderSimpleEdge(height);
+        this.renderSimpleEdge(height, force);
         return this.#currentHeight == height;
     }
 
@@ -168,11 +168,11 @@ export class Edge {
                                                      "L " + arrow0.x + " " + arrow0.y + " z");
     }
 
-    renderSimpleEdge(height) {
+    renderSimpleEdge(height, force) {
         const circle1 = this.node1.getCircle();
         const circle2 = this.node2.getCircle();
 
-        const MAX_HEIGHT_CHANGE = 0.1;
+        const MAX_HEIGHT_CHANGE = (force ? 0.1 : height + Math.abs(this.#currentHeight) + 1e-9);
         if (this.#currentHeight < height) {
             this.#currentHeight += Math.min(height - this.#currentHeight, MAX_HEIGHT_CHANGE);
         } else {

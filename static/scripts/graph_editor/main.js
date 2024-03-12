@@ -96,6 +96,12 @@ if (playButton && pauseButton) {
     graphEditor.registerPlayPauseButtons(playButton, pauseButton);
 }
 
+// Register skip animation button
+const skipAnimationButton = document.getElementById("skip-animation-button");
+if (skipAnimationButton) {
+    graphEditor.registerSkipAnimationButton(skipAnimationButton);
+}
+
 // Register nodes state listeners
 import { NodesStateListener } from "./graph_editor_state_listeners/nodes_state_listener.js";
 const nodesDetails = document.getElementById("nodes-details");

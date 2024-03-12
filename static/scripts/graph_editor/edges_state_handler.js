@@ -92,7 +92,7 @@ export class EdgesStateHandler {
         this.render();
     }
 
-    render() {
+    render(force=false) {
         const {indexes, outOf} = this.getEdgesIndexes(this.edges, 0, false);
         const banned = new Map();
         for (let i = 0; i < this.edges.length; i++) {
@@ -183,7 +183,7 @@ export class EdgesStateHandler {
 
         var finishedRendering = true;
         this.edges.forEach((edge, i) => {
-            finishedRendering &= edge.render(heights[i], indexes[i]);
+            finishedRendering &= edge.render(heights[i], indexes[i], force);
         });
         return finishedRendering;
     }
