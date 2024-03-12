@@ -166,7 +166,7 @@ export class NodesStateHandler {
 
     setLightMode() {
         this.nodes.forEach(node => {
-            node.setBackgroundColor("none");
+            node.setBackgroundColor("#ffffff");
             node.setColor("black");
         });
     }
