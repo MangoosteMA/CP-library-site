@@ -1,0 +1,104 @@
+@import "../base_styles.css";
+
+.login-body-div {
+    max-width: 95%;
+    margin-top: 100px;
+    width: 520px;
+    background-color: var(--base-font-color);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 10px;
+    box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.9);
+    border: 2px var(--base-white-font-color) solid;
+}
+
+.login-body-inside-div {
+    width: 87%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 15px;
+}
+
+.login-title-div {
+    padding-top: 10px;
+    padding-bottom: 5px;
+    text-align: center;
+    color: var(--base-white-font-color);
+    font-size: 28px;
+    border-bottom: 1px solid var(--base-white-font-color);
+    margin-bottom: 30px;
+}
+
+.login-element-div {
+    display: inline-block;
+    width: 21%;
+    color: var(--base-white-font-color);
+    font-size: 20px;
+    text-align: right;
+    padding-right: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.data-input {
+    margin-top: auto;
+    margin-bottom: auto;
+    box-sizing: border-box;
+    width: 100%;
+    height: 30px;
+    border: 1px solid var(--base-white-font-color);
+    box-shadow: 0px 0px 1px 1px rgba(255, 255, 255, 0.7);
+    border-radius: 7px;
+    padding-left: 10px;
+    background-color: var(--base-light-dark-background-color);
+    color: var(--base-white-font-color);
+    font-size: 16px;
+    font-weight: 500;
+    flex: 1;
+}
+
+.flex-div {
+    display: flex;
+    height: 30px;
+    margin-top: 30px;
+}
+
+.submit-input {
+    margin-top: 30px;
+    height: 100%;
+    height: 30px;
+    width: 70%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 15px;
+    text-align: center;
+    color: var(--base-font-color);
+    font-size: 18px;
+    font-weight: 500;
+    border: 1px solid var(--base-white-font-color);
+    background-image: linear-gradient(to right, rgb(252, 116, 26), rgb(232, 141, 22));
+}
+
+.submit-input:hover {
+    transition: 0.1s;
+    box-shadow: 0px 0px 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+.submit-input:active {
+    transition: 0.1s;
+    box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.7);
+}
+
+.register-link-div {
+    margin-top: 15px;
+    text-align: right;
+}
+
+.register-link {
+    font-family: var(--base-font-family);
+    color: var(--base-white-font-color);
+}

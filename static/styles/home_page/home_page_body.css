@@ -1,0 +1,158 @@
+@import "../base_styles.css";
+
+:root {
+    --table-even-background-color: var(--base-background-color);
+    --table-odd-background-color: rgb(220, 220, 220);
+}
+
+.body-div {
+    background-color: transparent;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    flex-flow: column;
+    padding-bottom: 20px;
+}
+
+.loading-animation-div {
+    display: none;
+    position: absolute;
+    top: 300px;
+    height: 100%;
+    width: 100%;
+    align-self: center;
+    padding: 0px;
+}
+
+@keyframes spinner {
+    0% {
+        transform: translate3d(-50%, -50%, 0) rotate(0deg);
+    }
+    100% {
+        transform: translate3d(-50%, -50%, 0) rotate(360deg);
+    }
+}
+
+.loading-animation {
+    animation: 1.6s linear infinite spinner;
+    -webkit-animation: 1.6s linear infinite spinner;
+    animation-play-state: running;
+    border: 4px solid transparent;
+    border-bottom-color: var(--base-font-color);
+    border-top-color: var(--base-font-color);
+    border-radius: 50%;
+    height: 180px;
+    width: 180px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    will-change: transform;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0%;
+    }
+}
+
+.loading-text-div {
+    animation: blinker 2s linear infinite;
+    color: var(--base-font-color);
+    font-size: 19px;
+    font-weight: 600;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    display: block;
+}
+
+.day-div {
+    color: var(--base-font-color);
+    text-align: center;
+    padding-bottom: 10px;
+    font-weight: 600;
+    font-size: 23px;
+    padding-top: 30px;
+}
+
+.schedule-div {
+    max-width: calc(100% - 20px);
+    text-align: center;
+    display: none;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.logo-png {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    width: 40px;
+    display: block;
+    margin: auto;
+}
+
+.contests-table-div {
+    display: inline-block;
+    background-color: var(--base-font-color);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border: 1px solid;
+    text-align: center;
+    box-shadow: 0px 0px 1.2px 1.2px rgba(0, 0, 0, 0.7);
+    width: auto;
+}
+
+.contests-title {
+    font-size: 20px;
+    color: var(--base-white-font-color);
+}
+
+table, th, td {
+    border-left: 1px solid;
+    border-right: 1px solid;
+    border-collapse: collapse;
+    text-align: center;
+    color: var(--base-font-color);
+    font-size: 17px;
+}
+
+table {
+    border-bottom: 1px solid;
+}
+
+th {
+    border-bottom: 1px solid;
+}
+
+tr:nth-child(even) {
+    background-color: var(--table-even-background-color);
+}
+
+tr:nth-child(odd) {
+    background-color: var(--table-odd-background-color);
+}
+
+td, th {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.col-0 {
+    width: 80px;
+}
+.col-1 {
+    width: 100px;
+}
+.col-2 {
+    width: 300px;
+}
+.col-3 {
+    width: 80px;
+}
+.col-4 {
+    width: 80px;
+}
+.col-5 {
+    width: 120px;
+}

@@ -1,0 +1,52 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/graph_editor/graph_editor_body.css') }}" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/graph_editor/graph_editor_objects.css') }}" type="text/css">
+
+<div style="display: flex; margin-top: 25px;">
+    <div class="left-panel-div">
+        {% include "graph_editor/graph_editor_left_panel.html" %}
+    </div>
+    <div class="middle-panel-div">
+        {% include "graph_editor/graph_editor_middle_panel.html" %}
+    </div>
+    <div class="right-panel-div">
+        {% include "graph_editor/graph_editor_right_panel.html" %}
+    </div>
+</div>
+
+<div style="position: fixed; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.3); top: 0%; left: 0%; display: none;" id="arrangement-selection-div">
+    <div class="arrangement-selection-div">
+        <div>
+            <div class="exit-selection-button">
+                <img class="exit-image" src="/images/exit.png">
+            </div>
+        </div>
+        <div class="settings-title-div">Расположение вершин</div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='scripts/graph_editor/utils.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/editor.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/svg_namespace.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/geometry.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/node.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/edge.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/nodes_and_edges_parser.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/nodes_state_handler.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/edges_state_handler.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/graph_editor_state_listeners/utils.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/graph_editor_state_listeners/base_state_listener.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/graph_editor_state_listeners/edges_state_listener.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/graph_editor_state_listeners/nodes_state_listener.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/arrangements_builder.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/arrangements/arrangement_interface.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/arrangements/dfs_tree_arrangement.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/arrangements/improved_regular_arrangement.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/arrangements/line_arrangement.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/arrangements/regular_arrangement.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/arrangements/top_sort_arrangement.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/arrangements/utils.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/random_graphs_generator.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/arrangement_selection.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/graph_editor.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/graph_editor_resizer.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/graph_editor/main.js') }}" type="module"></script>

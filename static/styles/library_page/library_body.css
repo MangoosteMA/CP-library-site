@@ -1,0 +1,130 @@
+@import "../base_styles.css";
+
+.body-div {
+    width: 100%;
+    padding-top: 15px;
+    padding-bottom: 20px;
+}
+
+.library-span {
+    width: auto;
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+input[type="radio"] {
+    position: absolute;
+    visibility: hidden;
+}
+
+input[type="radio"]:checked + label {
+    color: rgb(254, 167, 61);
+}
+
+label {
+    cursor: pointer;
+    padding-inline: 5px;
+    font-size: 15px;
+    color: var(--base-white-font-color);
+}
+
+.label-div {
+    width: 100px;
+    text-align: center;
+    background-color: var(--base-font-color);
+    display: inline-block;
+    border-radius: 15px;
+    padding-inline: 15px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.7);
+    font-family: var(--base-font-family);
+}
+
+label:hover {
+    color: rgb(255, 255, 255);
+    transition: 0.2s;
+}
+
+.library-div {
+    width: 800px;
+    max-width: 95%;
+    background-color: var(--base-font-color);
+    box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.9);
+    border: 2px var(--base-white-font-color) solid;
+    border-radius: 20px;
+    padding-top: 5px;
+    padding-bottom: 20px;
+    margin-top: 35px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.library-title-div {
+    color: var(--base-white-font-color);
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+    padding-bottom: 5px;
+    font-family: var(--base-font-family);
+}
+
+.library-file-folder-button {
+    border: 1px solid transparent;
+    height: 33px;
+    width: 100%;
+    background-color: transparent;
+    text-align: left;
+    padding-left: 40px;
+}
+
+.library-file-folder-button:hover {
+    border-bottom: 1px solid var(--base-white-font-color);
+    border-top: 1px solid var(--base-white-font-color);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.library-file-folder-button:active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.library-file-folder-inside-div {
+    display: inline-flex;
+    height: 100%;
+}
+
+.image-div {
+    display: inline-block;
+    margin-top: auto;
+    margin-bottom: auto;
+    height: 85%;
+    width: 35px;
+}
+
+.file-folder-image {
+    display: block;
+    margin: auto;
+    max-height: 90%;
+    max-width: 90%;
+    object-fit: contain;
+}
+
+.file-folder-name-div {
+    display: flex;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 17px;
+    align-items: center;
+    text-align: center;
+    font-family: var(--base-font-family);
+    font-weight: 600;
+    height: 100%;
+    border: none;
+    color: var(--base-white-font-color);
+}
+
+.folder-items-div {
+    display: none;
+}

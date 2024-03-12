@@ -1,0 +1,12 @@
+:root {
+    --base-font-color: rgb(25, 25, 25);
+    --base-background-color: rgb(253, 253, 253);
+    --base-white-font-color: rgb(225, 225, 225);
+    --base-font-family: Arial;
+    --base-light-dark-background-color: rgb(40, 44, 52);
+}
+
+body {
+    margin: 0;
+    background-color: var(--base-background-color);
+}

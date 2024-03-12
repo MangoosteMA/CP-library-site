@@ -1,0 +1,99 @@
+@import "../base_styles.css";
+
+.main-nav {
+    box-sizing: border-box;
+    width: 100%;
+    top: 0%;
+    left: 0%;
+    position: fixed;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    background-color: var(--base-font-color);
+    display: flex;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.8);
+    min-width: 740px;
+    z-index: 1000;
+}
+
+.title-div {
+    width: 200px;
+    display: table;
+}
+
+.title-link {
+    display: table-cell;
+    vertical-align: middle;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 33px;
+    font-family: Arial, Helvetica, sans-serif;
+    background: -webkit-linear-gradient(rgb(238, 238, 238), rgba(238, 238, 238, 0.6));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.sing-in-up-div {
+    float: right;
+    margin-top: auto;
+    margin-bottom: auto;
+    text-align: center;
+    width: 200px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: right;
+}
+
+.sign-in-up-link {
+    line-height: 35px;
+    width: 185px;
+    border-radius: 15px;
+    border: 1px solid var(--base-white-font-color);
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+    background-image: linear-gradient(to right, rgb(252, 116, 26), rgb(232, 141, 22));
+    text-decoration: none;
+    color: var(--base-font-color);
+    font-weight: 700;
+}
+
+.sign-in-up-link:hover {
+    transition: 0.1s;
+    box-shadow: 0px 0px 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+.sign-in-up-link:active {
+    transition: 0.1s;
+    box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.7);
+}
+
+.options-div {
+    margin: auto;
+}
+
+.option-link {
+    margin-right: 30px;
+    font-size: 20px;
+    font-family: var(--base-font-family);
+    border: none;
+    background: var(--base-white-font-color);
+    background-clip: text;
+    text-decoration: none;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.option-last-link {
+    margin-right: 0px;
+}
+
+.option-link:hover {
+    background: rgb(255, 255, 255);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: 0.2s;
+}

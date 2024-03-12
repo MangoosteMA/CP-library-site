@@ -1,0 +1,115 @@
+@import "../base_styles.css";
+
+.edit-outside-div {
+    margin-top: 5px;
+    height: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+}
+
+.edit-editable-textarea, .edit-background-div {
+    font-family: var(--base-font-family);
+    padding: 7px;
+    height: 100%;
+    width: 100%;
+    border: none;
+    font-size: 17px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    overflow: auto;
+    overflow-wrap: break-word;
+}
+
+.edit-editable-textarea {
+    transform: translateY(-100%);
+    background-color: transparent;
+    color: transparent;
+    caret-color: var(--base-white-font-color);
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    resize: none;
+}
+
+.edit-background-div {
+    color: var(--base-white-font-color);
+    background-color: var(--base-light-dark-background-color);
+    box-shadow: 0px 0px 2px 2px rgba(255, 255, 255, 0.7);
+}
+
+.cancel-save-button {
+    display: inline;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 10px;
+    background-color: var(--base-white-font-color);
+    border: none;
+    border-radius: 5px;
+    width: 60px;
+}
+
+.cancel-save-button:hover {
+    box-shadow: 0px 0px 1px 1px rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+}
+
+.cancel-save-button:active {
+    background-color: var(--base-white-font-color);
+}
+
+.save-button {
+    background: linear-gradient(to top, #0ba360 0%, #34a27f 100%);
+}
+
+.save-and-exit-button {
+    background: linear-gradient(to top, rgb(255, 219, 47) 11.2%, rgb(244, 253, 0) 100.2%);
+    width: 90px;
+}
+
+.exit-button {
+    background: linear-gradient(to top, rgb(255, 45, 45) 10.6%, rgb(255, 71, 71) 91.1%);
+}
+
+.cancel-save-buttons-div {
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.half-half-div {
+    min-height: 100px;
+    display: flex;
+}
+
+.left-half-div {
+    width: 50%;
+}
+
+.right-half-div {
+    flex: 1;
+    max-width: 50%;
+}
+
+.library-edit-button {
+    display: none;
+    background-color: var(--base-white-font-color);
+    border: none;
+    float: right;
+    margin-right: 20px;
+    width: 50px;
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+.library-edit-button:hover {
+    background-color: white;
+    cursor: pointer;
+}
+
+.library-edit-button:active {
+    background-color: var(--base-white-font-color);
+}

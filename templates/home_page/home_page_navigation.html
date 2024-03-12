@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/home_page/home_page_navigation.css') }}" type="text/css">
+
+<nav class="main-nav" id="main-nav">
+    <div class="title-div">
+        <a href="/" class="title-link">Algo-google</a>
+    </div>
+    <div class="options-div">
+        <a href="/library" class="option-link">Библиотека</a>
+        <a href="/apps" class="option-link option-last-link">Приложения</a>
+    </div>
+    <div class="sing-in-up-div">
+        <a href="/login" class="sign-in-up-link">Вход / Регистрация</a>
+    </div>
+</nav>
+
+<div id="main-nav-offset-imulation"></div>
+
+<script>
+    const mainNav = document.getElementById("main-nav");
+    const offsetDiv = document.getElementById("main-nav-offset-imulation");
+    offsetDiv.style.height = mainNav.offsetHeight + "px";
+</script>

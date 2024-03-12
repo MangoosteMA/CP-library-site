@@ -1,0 +1,29 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/login_page/login_page_body.css') }}" type="text/css">
+
+<div class="login-body-div">
+    <div class="login-body-inside-div">
+        <div class="login-title-div">Регистрация</div>
+        <form method="post" action="/register">
+            <div class="flex-div">
+                <div class="login-element-div">Логин</div>
+                <input class="data-input" type="text" name="fname">
+            </div>
+            <div class="flex-div">
+                <div class="login-element-div">Пароль</div>
+                <input class="data-input" type="password" name="fname">
+            </div>
+            <div class="flex-div">
+                <div class="login-element-div" style="transform: translateY(-20%);">Повторите пароль</div>
+                <input class="data-input" type="password" name="fname">
+            </div>
+            <div class="flex-div">
+                <div class="login-element-div">Секрет</div>
+                <input class="data-input" type="еуче" name="fname" style="content: '\f06e';">
+            </div>
+            <input class="submit-input" type="submit" value="Зарегестрироваться">
+            <div class="register-link-div">
+                <a href="/login" class="register-link">Войти</a>
+            </div>
+        </form>
+    </div>
+</div>

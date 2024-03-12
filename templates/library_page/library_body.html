@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/library_page/library_body.css') }}" type="text/css">
+
+<div class="body-div">
+    <span class="library-span" role="radiogroup" aria-label="library-type" onChange="changeLibrary(event.target.value)">
+        <input class="library-input" name="library-type" type="radio" value="algo" id="algo" checked>
+        <label for="algo">
+            <div class="label-div">
+                Алгоритмы
+            </div>
+        </label>
+        <input class="library-input" name="library-type" type="radio" value="polygon" id="polygon">
+        <label for="polygon">
+            <div class="label-div">
+                Разработка
+            </div>
+        </label>
+    </span>
+    {{ libraryBody | safe }}
+</div>
+
+<script src="{{ url_for('static', filename='scripts/library_page/library_page.js') }}"></script>

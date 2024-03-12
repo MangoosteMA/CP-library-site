@@ -1,0 +1,282 @@
+@import "../base_styles.css";
+
+:root {
+    --button-hover-color: rgb(88, 88, 88);
+    --button-active-color: rgb(100, 100, 100);
+}
+
+.middle-panel-div {
+    flex: 1;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.main-svg-div {
+    border-radius: 10px;
+    border: 1px solid var(--base-font-color);
+    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.7);
+    padding-bottom: 20px;
+}
+
+.main-svg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+.node {
+    stroke: black;
+    cursor: move;
+}
+
+.node > circle {
+    fill: white;
+    stroke-width: 2px;
+}
+
+.node > text, .edge > text {
+    font-weight: 500;
+    stroke-width: 1px;
+    text-anchor: middle;
+    alignment-baseline: central;
+}
+
+.left-panel-div {
+    min-width: 390px;
+    margin-left: 20px;
+}
+
+.right-panel-div {
+    margin-right: 25px;
+    width: 390px;
+}
+
+.left-panel-inside-div, .right-panel-inside-div {
+    width: 390px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.right-panel-inside-div > details {
+    box-sizing: border-box;
+}
+
+.top-buttons {
+    display: flex;
+    margin-bottom: 10px;
+    height: 21px;
+}
+
+.top-buttons-shadow {
+    display: inline-flex;
+    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.7);
+    border-radius: 6px;
+}
+
+.svg-left-buttons-div {
+    display: flex;
+    justify-content: center;
+    width: 65%;
+}
+
+.svg-right-buttons-div {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    position: relative;
+    height: 100%;
+}
+
+.textarea-title-div {
+    padding-top: 5px;
+    margin-bottom: 5px;
+    text-align: center;
+    color: var(--base-white-font-color);
+    font-size: 18px;
+    font-weight: 600;
+    font-family: var(--base-font-family);
+}
+
+.direction-button {
+    border: none;
+    font-size: 14px;
+    font-family: var(--base-font-family);
+    color: var(--base-white-font-color);
+    background-color: var(--base-font-color);
+    border-right: 1px solid var(--base-white-font-color);
+    text-align: center;
+    font-weight: 600;
+}
+
+.direction-button:hover {
+    background-color: var(--button-hover-color);
+}
+
+.direction-button:active {
+    background-color: var(--button-active-color);
+}
+
+.direction-button-first {
+    border-left: none;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.direction-button-last {
+    border-right: none;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.play-pause-button {
+    position: relative;
+    background-color: var(--base-font-color);
+    border-radius: 6px;
+    border: none;
+    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.7);
+    width: 30px;
+}
+
+.play-pause-button:hover {
+    background-color: var(--button-hover-color);
+}
+
+.play-pause-button:active {
+    background-color: var(--button-active-color);
+}
+
+.play-pause-image {
+    position: absolute;
+    max-height: 90%;
+    margin-top: 5%;
+    object-fit: contain;
+    position: relative;
+}
+
+.svg-bottom-div {
+    display: flex;
+    padding-left: 4px;
+    padding-right: 4px;
+    transform: translateY(calc(-100% - 4px));
+}
+
+.increase-decrease-button {
+    margin: 0;
+    color: var(--base-white-font-color);
+    background-color: var(--base-font-color);
+    font-size: 10px;
+}
+
+.nodes-edges-div {
+    background-color: var(--base-font-color);
+    box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.7);
+    border: 2px var(--base-white-font-color) solid;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.editor-outside-div {
+    height: 280px;
+    display: flex;
+    max-width: 100%;
+    border-top: 2px solid var(--base-white-font-color);
+    border-bottom: 0px;
+    border-bottom-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.nodes-edges-textarea, .nodes-edges-background {
+    display: inline-block;
+    border: none;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    white-space: pre;
+}
+
+.nodes-edges-textarea {
+    resize: none;
+    background-color: transparent;
+    color: transparent;
+    border: none;
+    caret-color: var(--base-white-font-color);
+    transform: translateY(calc(-100% - 4px));
+    padding-left: 5px;
+}
+
+.nodes-edges-background {
+    background-color: var(--base-light-dark-background-color);
+    color: var(--base-white-font-color);
+}
+
+.nodes-edges-textarea:focus {
+    outline: 0;
+}
+
+.lines-div, .settings-div {
+    display: inline-block;
+    width: 40px;
+    min-width: 40px;
+    background-color: rgb(64, 64, 64);
+    background-color: var(--base-font-color);
+    color: var(--base-white-font-color);
+}
+
+.lines-div {
+    border-bottom-left-radius: 10px;
+    border-right: 2px solid var(--base-white-font-color);
+    font-weight: 600;
+}
+
+.settings-div {
+    flex: 1;
+    border-bottom-right-radius: 10px;
+    border-left: 2px solid var(--base-white-font-color);
+    font-weight: 600;
+}
+
+.lines-div, .settings-div, .nodes-edges-textarea, .nodes-edges-background {
+    padding-top: 5px;
+    font-family: var(--base-font-family);
+    font-size: 18px;
+    box-sizing: border-box;
+    overflow: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.lines-div::-webkit-scrollbar, .settings-div::-webkit-scrollbar, .nodes-edges-textarea::-webkit-scrollbar, .nodes-edges-background::-webkit-scrollbar {
+    display: none;
+}
+
+.resizer-div {
+    display: block;
+    transform: translateY(-12px);
+    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.7);
+    margin-left: auto;
+    margin-right: auto;
+    width: 40px;
+    border-radius: 5px;
+    text-align: center;
+    background-color: var(--base-font-color);
+    color: var(--base-white-font-color);
+    cursor: row-resize;
+    font-size: 8px;
+    padding-bottom: 1px;
+}
+
+.arrangement-selection-div {
+    position: fixed;
+    top: 300px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid var(--base-white-font-color);
+    background-color: var(--base-font-color);
+    box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.7);
+    border-radius: 5px;
+    z-index: 228;
+}

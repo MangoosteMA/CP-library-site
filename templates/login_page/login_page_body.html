@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='styles/login_page/login_page_body.css') }}" type="text/css">
+
+<div class="login-body-div">
+    <div class="login-body-inside-div">
+        <div class="login-title-div">Вход</div>
+        <form method="post" action="/login">
+            <div class="flex-div">
+                <div class="login-element-div">Логин</div>
+                <input class="data-input" type="text" name="fname">
+            </div>
+            <div class="flex-div">
+                <div class="login-element-div">Пароль</div>
+                <input class="data-input" type="password" name="fname">
+            </div>
+            <input class="submit-input" type="submit" value="Bход">
+            <div class="register-link-div">
+                <a href="/register" class="register-link">Регистрация</a>
+            </div>
+        </form>
+    </div>
+</div>

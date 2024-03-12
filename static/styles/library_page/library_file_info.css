@@ -1,0 +1,142 @@
+@import "../base_styles.css";
+
+:root {
+    --default-tab-size-main: 28px;
+    --default-tab-size-simple: 23px;
+}
+
+.body-div {
+    margin-left: auto;
+    margin-right: auto;
+    width: 900px;
+    max-width: 95%;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    background-color: var(--base-font-color);
+    box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.9);
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-radius: 10px;
+    border: 2px var(--base-white-font-color) solid;
+    font-family: var(--base-font-family);
+}
+
+.library-body-inside-div {
+    margin-left: auto;
+    margin-right: auto;
+    margin-left: 90px;
+    margin-right: 90px;
+}
+
+.library-title-div {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--base-white-font-color);
+    padding-bottom: 10px;
+}
+
+summary {
+    color: var(--base-white-font-color);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.main-summary {
+    font-size: 21px;
+}
+
+.simple-summary {
+    font-size: 17px;
+}
+
+.language-div {
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    margin-left: 10px;
+    color: var(--base-font-color);
+    font-size: 20px;
+}
+
+.code-details-div {
+    margin-top: 5px;
+    font-weight: 600;
+    background-color: var(--base-white-font-color);
+    box-shadow: 0px 0px 1px 1px rgba(255, 255, 255, 0.7);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border: 1px solid var(--base-white-font-color);
+}
+
+.code-navigation-div {
+    height: 20px;
+    margin-bottom: 2px;
+}
+
+.copy-code-button {
+    float: right;
+    font-size: 11px;
+    background-color: white;
+    border: 1px solid var(--base-font-color);
+    border-radius: 5px;
+    font-weight: 600;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    margin-right: 10px;
+}
+
+.copy-code-button:hover {
+    background-color: transparent;
+}
+
+.copy-code-button:active {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.check-mark-image {
+    display: none;
+    float: right;
+    max-height: 60%;
+    object-fit: contain;
+    position: relative;
+    top: 50%;
+    transform: translate(0%, -50%);
+    padding-right: 5px;
+}
+
+details {
+    padding: 0px;
+    font-size: 17px;
+    margin-top: 5px;
+}
+
+.main-details {
+    margin-top: 7px;
+    transform: translateX(calc(0px - var(--default-tab-size-main)));
+    width: calc(100% + var(--default-tab-size-main));
+}
+
+pre {
+    padding: 0px;
+    margin: 0px;
+}
+
+code {
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.add-tab-div {
+    margin-left: var(--default-tab-size-main);
+    color: var(--base-white-font-color);
+    text-align: justify;
+}
+
+.center-align-div {
+    text-align: center;
+    align-items: center;
+}
