@@ -78,15 +78,19 @@ export class GraphEditor {
     }
 
     increaseNodesRadiusBy(value) {
-        this.#radius += value;
-        this.updateRadius();
-        this.onNodesOrEdgesStateChange();
+        if (this.#radius + value >= 0) {
+            this.#radius += value;
+            this.updateRadius();
+            this.onNodesOrEdgesStateChange();
+        }
     }
 
     increaseFontSizeBy(value) {
-        this.#fontSize += value;
-        this.updateFontSize();
-        this.onNodesOrEdgesStateChange();
+        if (this.#fontSize + value >= 0) {
+            this.#fontSize += value;
+            this.updateFontSize();
+            this.onNodesOrEdgesStateChange();
+        }
     }
 
     directAllEdges(directed) {
