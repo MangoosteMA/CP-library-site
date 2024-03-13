@@ -41,6 +41,7 @@
     stroke-width: 1px;
     text-anchor: middle;
     alignment-baseline: central;
+    dominant-baseline: central;
 }
 
 .left-panel-div {
