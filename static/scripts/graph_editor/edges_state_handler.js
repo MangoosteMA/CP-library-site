@@ -140,13 +140,6 @@ export class EdgesStateHandler {
                 bestClosest = 0;
             }
 
-            function updateBestHeight(delta, height) {
-                if (delta > bestDelta) {
-                    bestDelta = delta;
-                    bestHeight = height;
-                }
-            }
-
             const orderCoeff = (edge.node1.label < edge.node2.label ? 1 : -1);
             for (let heightAbs = 0; bestClosest == -1; heightAbs++) {
                 // TODO: make random shift random number from {-eps, +eps} with fixed
