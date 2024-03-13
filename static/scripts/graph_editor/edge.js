@@ -142,6 +142,13 @@ export class Edge {
         this.text.textContent = "";
     }
 
+    nodesIntersects() {
+        const circle1 = this.node1.getCircle();
+        const circle2 = this.node2.getCircle();
+        const distance = circle1.center.sub(circle2.center).length();
+        return distance < circle1.radius;
+    }
+
 // Private:
     #currentHeight;
 
@@ -179,6 +186,10 @@ export class Edge {
             this.#currentHeight -= Math.min(this.#currentHeight - height, MAX_HEIGHT_CHANGE);
         }
         height = this.#currentHeight;
+
+        if (this.nodesIntersects()) {
+            return;
+        }
 
         var vector = circle2.center.sub(circle1.center).normalize(circle1.radius);
         var border1 = circle1.center.add(vector);

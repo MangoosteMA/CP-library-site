@@ -136,6 +136,9 @@ export class EdgesStateHandler {
 
             var bestClosest = -1;
             var bestHeight = 0;
+            if (edge.nodesIntersects()) {
+                bestClosest = 0;
+            }
 
             function updateBestHeight(delta, height) {
                 if (delta > bestDelta) {
