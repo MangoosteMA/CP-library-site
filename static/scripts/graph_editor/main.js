@@ -141,6 +141,9 @@ if (randomGraphsDetails) {
 }
 
 // Register dark-light mode switcher
+import { getCookieValue } from "./utils.js";
+const DARKMODE_COOKIE = "darkmode";
+
 const darkModeButton = document.getElementById("dark-mode-button");
 const lightModeButton = document.getElementById("light-mode-button");
 if (darkModeButton && lightModeButton) {
@@ -169,6 +172,8 @@ if (darkModeButton && lightModeButton) {
                 }
             }
         }
+
+        document.cookie = DARKMODE_COOKIE + "=true";
     });
 
     lightModeButton.addEventListener("click", function() {
@@ -181,5 +186,12 @@ if (darkModeButton && lightModeButton) {
         changedElements.forEach(value => {
             value.element.style.boxShadow = value.shadow;
         })
+        document.cookie = DARKMODE_COOKIE + "=false";
+    });
+
+    window.addEventListener("load", function() {
+        if (getCookieValue(DARKMODE_COOKIE) == "true") {
+            darkModeButton.click();
+        }
     });
 }
