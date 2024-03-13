@@ -9,8 +9,8 @@ import { clamp }                         from "./utils.js";
 export class ArrangementsBuilder {
     /*
     Variables:
-    mode:     ArrangementInterface or null
-    builders: list[ArrangementInterface]
+    mode:     ArrangementBuilderInterface or null
+    builders: list[ArrangementBuilderInterface]
     */
 
     constructor() {

@@ -16,6 +16,26 @@ export class ArrangementEdge {
 };
 
 export class ArrangementInterface {
+    prettify() {}
+    // Returns an array of points
+    getArrangement() {}
+}
+
+export class StableArrangement extends ArrangementInterface {
+    constructor(arrangement) {
+        super();
+        this.#arrangement = arrangement;
+    }
+
+    getArrangement() {
+        return this.#arrangement;
+    }
+
+// Private:
+    #arrangement;
+}
+
+export class ArrangementBuilderInterface {
     build(n, edges) {}
     isPretty(n, edges) {}
 }

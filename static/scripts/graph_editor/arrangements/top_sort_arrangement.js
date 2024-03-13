@@ -1,10 +1,11 @@
-import { ArrangementInterface }       from "./arrangement_interface.js";
-import { ArrangementOptionInterface } from "./arrangement_interface.js";
-import { PERFECT_DISTANCE }           from "./arrangement_interface.js";
+import { StableArrangement }           from "./arrangement_interface.js";
+import { ArrangementBuilderInterface } from "./arrangement_interface.js";
+import { ArrangementOptionInterface }  from "./arrangement_interface.js";
+import { PERFECT_DISTANCE }            from "./arrangement_interface.js";
 
-import { Point }                      from "../geometry.js";
-import { buildGraph }                 from "./utils.js";
-import { isDirected }                 from "./utils.js";
+import { Point }                       from "../geometry.js";
+import { buildGraph }                  from "./utils.js";
+import { isDirected }                  from "./utils.js";
 
 function buildLayers(n, edges) {
     const inDegree = Array(n).fill(0);
@@ -47,7 +48,7 @@ function topSortExists(n, edges) {
     return total == n;
 }
 
-export class TopSortArrangementArrangement extends ArrangementInterface {
+export class TopSortArrangementArrangement extends ArrangementBuilderInterface {
     build(n, edges) {
         if (!isDirected(edges) || !topSortExists(n, edges)) {
             return null;
@@ -185,7 +186,7 @@ export class TopSortArrangementArrangement extends ArrangementInterface {
         for (let i = 0; i < n; i++) {
             arrangement[i].y *= PERFECT_DISTANCE / 2;
         }
-        return arrangement;
+        return new StableArrangement(arrangement);
     }
 
     isPretty(n, edges) {

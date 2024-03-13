@@ -146,7 +146,7 @@ export class GraphEditor {
 
     skipAnimation() {
         this.buildBetterArrangement();
-        this.nodesStateHandler.applyArrangement(this.#betterArrangement, true);
+        this.nodesStateHandler.applyArrangement(this.#betterArrangement.getArrangement(), true);
         this.renderEdges(true);
     }
 
@@ -207,10 +207,10 @@ export class GraphEditor {
     #nodesStateListener;  // NodesStateListener
     #edgesStateListener;  // EdgeStateListener
     #isPlaying;           // bool
-    #betterArrangement;   // Map or null
+    #betterArrangement;   // ArrangementInterface or null
     #edgesRendering;      // bool
     #playButton;          // html <button> element
-    #pauseButton;         // html <button>
+    #pauseButton;         // html <button> element
     #darkModeColor;       // string or null
 
     buildBetterArrangement() {
@@ -303,10 +303,10 @@ export class GraphEditor {
     }
 
     startPlaying() {
-        if (!this.isPlaying()) {
+        if (!this.isPlaying() || !this.#betterArrangement) {
             return;
         }
-        var done = this.nodesStateHandler.applyArrangement(this.#betterArrangement);
+        var done = this.nodesStateHandler.applyArrangement(this.#betterArrangement.getArrangement());
         this.edgesStateHandler.render();
         if (done) {
             this.pause();

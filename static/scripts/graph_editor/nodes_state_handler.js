@@ -1,3 +1,4 @@
+import { StableArrangement }      from "./arrangements/arrangement_interface.js";
 import { Point }                  from "./geometry.js";
 import { Node }                   from "./node.js";
 import { increaseLabelBy, isInt } from "./utils.js";
@@ -57,7 +58,6 @@ export class NodesStateHandler {
             }
             return a_label < b_label;
         }
-
         return [...this.nodes.values()].sort(compare);
     }
 
@@ -114,12 +114,12 @@ export class NodesStateHandler {
         for (let i = 0; i < n; i++) {
             arrangement[i] = this.get(indexToNode.get(i)).getCircle().center;
         }
-        return this.unpackArrangement(arrangement, indexToNode);
+        return arrangement;
     }
 
     betterNodesArrangement(edgesStateHandler) {
         if (this.nodes.size == 0) {
-            return new Map();
+            return new StableArrangement([]);
         }
         const {n, nodeToIndex, indexToNode} = this.enumerateVerteces();
 
@@ -131,14 +131,13 @@ export class NodesStateHandler {
         });
 
         var arrangement = this.arrangementsBuilder.build(n, edges);
-        if (arrangement == null) {
-            return this.currentArrangement();
-        }
-        arrangement = this.arrangementsBuilder.prettify(arrangement, this.box);
-        return this.unpackArrangement(arrangement, indexToNode);
+        return arrangement || new StableArrangement(this.currentArrangement());
     }
 
     applyArrangement(arrangement, force=false) {
+        arrangement = this.arrangementsBuilder.prettify(arrangement, this.box);
+        arrangement = this.unpackArrangement(arrangement);
+
         const MOVING_SPEED = (this.box.maxX - this.box.minX + this.box.maxY - this.box.minY) * 0.008;
         var allDone = true;
 
@@ -230,7 +229,8 @@ export class NodesStateHandler {
         node.setColor("#ffffff");
     }
 
-    unpackArrangement(arrangement, indexToNode) {
+    unpackArrangement(arrangement) {
+        const indexToNode = this.enumerateVerteces().indexToNode;
         const unpackedArrangement = new Map();
         arrangement.forEach((point, index) => {
             unpackedArrangement.set(indexToNode.get(index), point);

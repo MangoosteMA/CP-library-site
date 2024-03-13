@@ -1,11 +1,12 @@
-import { ArrangementInterface }       from "./arrangement_interface.js";
-import { ArrangementOptionInterface } from "./arrangement_interface.js";
+import { StableArrangement }           from "./arrangement_interface.js";
+import { ArrangementBuilderInterface } from "./arrangement_interface.js";
+import { ArrangementOptionInterface }  from "./arrangement_interface.js";
 
-import { Point }                      from "../geometry.js";
-import { getRegularPolygon }          from "./regular_arrangement.js";
-import { buildGraph }                 from "./utils.js";
+import { Point }                       from "../geometry.js";
+import { getRegularPolygon }           from "./regular_arrangement.js";
+import { buildGraph }                  from "./utils.js";
 
-export class ImprovedRegularArrangement extends ArrangementInterface {
+export class ImprovedRegularArrangement extends ArrangementBuilderInterface {
     build(n, edges) {
         const graph = buildGraph(n, edges, false);
         const used = Array(n).fill(false);
@@ -56,7 +57,7 @@ export class ImprovedRegularArrangement extends ArrangementInterface {
         for (let i = 0; i < n; i++) {
             arrangement[order[i]] = regular[i];
         }
-        return arrangement;
+        return new StableArrangement(arrangement);
     }
 
     isPretty(n, edges) {

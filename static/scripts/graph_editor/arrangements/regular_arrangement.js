@@ -1,8 +1,9 @@
-import { ArrangementInterface }       from "./arrangement_interface.js";
-import { ArrangementOptionInterface } from "./arrangement_interface.js";
-import { PERFECT_DISTANCE }           from "./arrangement_interface.js";
+import { StableArrangement }           from "./arrangement_interface.js";
+import { ArrangementBuilderInterface } from "./arrangement_interface.js";
+import { ArrangementOptionInterface }  from "./arrangement_interface.js";
+import { PERFECT_DISTANCE }            from "./arrangement_interface.js";
 
-import { Point }                      from "../geometry.js";
+import { Point }                       from "../geometry.js";
 
 export function getRegularPolygon(n) {
     const arrangement = new Array(n);
@@ -27,9 +28,9 @@ export function getRegularPolygon(n) {
     return arrangement;
 }
 
-export class RegularArrangement extends ArrangementInterface {
+export class RegularArrangement extends ArrangementBuilderInterface {
     build(n, edges) {
-        return getRegularPolygon(n);
+        return new StableArrangement(getRegularPolygon(n));
     }
 
     isPretty(n, edges) {

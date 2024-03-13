@@ -1,13 +1,14 @@
-import { ArrangementInterface }       from "./arrangement_interface.js";
-import { ArrangementOptionInterface } from "./arrangement_interface.js";
-import { PERFECT_DISTANCE }           from "./arrangement_interface.js";
+import { StableArrangement }           from "./arrangement_interface.js";
+import { ArrangementBuilderInterface } from "./arrangement_interface.js";
+import { ArrangementOptionInterface }  from "./arrangement_interface.js";
+import { PERFECT_DISTANCE }            from "./arrangement_interface.js";
 
-import { Point }                      from "../geometry.js";
+import { Point }                       from "../geometry.js";
 import { isForest, isTree }                   from "./utils.js";
-import { getUniqueEdges }             from "./utils.js";
-import { buildGraph }                 from "./utils.js";
-import { getComponents }              from "./utils.js";
-import { isDirected }                 from "./utils.js";
+import { getUniqueEdges }              from "./utils.js";
+import { buildGraph }                  from "./utils.js";
+import { getComponents }               from "./utils.js";
+import { isDirected }                  from "./utils.js";
 
 class Data {
     constructor(index, point) {
@@ -69,7 +70,7 @@ class Presets {
     }
 }
 
-export class DfsTreeArrangement extends ArrangementInterface {
+export class DfsTreeArrangement extends ArrangementBuilderInterface {
     /*
     Variables:
     presets: Presets
@@ -113,7 +114,7 @@ export class DfsTreeArrangement extends ArrangementInterface {
                 arrangement[data.index] = data.point;
             });
         }
-        return arrangement;
+        return new StableArrangement(arrangement);
     }
 
     isPretty(n, edges) {

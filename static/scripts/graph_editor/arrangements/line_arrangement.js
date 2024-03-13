@@ -1,16 +1,17 @@
-import { ArrangementInterface }       from "./arrangement_interface.js";
-import { ArrangementOptionInterface } from "./arrangement_interface.js";
-import { PERFECT_DISTANCE }           from "./arrangement_interface.js";
+import { StableArrangement }           from "./arrangement_interface.js";
+import { ArrangementBuilderInterface } from "./arrangement_interface.js";
+import { ArrangementOptionInterface }  from "./arrangement_interface.js";
+import { PERFECT_DISTANCE }            from "./arrangement_interface.js";
 
-import { Point }                      from "../geometry.js";
+import { Point }                       from "../geometry.js";
 
-export class LineArrangement extends ArrangementInterface {
+export class LineArrangement extends ArrangementBuilderInterface {
     build(n, edges) {
-        const result = [];
+        const arrangement = [];
         for (let i = 0; i < n; i++) {
-            result.push(new Point(PERFECT_DISTANCE * i, 0));
+            arrangement.push(new Point(PERFECT_DISTANCE * i, 0));
         }
-        return result;
+        return new StableArrangement(arrangement);
     }
 
     isPretty(n, edges) {
