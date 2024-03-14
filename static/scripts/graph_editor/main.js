@@ -1,6 +1,10 @@
 // Create graph Editor
 import { GraphEditor } from "./graph_editor.js";
-var graphEditor = new GraphEditor(document.getElementById("svg"));
+const mainSvg = document.getElementById("svg");
+var graphEditor = null;
+if (mainSvg) {
+    graphEditor = new GraphEditor(mainSvg);
+}
 
 // Create edges textareas
 import { Editor }                      from "./editor.js";
@@ -12,7 +16,7 @@ const edgesLinesDiv = document.getElementById("edges-lines-div");
 const edgesSettingsDiv = document.getElementById("edges-settings-div");
 
 const nodesAndEdgesEditorListener = new NodesAndEdgesEditorListener(graphEditor);
-var graphTextarea = null
+var graphTextarea = null;
 if (edgesTextarea && edgesTextareaBackgound) {
     graphTextarea = new Editor(edgesTextarea, edgesTextareaBackgound, edgesLinesDiv, edgesSettingsDiv, nodesAndEdgesEditorListener);
 }
@@ -172,7 +176,6 @@ if (darkModeButton && lightModeButton) {
                 }
             }
         }
-
         document.cookie = DARKMODE_COOKIE + "=true";
     });
 
@@ -193,5 +196,14 @@ if (darkModeButton && lightModeButton) {
         if (getCookieValue(DARKMODE_COOKIE) == "true") {
             darkModeButton.click();
         }
+    });
+}
+
+// Register exports
+import { exportToSvg } from "./exports/svg_export.js";
+const svgExportButton = document.getElementById("export-to-svg-button");
+if (svgExportButton) {
+    svgExportButton.addEventListener("click", function() {
+        exportToSvg(mainSvg, darkModeButton.style.display == "none");
     });
 }

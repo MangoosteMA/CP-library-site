@@ -24,21 +24,7 @@
 }
 
 .node {
-    stroke: black;
     cursor: move;
-}
-
-.node > circle {
-    fill: white;
-    stroke-width: 2px;
-}
-
-.node > text, .edge > text {
-    font-weight: 500;
-    stroke-width: 1px;
-    text-anchor: middle;
-    alignment-baseline: central;
-    dominant-baseline: central;
 }
 
 .left-panel-div {
@@ -277,4 +263,24 @@
     box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.7);
     border-radius: 5px;
     z-index: 228;
+}
+
+.export-button {
+    box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.7);
+    color: var(--base-white-font-color);
+    font-family: var(--base-font-family);
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 10px;
+    border: 2px solid var(--base-white-font-color);
+    background-color: var(--base-font-color);
+    padding: 5px;
+}
+
+.export-button:hover {
+    background-color: var(--button-hover-color);
+}
+
+.export-button:active {
+    background-color: var(--button-active-color);
 }

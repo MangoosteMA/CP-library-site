@@ -2,6 +2,16 @@ import { Point, Circle }              from "./geometry.js";
 import { SVG_NAMESPACE }              from "./svg_namespace.js";
 import { randomInt, increaseLabelBy } from "./utils.js";
 
+export function createText() {
+    const text = document.createElementNS(SVG_NAMESPACE, "text");
+    text.setAttributeNS(null, "font-weight", 500);
+    text.setAttributeNS(null, "stroke-width", "1px");
+    text.setAttributeNS(null, "text-anchor", "middle");
+    text.setAttributeNS(null, "alignment-baseline", "central");
+    text.setAttributeNS(null, "dominant-baseline", "central");
+    return text;
+}
+
 export class Node {
     /*
     Variables:
@@ -18,8 +28,11 @@ export class Node {
 
         this.node = document.createElementNS(SVG_NAMESPACE, 'g');
         this.node.setAttributeNS(null, "class", "node");
+        this.node.setAttributeNS(null, "stroke", "#000000");
         this.circle = document.createElementNS(SVG_NAMESPACE, "circle");
-        this.text = document.createElementNS(SVG_NAMESPACE, "text");
+        this.circle.setAttributeNS(null, "fill", "#ffffff");
+        this.circle.setAttributeNS(null, "stroke-width", "2");
+        this.text = createText();
 
         this.setRadius(radius);
         this.setLabel(label);

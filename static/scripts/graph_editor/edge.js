@@ -1,6 +1,7 @@
 import { Point, Line }   from "./geometry.js";
 import { SVG_NAMESPACE } from "./svg_namespace.js";
 import { Node }          from "./node.js";
+import { createText }    from "./node.js";
 
 export function getRadiusStep(nodeRadius) {
     return 1.5 * nodeRadius;
@@ -64,7 +65,7 @@ export class Edge {
         this.edgeLine.setAttributeNS(null, "stroke", "black");
         this.edgeLine.setAttributeNS(null, "stroke-width", "2");
 
-        this.text = document.createElementNS(SVG_NAMESPACE, "text");
+        this.text = createText();
         this.edgeDirection = document.createElementNS(SVG_NAMESPACE, "path");
 
         this.setDirected(directed);
