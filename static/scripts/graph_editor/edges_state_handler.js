@@ -1,6 +1,8 @@
 import { Edge }          from "./edge.js";
 import { getRadiusStep } from "./edge.js";
 import { getPointSide }  from "./geometry.js";
+import { randomInt }     from "./utils.js";
+import { RandomInt }     from "./random.js";
 
 function encodeEdge(edge) {
     var from = edge.node1.label != null ? edge.node1.label : edge.node1;
@@ -25,7 +27,13 @@ export class EdgesStateHandler {
         this.edges = [];
         this.group = group;
         this.nodesStateHandler = nodesStateHandler;
+        this.#randomSeed = 228;
+        this.random = new RandomInt(this.#randomSeed);
         this.#fontSize = 0;
+    }
+
+    regenerateSeed() {
+        this.#randomSeed = randomInt(0, (1 << 30));
     }
 
     updateEdgesSet(newEdges, darkMode) {
@@ -105,6 +113,7 @@ export class EdgesStateHandler {
             }
         }
 
+        const random = new RandomInt(this.#randomSeed);
         const heights = [];
         this.edges.forEach(edge => {
             if (edge.node1 == edge.node2) {
@@ -142,9 +151,7 @@ export class EdgesStateHandler {
 
             const orderCoeff = (edge.node1.label < edge.node2.label ? 1 : -1);
             for (let heightAbs = 0; bestClosest == -1; heightAbs++) {
-                // TODO: make random shift random number from {-eps, +eps} with fixed
-                //     : random seed that is changed when play button is clicked.
-                const randomShift = 0;
+                const randomShift = (random.random() - 0.5) * 1e-5;
 
                 [-heightAbs, heightAbs].forEach(height => {
                     if (banned.get(edgeId).has(height * orderCoeff)) {
@@ -197,7 +204,8 @@ export class EdgesStateHandler {
     }
 
 // Pravate:
-    #fontSize;
+    #fontSize;   // int
+    #randomSeed; // int
 
     getEdgesIndexes(edges) {
         var edgeToIndexMap = new Map();

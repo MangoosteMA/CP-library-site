@@ -159,6 +159,7 @@ export class GraphEditor {
         this.#pauseButton = pauseButton;
         const editor = this;
         playButton.addEventListener("click", function() {
+            editor.edgesStateHandler.regenerateSeed();
             editor.play();
         });
         pauseButton.addEventListener("click", function() {
@@ -169,6 +170,7 @@ export class GraphEditor {
     registerSkipAnimationButton(skipAnimationButton) {
         const editor = this;
         skipAnimationButton.addEventListener("click", function() {
+            editor.edgesStateHandler.regenerateSeed();
             editor.skipAnimation();
         });
     }

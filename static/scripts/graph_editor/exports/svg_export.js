@@ -1,3 +1,5 @@
+// TODO: shift points by bounding box so svg is not too big
+
 export function exportToSvg(svg, darkmodeOn) {
     const auxSvg = document.createElement("svg");
     auxSvg.innerHTML = svg.innerHTML;
@@ -27,7 +29,6 @@ export function exportToSvg(svg, darkmodeOn) {
     var source = serializer.serializeToString(auxSvg);
     source = source.replace("http://www.w3.org/1999/xhtml", "http://www.w3.org/2000/svg")
     source = '<?xml version="1.0" encoding="utf-8" standalone="no"?>\r\n' + source;
-    console.log(source);
 
     const link = document.createElement("a");
     const file = new Blob([source], { type: "image/svg+xml" });
