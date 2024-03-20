@@ -39,6 +39,7 @@ export class GraphEditor {
 
         this.#selectedNode = null;
         this.#selectedNodeMoved = false;
+        this.#selectionPaused = false;
         this.#allEdgesAreDirected = false;
 
         this.updateRadius();
@@ -208,6 +209,7 @@ export class GraphEditor {
     #fontSize;            // int
     #selectedNode;        // Node or null
     #selectedNodeMoved;   // bool
+    #selectionPaused;     // bool
     #allEdgesAreDirected; // bool
     
     #nodesStateListener;  // NodesStateListener
@@ -245,6 +247,10 @@ export class GraphEditor {
             return;
         }
         this.#selectedNode.setMousePosition(this.getMousePosition(evt));
+        if (this.isPlaying()) {
+            this.pause();
+            this.#selectionPaused = true;
+        }
     }
 
     startDrag(evt) {
@@ -275,6 +281,10 @@ export class GraphEditor {
             this.onNodesOrEdgesStateChange();
         }
         this.#selectedNode = null;
+        if (this.#selectionPaused) {
+            this.#selectionPaused = false;
+            this.play();
+        }
     }
 
     registerListeners() {
@@ -312,7 +322,8 @@ export class GraphEditor {
         if (!this.isPlaying() || !this.#betterArrangement) {
             return;
         }
-        var done = this.nodesStateHandler.applyArrangement(this.#betterArrangement.getArrangement());
+        var done = this.#betterArrangement.prettify();
+        done &= this.nodesStateHandler.applyArrangement(this.#betterArrangement.getArrangement());
         this.edgesStateHandler.render();
         if (done) {
             this.pause();

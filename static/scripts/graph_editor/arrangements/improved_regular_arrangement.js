@@ -3,6 +3,7 @@ import { ArrangementBuilderInterface } from "./arrangement_interface.js";
 import { ArrangementOptionInterface }  from "./arrangement_interface.js";
 
 import { Point }                       from "../geometry.js";
+import { segmentsIntersect }           from "../geometry.js";
 import { getRegularPolygon }           from "./regular_arrangement.js";
 import { buildGraph }                  from "./utils.js";
 
@@ -61,6 +62,25 @@ export class ImprovedRegularArrangement extends ArrangementBuilderInterface {
     }
 
     isPretty(n, edges) {
+        if (n > 10) {
+            return false;
+        }
+        const arrangement = this.build(n, edges).getArrangement();
+        for (let i = 0; i < edges.length; i++) {
+            const v = edges[i].from;
+            const u = edges[i].to;
+            for (let j = i + 1; j < edges.length; j++) {
+                const x = edges[j].from;
+                const y = edges[j].to;
+                if (v == x || v == y || u == x || u == y) {
+                    continue;
+                }
+                if (segmentsIntersect(arrangement[v], arrangement[u],
+                                      arrangement[x], arrangement[y])) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 }

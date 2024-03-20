@@ -1,9 +1,11 @@
-import { StableArrangement }      from "./arrangements/arrangement_interface.js";
-import { Point }                  from "./geometry.js";
-import { Node }                   from "./node.js";
-import { increaseLabelBy, isInt } from "./utils.js";
-import { ArrangementsBuilder }    from "./arrangements_builder.js";
-import { ArrangementEdge }        from "./arrangements/arrangement_interface.js";
+import { StableArrangement }   from "./arrangements/arrangement_interface.js";
+import { Point }               from "./geometry.js";
+import { Node }                from "./node.js";
+import { increaseLabelBy }     from "./utils.js";
+import { isInt }               from "./utils.js";
+import { clamp }               from "./utils.js";
+import { ArrangementsBuilder } from "./arrangements_builder.js";
+import { ArrangementEdge }     from "./arrangements/arrangement_interface.js";
 
 export class NodesStateHandler {
     /*
@@ -18,8 +20,7 @@ export class NodesStateHandler {
         this.box = box;
         this.nodes = new Map();
         this.group = group;
-        this.arrangementsBuilder = new ArrangementsBuilder();
-
+        this.arrangementsBuilder = new ArrangementsBuilder(this);
         this.#radius = 0;
         this.#fontSize = 0;
     }
@@ -138,7 +139,8 @@ export class NodesStateHandler {
         arrangement = this.arrangementsBuilder.prettify(arrangement, this.box);
         arrangement = this.unpackArrangement(arrangement);
 
-        const MOVING_SPEED = (this.box.maxX - this.box.minX + this.box.maxY - this.box.minY) * 0.008;
+        const MAX_MOVING_SPEED = (this.box.maxX - this.box.minX + this.box.maxY - this.box.minY) * 0.004;
+        const MIN_MOVING_SPEED = MAX_MOVING_SPEED / 5;
         var allDone = true;
 
         this.nodes.forEach((node, label) => {
@@ -147,9 +149,14 @@ export class NodesStateHandler {
             }
             const center = node.getCircle().center;
             var vector = arrangement.get(label).sub(center);
-            if (!force && vector.length() > MOVING_SPEED) {
-                vector = vector.normalize(MOVING_SPEED);
-                allDone = false;
+            if (!force) {
+                var expectedSpeed = vector.length() / 20;
+                expectedSpeed = clamp(expectedSpeed, MIN_MOVING_SPEED, MAX_MOVING_SPEED);
+                expectedSpeed = Math.min(expectedSpeed, vector.length());
+                if (Math.abs(expectedSpeed - vector.length()) > 1e-5) {
+                    vector = vector.normalize(expectedSpeed);
+                    allDone = false;
+                }
             }
             node.setCoordinates(center.add(vector));
         });

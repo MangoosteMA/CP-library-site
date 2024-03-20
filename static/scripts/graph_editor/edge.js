@@ -180,7 +180,7 @@ export class Edge {
         const circle1 = this.node1.getCircle();
         const circle2 = this.node2.getCircle();
 
-        const MAX_HEIGHT_CHANGE = (!force ? 0.1 : height + Math.abs(this.#currentHeight) + 1e9);
+        const MAX_HEIGHT_CHANGE = (!force ? 0.05 : height + Math.abs(this.#currentHeight) + 1e9);
         if (this.#currentHeight < height) {
             this.#currentHeight += Math.min(height - this.#currentHeight, MAX_HEIGHT_CHANGE);
         } else {

@@ -1,6 +1,6 @@
 import { DfsTreeArrangement }            from "./arrangements/dfs_tree_arrangement.js";
 import { ImprovedRegularArrangement}     from "./arrangements/improved_regular_arrangement.js";
-import { RegularArrangement }            from "./arrangements/regular_arrangement.js";
+import { IterativeArrangement }          from "./arrangements/iterative_arrangement.js";
 import { TopSortArrangementArrangement } from "./arrangements/top_sort_arrangement.js";
 
 import { Point }                         from "./geometry.js";
@@ -13,11 +13,12 @@ export class ArrangementsBuilder {
     builders: list[ArrangementBuilderInterface]
     */
 
-    constructor() {
+    constructor(nodesStateHandler) {
         this.mode = null;
-        this.builders = [new DfsTreeArrangement()           ,
-                         new TopSortArrangementArrangement(),
-                         new ImprovedRegularArrangement()   ];
+        this.builders = [new DfsTreeArrangement()                   ,
+                         new TopSortArrangementArrangement()        ,
+                         new ImprovedRegularArrangement()           ,
+                         new IterativeArrangement(nodesStateHandler)];
     }
 
     build(n, edges) {

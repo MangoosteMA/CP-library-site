@@ -27,6 +27,10 @@ export class StableArrangement extends ArrangementInterface {
         this.#arrangement = arrangement;
     }
 
+    prettify() {
+        return true;
+    }
+
     getArrangement() {
         return this.#arrangement;
     }

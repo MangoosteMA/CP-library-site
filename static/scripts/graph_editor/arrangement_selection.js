@@ -1,6 +1,7 @@
 import { DefaultArrangementOption }            from "./arrangements/arrangement_interface.js";
 import { DfsTreeArrangementOption }            from "./arrangements/dfs_tree_arrangement.js";
 import { ImprovedRegularArrangementOption }    from "./arrangements/improved_regular_arrangement.js";
+import { IterativeArrangementOption }          from "./arrangements/iterative_arrangement.js";
 import { LineArrangementOption }               from "./arrangements/line_arrangement.js";
 import { RegularArrangementOption }            from "./arrangements/regular_arrangement.js";
 import { TopSortArrangementArrangementOption } from "./arrangements/top_sort_arrangement.js";
@@ -20,12 +21,13 @@ export class ArrangementSelection {
     constructor(selectionDiv, settingsButton, graphEditor) {
         this.selectionDiv = selectionDiv;
         this.graphEditor = graphEditor;
-        this.options = [new DefaultArrangementOption()                             ,
-                        new DfsTreeArrangementOption(graphEditor.nodesStateHandler),
-                        new RegularArrangementOption()                             ,
-                        new ImprovedRegularArrangementOption()                     ,
-                        new TopSortArrangementArrangementOption()                  ,
-                        new LineArrangementOption()                                ];
+        this.options = [new DefaultArrangementOption()                               ,
+                        new DfsTreeArrangementOption(graphEditor.nodesStateHandler)  ,
+                        new RegularArrangementOption()                               ,
+                        new ImprovedRegularArrangementOption()                       ,
+                        new TopSortArrangementArrangementOption()                    ,
+                        new LineArrangementOption()                                  ,
+                        new IterativeArrangementOption(graphEditor.nodesStateHandler)];
 
         this.selectedOption = this.options[0];
 

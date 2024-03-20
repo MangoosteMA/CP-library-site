@@ -124,3 +124,18 @@ export function getPointSide(a, b, c) {
     }
     return prod > -EPS ? 0 : 1;
 }
+
+// Returns true if points a and b are on different sides from line (c, d)
+export function differentSide(a, b, c, d) {
+    const prod1 = c.sub(a).cross(d.sub(a));
+    const prod2 = c.sub(b).cross(d.sub(b));
+    return prod1 * prod2 <= 0;
+}
+
+export function segmentsIntersect(a, b, c, d, extendCDBy=1) {
+    var vector = d.sub(c);
+    vector = vector.normalize(vector.length() * (extendCDBy - 1));
+    d = d.add(vector);
+    c = c.sub(vector);
+    return differentSide(a, b, c, d) && differentSide(c, d, a, b);
+}

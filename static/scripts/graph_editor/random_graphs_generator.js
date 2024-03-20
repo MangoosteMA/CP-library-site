@@ -320,7 +320,7 @@ export class RandomGraphsGenerator {
                     }
                 });
             } else {
-                for (let its = 0; remainingEdges > 0 && its < 1000; its++) {
+                for (let its = 0; remainingEdges > 0 && its < 10000; its++) {
                     const v = randomInt(0, this.n);
                     const u = randomInt(0, this.n);
                     if (v != u && !graph.hasEdge(new Edge(v, u, ""))) {
