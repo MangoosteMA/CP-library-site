@@ -17,7 +17,8 @@ const K = 0.001;
 const DEFAULT_RANDOM_MOVE_PROB = 0.02;
 const RANDOM_MOVE_BASE = 0.99;
 const DONE_MAX_LENGTH = 0.02;
-const RANDOM_MOVE_ITERATIONS = 3;
+const RANDOM_MOVE_ITERATIONS = 4;
+const VERTECES_TO_SWAP = 2;
 
 function squareSaveSign(value) {
     const sq = value * value;
@@ -37,12 +38,15 @@ class IterativePrettifier extends ArrangementInterface {
         this.#done = false;
         this.#randomMoveProb = DEFAULT_RANDOM_MOVE_PROB;
         this.#randomMoveIterationsLeft = RANDOM_MOVE_ITERATIONS;
-        for (let i = 0; i < 10; i++) {
+        this.#vertexToSwap = 0;
+
+        for (let i = 0; i < 5; i++) {
             this.prettify();
         }
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 5; i++) {
             this.makeRandomMove();
         }
+        this.makeSwaps();
     }
 
     getArrangement() {
@@ -53,6 +57,7 @@ class IterativePrettifier extends ArrangementInterface {
         for (let it = 0; it < PRETTIFY_ARRANGEMENT_ITERATIONS; it++) {
             this.prettifyIteration();
         }
+        this.makeSwaps();
         if (Math.random() < this.#randomMoveProb) {
             this.#randomMoveProb *= RANDOM_MOVE_BASE;
             this.makeRandomMove();
@@ -69,6 +74,7 @@ class IterativePrettifier extends ArrangementInterface {
     #done;                     // bool
     #randomMoveProb;           // float
     #randomMoveIterationsLeft; // int
+    #vertexToSwap;             // int
 
     size() {
         return this.#graph.length;
@@ -88,6 +94,63 @@ class IterativePrettifier extends ArrangementInterface {
         return (left != -1 && this.#graph[v][left] == u);
     }
 
+    edgesIntersect(v, u, x, y, extendXY=1) {
+        return segmentsIntersect(this.#arrangement[v], this.#arrangement[u],
+                                 this.#arrangement[x], this.#arrangement[y],
+                                 extendXY);
+    }
+
+    makeSwaps() {
+        for (let i = 0; i < VERTECES_TO_SWAP; i++) {
+            var v = this.#vertexToSwap;
+            this.#vertexToSwap = (v + 1) % this.size();
+
+            const order = [];
+            for (let u = v + 1; u < this.size(); u++) {
+                order.push(u);
+            }
+            order.sort((a, b) => {
+                const distA = this.#arrangement[a].sub(this.#arrangement[v]).length();
+                const distB = this.#arrangement[b].sub(this.#arrangement[v]).length();
+                return distA - distB;
+            });
+            order.forEach((u, i) => {
+                if (i > 10) {
+                    return;
+                }
+                var delta = 0;
+                this.#graph[v].forEach(x => {
+                    this.#graph[u].forEach(y => {
+                        if (x == u || y == v) {
+                            return;
+                        }
+                        delta -= this.edgesIntersect(v, x, u, y);
+                        delta += this.edgesIntersect(u, x, v, y);
+                    });
+                });
+
+                [v, u].forEach(x => {
+                    const other = (x == v ? u : v);
+                    this.#graph[x].forEach(y => {
+                        this.#edges.forEach(edge => {
+                            if (edge.from == v || edge.to == v || edge.from == u || edge.to == u) {
+                                return;
+                            }
+                            delta -= this.edgesIntersect(x, y, edge.from, edge.to);
+                            delta += this.edgesIntersect(other, y, edge.from, edge.to);
+                        });
+                    });
+                });
+
+                if (delta < 0) {
+                    const auxPoint = this.#arrangement[v];
+                    this.#arrangement[v] = this.#arrangement[u];
+                    this.#arrangement[u] = auxPoint;
+                }
+            });
+        }
+    }
+
     isVertexMirroringBetter(v, edge, ignored=null) {
         if (ignored == edge.from || ignored == edge.to) {
             return false;
@@ -99,9 +162,7 @@ class IterativePrettifier extends ArrangementInterface {
                 return true;
             }
             count++;
-            allIntersecting &= segmentsIntersect(this.#arrangement[v], this.#arrangement[u],
-                                                 this.#arrangement[edge.from], this.#arrangement[edge.to],
-                                                 1.5);
+            allIntersecting &= this.edgesIntersect(v, u, edge.from, edge.to, 1.5);
             return allIntersecting;
         });
         return allIntersecting && count != 0;
@@ -140,7 +201,7 @@ class IterativePrettifier extends ArrangementInterface {
             this.#arrangement[v] = this.#arrangement[v].add(vector.scale(coeff + 1));
             this.#done = false;
 
-            this.#temperature *= Math.pow(1 / TEMPERATURE_BASE, 15);
+            this.#temperature *= Math.pow(1 / TEMPERATURE_BASE, 35);
             this.#temperature = Math.min(this.#temperature, DEFAULT_TEMPERATURE);
         }
     }
