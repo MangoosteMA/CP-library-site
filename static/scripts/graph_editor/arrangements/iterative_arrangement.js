@@ -114,6 +114,7 @@ class IterativePrettifier extends ArrangementInterface {
                 const distB = this.#arrangement[b].sub(this.#arrangement[v]).length();
                 return distA - distB;
             });
+
             order.forEach((u, i) => {
                 if (i > 10) {
                     return;
@@ -132,7 +133,7 @@ class IterativePrettifier extends ArrangementInterface {
                 [v, u].forEach(x => {
                     const other = (x == v ? u : v);
                     this.#graph[x].forEach(y => {
-                        if (v == y || u == y) {
+                        if (y == other || this.hasEdge(other, y)) {
                             return;
                         }
                         this.#edges.forEach(edge => {
