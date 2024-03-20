@@ -16,7 +16,7 @@ const MAX_SHIFT = 20;
 const K = 0.001;
 const DEFAULT_RANDOM_MOVE_PROB = 0.02;
 const RANDOM_MOVE_BASE = 0.99;
-const DONE_MAX_LENGTH = 0.02;
+const DONE_MAX_LENGTH = 0.01;
 const RANDOM_MOVE_ITERATIONS = 4;
 const VERTECES_TO_SWAP = 2;
 
@@ -121,7 +121,7 @@ class IterativePrettifier extends ArrangementInterface {
                 var delta = 0;
                 this.#graph[v].forEach(x => {
                     this.#graph[u].forEach(y => {
-                        if (x == u || y == v) {
+                        if (x == u || y == v || x == y) {
                             return;
                         }
                         delta -= this.edgesIntersect(v, x, u, y);
@@ -132,7 +132,13 @@ class IterativePrettifier extends ArrangementInterface {
                 [v, u].forEach(x => {
                     const other = (x == v ? u : v);
                     this.#graph[x].forEach(y => {
+                        if (v == y || u == y) {
+                            return;
+                        }
                         this.#edges.forEach(edge => {
+                            if (edge.from == y || edge.to == y) {
+                                return;
+                            }
                             if (edge.from == v || edge.to == v || edge.from == u || edge.to == u) {
                                 return;
                             }
