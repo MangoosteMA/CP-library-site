@@ -16,7 +16,6 @@ export class ArrangementsBuilder {
     constructor(nodesStateHandler) {
         this.mode = null;
         this.builders = [new DfsTreeArrangement()                   ,
-                         new TopSortArrangementArrangement()        ,
                          new ImprovedRegularArrangement()           ,
                          new IterativeArrangement(nodesStateHandler)];
     }

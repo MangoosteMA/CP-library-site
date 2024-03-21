@@ -10,19 +10,36 @@ import { differentSide }               from "../geometry.js";
 import { segmentsIntersect }           from "../geometry.js";
 
 const PRETTIFY_ARRANGEMENT_ITERATIONS = 20;
-const DEFAULT_TEMPERATURE = 0.05;
-const TEMPERATURE_BASE = 0.999;
-const MAX_SHIFT = 20;
-const K = 0.001;
-const DEFAULT_RANDOM_MOVE_PROB = 0.02;
+const DEFAULT_TEMPERATURE = 0.08;
+const TEMPERATURE_BASE = 0.9995;
+const MAX_SHIFT = 5;
+const K = 0.002;
+const DEFAULT_RANDOM_MOVE_PROB = 0.015;
 const RANDOM_MOVE_BASE = 0.99;
-const DONE_MAX_LENGTH = 0.01;
+const DONE_MAX_LENGTH = 0.02;
 const RANDOM_MOVE_ITERATIONS = 4;
 const VERTECES_TO_SWAP = 2;
+const SWAPS_PERIOD = 30;
+const MIN_SWAP_ITERATIONS_SHOULD_PASS = 300;
 
-function squareSaveSign(value) {
+class Swap {
+    /*
+    Variables:
+    v:         int
+    u:         int
+    iteration: int
+    */
+
+    constructor(v, u, iteration) {
+        this.v = Math.min(v, u);
+        this.u = Math.max(v, u);
+        this.iteration = iteration;
+    }
+}
+
+function lengthFunction(value) {
     const sq = value * value;
-    return (value < 0 ? -sq : sq);
+    return value < 0 ? -sq : sq;
 }
 
 class IterativePrettifier extends ArrangementInterface {
@@ -39,6 +56,9 @@ class IterativePrettifier extends ArrangementInterface {
         this.#randomMoveProb = DEFAULT_RANDOM_MOVE_PROB;
         this.#randomMoveIterationsLeft = RANDOM_MOVE_ITERATIONS;
         this.#vertexToSwap = 0;
+
+        this.#currentIteration = 0;
+        this.#previousSwaps = [];
 
         for (let i = 0; i < 5; i++) {
             this.prettify();
@@ -57,12 +77,15 @@ class IterativePrettifier extends ArrangementInterface {
         for (let it = 0; it < PRETTIFY_ARRANGEMENT_ITERATIONS; it++) {
             this.prettifyIteration();
         }
-        this.makeSwaps();
+        if (this.#currentIteration % SWAPS_PERIOD == 0) {
+            this.makeSwaps();
+        }
         if (Math.random() < this.#randomMoveProb) {
             this.#randomMoveProb *= RANDOM_MOVE_BASE;
             this.makeRandomMove();
         }
         this.#temperature *= TEMPERATURE_BASE;
+        this.#currentIteration++;
         return this.#done;
     }
 
@@ -75,6 +98,9 @@ class IterativePrettifier extends ArrangementInterface {
     #randomMoveProb;           // float
     #randomMoveIterationsLeft; // int
     #vertexToSwap;             // int
+
+    #currentIteration;         // int
+    #previousSwaps;            // List[Swap]
 
     size() {
         return this.#graph.length;
@@ -100,25 +126,50 @@ class IterativePrettifier extends ArrangementInterface {
                                  extendXY);
     }
 
+    getDist(v, u) {
+        return this.#arrangement[u].sub(this.#arrangement[v]).length();
+    }
+
+    removeExpiredSwaps() {
+        while (this.#previousSwaps.length > 0 &&
+               this.#currentIteration - this.#previousSwaps[0].iteration > MIN_SWAP_ITERATIONS_SHOULD_PASS) {
+            this.#previousSwaps.shift();
+        }
+    }
+
     makeSwaps() {
+        this.removeExpiredSwaps();
         for (let i = 0; i < VERTECES_TO_SWAP; i++) {
             var v = this.#vertexToSwap;
             this.#vertexToSwap = (v + 1) % this.size();
+            if (this.#graph[v].length == 0) {
+                continue;
+            }
 
             const order = [];
             for (let u = v + 1; u < this.size(); u++) {
                 order.push(u);
             }
             order.sort((a, b) => {
-                const distA = this.#arrangement[a].sub(this.#arrangement[v]).length();
-                const distB = this.#arrangement[b].sub(this.#arrangement[v]).length();
-                return distA - distB;
+                return this.getDist(v, a) - this.getDist(v, b);
             });
 
             order.forEach((u, i) => {
                 if (i > 10) {
                     return;
                 }
+
+                var fail = false;
+                this.#previousSwaps.every(swap => {
+                    if (Math.min(v, u) == swap.v && Math.max(v, u) == swap.u) {
+                        fail = true;
+                    }
+                    return !fail;
+                });
+                if (fail) {
+                    return;
+                }
+
                 var delta = 0;
                 this.#graph[v].forEach(x => {
                     this.#graph[u].forEach(y => {
@@ -150,6 +201,7 @@ class IterativePrettifier extends ArrangementInterface {
                 });
 
                 if (delta < 0) {
+                    this.#previousSwaps.push(new Swap(v, u, this.#currentIteration));
                     const auxPoint = this.#arrangement[v];
                     this.#arrangement[v] = this.#arrangement[u];
                     this.#arrangement[u] = auxPoint;
@@ -177,6 +229,10 @@ class IterativePrettifier extends ArrangementInterface {
 
     makeRandomMove() {
         for (let v = 0; v < this.size(); v++) {
+            if (this.#graph[v].length == 0) {
+                continue;
+            }
+
             const intersectingEdges = [];
             this.#edges.forEach(edge => {
                 if (this.isVertexMirroringBetter(v, edge)) {
@@ -204,7 +260,7 @@ class IterativePrettifier extends ArrangementInterface {
             const edge = intersectingEdges[randomInt(0, intersectingEdges.length)];
             const center = this.#arrangement[edge.from].add(this.#arrangement[edge.to]).scale(0.5);
             const vector = center.sub(this.#arrangement[v]);
-            const coeff = Math.random() * 1.25 + 0.25;
+            const coeff = Math.random() * 0.8 + 0.5;
             this.#arrangement[v] = this.#arrangement[v].add(vector.scale(coeff + 1));
             this.#done = false;
 
@@ -220,14 +276,17 @@ class IterativePrettifier extends ArrangementInterface {
                 continue;
             }
             var vector = this.#arrangement[u].sub(this.#arrangement[v]);
+            if (vector.length() < 1e-5) {
+                vector = new Point(Math.random() - 0.5, Math.random() - 0.5);
+            }
             const distance = vector.length();
             var currentForce;
             if (!this.hasEdge(v, u)) {
-                currentForce = -Math.max(0, squareSaveSign(PERFECT_DISTANCE - distance)) * K;
+                currentForce = -Math.max(0, lengthFunction(PERFECT_DISTANCE - distance)) * K;
             } else {
-                currentForce = squareSaveSign(distance - PERFECT_DISTANCE) * K;
+                currentForce = lengthFunction(distance - PERFECT_DISTANCE) * K;
             }
-            force = force.add(vector.scale(currentForce));
+            force = force.add(vector.normalize(currentForce));
         }
         return force;
     }
