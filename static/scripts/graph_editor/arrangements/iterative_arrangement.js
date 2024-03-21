@@ -320,6 +320,7 @@ class IterativePrettifier extends ArrangementInterface {
             if (this.#randomMoveIterationsLeft > 0) {
                 this.#randomMoveIterationsLeft--;
                 this.makeRandomMove();
+                this.makeSwaps();
             } else {
                 this.#done = true;
             }
