@@ -13,10 +13,12 @@ const PRETTIFY_ARRANGEMENT_ITERATIONS = 20;
 const DEFAULT_TEMPERATURE = 0.08;
 const TEMPERATURE_BASE = 0.9995;
 const MAX_SHIFT = 5;
+
 const K = 0.002;
 const DEFAULT_RANDOM_MOVE_PROB = 0.015;
 const RANDOM_MOVE_BASE = 0.99;
 const DONE_MAX_LENGTH = 0.02;
+
 const RANDOM_MOVE_ITERATIONS = 4;
 const VERTECES_TO_SWAP = 2;
 const SWAPS_PERIOD = 30;
@@ -50,6 +52,7 @@ class IterativePrettifier extends ArrangementInterface {
         for (let i = 0; i < n; i++) {
             this.#graph[i].sort((a, b) => a - b);
         }
+
         this.#edges = edges;
         this.#temperature = DEFAULT_TEMPERATURE;
         this.#done = false;
@@ -84,6 +87,7 @@ class IterativePrettifier extends ArrangementInterface {
             this.#randomMoveProb *= RANDOM_MOVE_BASE;
             this.makeRandomMove();
         }
+
         this.#temperature *= TEMPERATURE_BASE;
         this.#currentIteration++;
         return this.#done;
@@ -107,10 +111,10 @@ class IterativePrettifier extends ArrangementInterface {
     }
 
     hasEdge(v, u) {
-        let left = -1;
-        let right = this.#graph[v].length;
+        var left = -1;
+        var right = this.#graph[v].length;
         while (right - left > 1) {
-            let mid = Math.floor((left + right) / 2);
+            var mid = Math.floor((left + right) / 2);
             if (this.#graph[v][mid] <= u) {
                 left = mid;
             } else {
@@ -155,11 +159,7 @@ class IterativePrettifier extends ArrangementInterface {
             });
 
             order.forEach((u, i) => {
-                if (i > 10) {
-                    return;
-                }
-
-                var fail = false;
+                var fail = (i > 10);
                 this.#previousSwaps.every(swap => {
                     if (Math.min(v, u) == swap.v && Math.max(v, u) == swap.u) {
                         fail = true;
@@ -188,10 +188,8 @@ class IterativePrettifier extends ArrangementInterface {
                             return;
                         }
                         this.#edges.forEach(edge => {
-                            if (edge.from == y || edge.to == y) {
-                                return;
-                            }
-                            if (edge.from == v || edge.to == v || edge.from == u || edge.to == u) {
+                            if (edge.from == v || edge.to == v || edge.from == u ||
+                                edge.to == u || edge.from == y || edge.to == y) {
                                 return;
                             }
                             delta -= this.edgesIntersect(x, y, edge.from, edge.to);
@@ -216,6 +214,7 @@ class IterativePrettifier extends ArrangementInterface {
         }
         var allIntersecting = true;
         var count = 0;
+
         this.#graph[v].every(u => {
             if (u == edge.from || u == edge.to || v == edge.from || v == edge.to || ignored == u) {
                 return true;
@@ -232,13 +231,14 @@ class IterativePrettifier extends ArrangementInterface {
             if (this.#graph[v].length == 0) {
                 continue;
             }
-
             const intersectingEdges = [];
+
             this.#edges.forEach(edge => {
                 if (this.isVertexMirroringBetter(v, edge)) {
                     intersectingEdges.push(edge);
                     return;
                 }
+
                 var found = false;
                 this.#graph[v].every(u => {
                     if (this.#graph[u].length != 1) {
@@ -249,10 +249,12 @@ class IterativePrettifier extends ArrangementInterface {
                     }
                     return !found;
                 });
+
                 if (found) {
                     intersectingEdges.push(edge);
                 }
             });
+
             if (intersectingEdges.length == 0 || Math.random() < 0.5) {
                 continue;
             }
@@ -279,6 +281,7 @@ class IterativePrettifier extends ArrangementInterface {
             if (vector.length() < 1e-5) {
                 vector = new Point(Math.random() - 0.5, Math.random() - 0.5);
             }
+
             const distance = vector.length();
             var currentForce;
             if (!this.hasEdge(v, u)) {
@@ -301,6 +304,7 @@ class IterativePrettifier extends ArrangementInterface {
             maxLength = Math.max(maxLength, shiftVector.length());
             this.#arrangement[i] = this.#arrangement[i].add(shiftVector);
         }
+
         if (maxLength < DONE_MAX_LENGTH) {
             if (this.#randomMoveIterationsLeft > 0) {
                 this.#randomMoveIterationsLeft--;
