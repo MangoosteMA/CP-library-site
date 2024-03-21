@@ -6,6 +6,7 @@ import { PERFECT_DISTANCE }            from "./arrangement_interface.js";
 import { buildGraph }                  from "./utils.js";
 import { randomInt }                   from "../utils.js";
 import { Point }                       from "../geometry.js";
+import { Line }                        from "../geometry.js";
 import { differentSide }               from "../geometry.js";
 import { segmentsIntersect }           from "../geometry.js";
 
@@ -18,6 +19,7 @@ const K = 0.002;
 const DEFAULT_RANDOM_MOVE_PROB = 0.015;
 const RANDOM_MOVE_BASE = 0.99;
 const DONE_MAX_LENGTH = 0.02;
+const MAX_RANDOM_MOVE_DISTANCE_COEFF = 1.1;
 
 const RANDOM_MOVE_ITERATIONS = 4;
 const VERTECES_TO_SWAP = 2;
@@ -161,9 +163,7 @@ class IterativePrettifier extends ArrangementInterface {
             order.forEach((u, i) => {
                 var fail = (i > 10);
                 this.#previousSwaps.every(swap => {
-                    if (Math.min(v, u) == swap.v && Math.max(v, u) == swap.u) {
-                        fail = true;
-                    }
+                    fail |= (Math.min(v, u) == swap.v && Math.max(v, u) == swap.u);
                     return !fail;
                 });
                 if (fail) {
@@ -212,6 +212,10 @@ class IterativePrettifier extends ArrangementInterface {
         if (ignored == edge.from || ignored == edge.to) {
             return false;
         }
+        const distToEdge = (new Line(this.#arrangement[edge.from], this.#arrangement[edge.to])).distanceToPoint(this.#arrangement[v]);
+        if (distToEdge > MAX_RANDOM_MOVE_DISTANCE_COEFF * PERFECT_DISTANCE) {
+            return false;
+        }
         var allIntersecting = true;
         var count = 0;
 
@@ -227,8 +231,14 @@ class IterativePrettifier extends ArrangementInterface {
     }
 
     makeRandomMove() {
+        const moved = Array(this.size()).fill(false);
         for (let v = 0; v < this.size(); v++) {
-            if (this.#graph[v].length == 0) {
+            var adjMoved = false;
+            this.#graph[v].every(u => {
+                adjMoved |= moved[u];
+                return !adjMoved;
+            });
+            if (adjMoved || this.#graph[v].length == 0) {
                 continue;
             }
             const intersectingEdges = [];
@@ -244,9 +254,7 @@ class IterativePrettifier extends ArrangementInterface {
                     if (this.#graph[u].length != 1) {
                         return true;
                     }
-                    if (this.isVertexMirroringBetter(v, edge, u)) {
-                        found = true;
-                    }
+                    found |= this.isVertexMirroringBetter(v, edge, u);
                     return !found;
                 });
 
@@ -261,12 +269,15 @@ class IterativePrettifier extends ArrangementInterface {
 
             const edge = intersectingEdges[randomInt(0, intersectingEdges.length)];
             const center = this.#arrangement[edge.from].add(this.#arrangement[edge.to]).scale(0.5);
-            const vector = center.sub(this.#arrangement[v]);
-            const coeff = Math.random() * 0.8 + 0.5;
+            const coeff = Math.random() * 1.25 + 0.25;
+            var vector = center.sub(this.#arrangement[v]).scale(coeff + 1);
+            vector = vector.normalize(Math.min(vector.length(), PERFECT_DISTANCE));
+
+            moved[v] = true;
             this.#arrangement[v] = this.#arrangement[v].add(vector.scale(coeff + 1));
             this.#done = false;
 
-            this.#temperature *= Math.pow(1 / TEMPERATURE_BASE, 35);
+            this.#temperature *= Math.pow(1 / TEMPERATURE_BASE, 25);
             this.#temperature = Math.min(this.#temperature, DEFAULT_TEMPERATURE);
         }
     }
