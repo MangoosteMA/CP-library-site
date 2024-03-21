@@ -4,6 +4,7 @@ import { Node }                from "./node.js";
 import { increaseLabelBy }     from "./utils.js";
 import { isInt }               from "./utils.js";
 import { clamp }               from "./utils.js";
+import { uniteBoundingBoxes }  from "./utils.js";
 import { ArrangementsBuilder } from "./arrangements_builder.js";
 import { ArrangementEdge }     from "./arrangements/arrangement_interface.js";
 
@@ -187,6 +188,20 @@ export class NodesStateHandler {
             n += 1;
         });
         return {n: n, nodeToIndex: nodeToIndex, indexToNode: indexToNode};
+    }
+
+    getBoundingBox() {
+        var boundingBox = null;
+        this.nodes.forEach(node => {
+            boundingBox = uniteBoundingBoxes(boundingBox, node.getBoundingBox());
+        });
+        return boundingBox;
+    }
+
+    shiftNodesBy(vector) {
+        this.nodes.forEach(node => {
+            node.setCoordinates(node.getCircle().center.add(vector));
+        });
     }
 
 // Private:

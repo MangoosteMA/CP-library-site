@@ -1,7 +1,8 @@
-import { Point, Line }   from "./geometry.js";
-import { SVG_NAMESPACE } from "./svg_namespace.js";
-import { Node }          from "./node.js";
-import { createText }    from "./node.js";
+import { Point, Line }        from "./geometry.js";
+import { SVG_NAMESPACE }      from "./svg_namespace.js";
+import { Node }               from "./node.js";
+import { createText }         from "./node.js";
+import { uniteBoundingBoxes } from "./utils.js";
 
 export function getRadiusStep(nodeRadius) {
     return 1.5 * nodeRadius;
@@ -42,7 +43,7 @@ export class Edge {
     node2:            Node
     weight:           string or null
     directed:         bool (if true, then edge goes from node1 to node2)
-    edgeLine:         html <path> object
+    edgeLine:         html <path> or <ellipse> object
     text:             html <text> object
     edgeDirection:    html <path> object
     extraTextPadding: int (5 by default)
@@ -148,6 +149,14 @@ export class Edge {
         const circle2 = this.node2.getCircle();
         const distance = circle1.center.sub(circle2.center).length();
         return distance < circle1.radius;
+    }
+
+    getBoundingBox() {
+        var box = this.edgeLine.getBBox();
+        if (!this.isWeightHidden() && this.weight != "") {
+            box = uniteBoundingBoxes(box, this.text.getBBox());
+        }
+        return box;
     }
 
 // Private:

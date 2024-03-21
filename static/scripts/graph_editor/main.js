@@ -204,6 +204,6 @@ import { exportToSvg } from "./exports/svg_export.js";
 const svgExportButton = document.getElementById("export-to-svg-button");
 if (svgExportButton) {
     svgExportButton.addEventListener("click", function() {
-        exportToSvg(mainSvg, darkModeButton.style.display == "none");
+        exportToSvg(mainSvg, graphEditor, darkModeButton.style.display == "none");
     });
 }

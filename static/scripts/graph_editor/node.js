@@ -1,6 +1,8 @@
-import { Point, Circle }              from "./geometry.js";
-import { SVG_NAMESPACE }              from "./svg_namespace.js";
-import { randomInt, increaseLabelBy } from "./utils.js";
+import { Point, Circle }      from "./geometry.js";
+import { SVG_NAMESPACE }      from "./svg_namespace.js";
+import { randomInt }          from "./utils.js";
+import { increaseLabelBy }    from "./utils.js";
+import { uniteBoundingBoxes } from "./utils.js";
 
 export function createText() {
     const text = document.createElementNS(SVG_NAMESPACE, "text");
@@ -157,5 +159,13 @@ export class Node {
         this.circle.setAttributeNS(null, "stroke", newColor);
         this.text.setAttributeNS(null, "fill", newColor);
         this.text.setAttributeNS(null, "stroke", newColor);
+    }
+
+    getBoundingBox() {
+        var box = this.circle.getBBox();
+        if (!this.isLabelHidden()) {
+            box = uniteBoundingBoxes(box, this.text.getBBox());
+        }
+        return box;
     }
 }

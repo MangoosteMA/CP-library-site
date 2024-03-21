@@ -6,6 +6,7 @@ import { SVG_NAMESPACE }      from "./svg_namespace.js";
 import { Node }               from "./node.js";
 import { NodesStateHandler }  from "./nodes_state_handler.js";
 import { NodesStateListener } from "./graph_editor_state_listeners/nodes_state_listener.js";
+import { uniteBoundingBoxes } from "./utils.js";
 
 const DEFAULT_RADIUS = 20;
 const DEFAULT_FONT_SIZE = 16;
@@ -202,6 +203,27 @@ export class GraphEditor {
     updateArrangementBuilder(newArrangementBuilder) {
         this.nodesStateHandler.arrangementsBuilder.mode = newArrangementBuilder;
         this.play();
+    }
+
+    getBoundingBox() {
+        const nodesBoundingBox = this.nodesStateHandler.getBoundingBox();
+        const edgesBoundingBox = this.edgesStateHandler.getBoundingBox();
+        var union = uniteBoundingBoxes(nodesBoundingBox, edgesBoundingBox);
+        if (union == null) {
+            return {x: 0, y: 0, width: 1, height: 1};
+        }
+
+        const EXTRA_PADDING = 10;
+        union.x -= EXTRA_PADDING;
+        union.y -= EXTRA_PADDING;
+        union.width += 2 * EXTRA_PADDING;
+        union.height += 2 * EXTRA_PADDING;
+        return union;
+    }
+
+    shiftNodesBy(vector) {
+        this.nodesStateHandler.shiftNodesBy(vector);
+        this.renderEdges(true);
     }
 
 // Private:

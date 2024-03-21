@@ -1,8 +1,9 @@
-import { Edge }          from "./edge.js";
-import { getRadiusStep } from "./edge.js";
-import { getPointSide }  from "./geometry.js";
-import { randomInt }     from "./utils.js";
-import { RandomInt }     from "./random.js";
+import { Edge }               from "./edge.js";
+import { getRadiusStep }      from "./edge.js";
+import { getPointSide }       from "./geometry.js";
+import { randomInt }          from "./utils.js";
+import { uniteBoundingBoxes } from "./utils.js";
+import { RandomInt }          from "./random.js";
 
 function encodeEdge(edge) {
     var from = edge.node1.label != null ? edge.node1.label : edge.node1;
@@ -201,6 +202,14 @@ export class EdgesStateHandler {
         this.edges.forEach(edge => {
             edge.setColor("#000000");
         });
+    }
+
+    getBoundingBox() {
+        var boundingBox = null;
+        this.edges.forEach(edge => {
+            boundingBox = uniteBoundingBoxes(boundingBox, edge.getBoundingBox());
+        });
+        return boundingBox;
     }
 
 // Pravate:

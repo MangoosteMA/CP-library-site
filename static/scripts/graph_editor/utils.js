@@ -31,3 +31,20 @@ export function getCookieValue(name) {
     }
     return null;
 }
+
+export function uniteBoundingBoxes(box1, box2) {
+    if (box1 == null) {
+        return box2;
+    }
+    if (box2 == null) {
+        return box1;
+    }
+    const xl = Math.min(box1.x, box2.x);
+    const yl = Math.min(box1.y, box2.y);
+    const xr = Math.max(box1.x + box1.width, box2.x + box2.width);
+    const yr = Math.max(box1.y + box1.height, box2.y + box2.height);
+    return {x:      xl     ,
+            y:      yl     ,
+            width:  xr - xl,
+            height: yr - yl};
+}

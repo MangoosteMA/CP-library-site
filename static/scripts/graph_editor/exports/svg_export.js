@@ -1,16 +1,22 @@
-// TODO: shift points by bounding box so svg is not too big
+import { Point } from "../geometry.js";
 
-export function exportToSvg(svg, darkmodeOn) {
+export function exportToSvg(svg, graphEditor, darkmodeOn) {
+    const boundingBox = graphEditor.getBoundingBox(svg);
+    const vector = new Point(boundingBox.x, boundingBox.y);
+    graphEditor.shiftNodesBy(vector.scale(-1));
+
     const auxSvg = document.createElement("svg");
     auxSvg.innerHTML = svg.innerHTML;
-    auxSvg.setAttribute("width", svg.getAttribute("width"));
-    auxSvg.setAttribute("height", svg.getAttribute("height"));
+    auxSvg.setAttribute("width", boundingBox.width);
+    auxSvg.setAttribute("height", boundingBox.height);
+
+    graphEditor.shiftNodesBy(vector);
 
     if (darkmodeOn) {
         const elements = auxSvg.getElementsByTagName("*");
         for (let i = 0; i < elements.length; i++) {
             const element = elements[i];
-            const TAGS = new Set(["CIRCLE", "TEXT", "PATH"]);
+            const TAGS = new Set(["CIRCLE", "TEXT", "PATH", "ELLIPSE"]);
             if (TAGS.has(element.tagName)) {
                 if (element.getAttribute("fill") == "#ffffff") {
                     element.setAttribute("fill", "#000000");
