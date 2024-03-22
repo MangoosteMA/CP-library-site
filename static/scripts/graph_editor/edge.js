@@ -197,7 +197,7 @@ export class Edge {
         }
         height = this.#currentHeight;
 
-        if (this.nodesIntersects()) {
+        if (circle1.center.sub(circle2.center).length() < 1e-3) {
             return;
         }
 
