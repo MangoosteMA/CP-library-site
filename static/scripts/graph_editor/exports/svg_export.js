@@ -1,4 +1,5 @@
-import { Point } from "../geometry.js";
+import { Point }         from "../geometry.js";
+import { SVG_NAMESPACE } from "../svg_namespace.js";
 
 export function exportToSvg(svg, graphEditor, darkmodeOn) {
     const boundingBox = graphEditor.getBoundingBox(svg);
@@ -33,7 +34,7 @@ export function exportToSvg(svg, graphEditor, darkmodeOn) {
 
     var serializer = new XMLSerializer();
     var source = serializer.serializeToString(auxSvg);
-    source = source.replace("http://www.w3.org/1999/xhtml", "http://www.w3.org/2000/svg")
+    source = source.replace("http://www.w3.org/1999/xhtml", SVG_NAMESPACE);
     source = '<?xml version="1.0" encoding="utf-8" standalone="no"?>\r\n' + source;
 
     const link = document.createElement("a");
