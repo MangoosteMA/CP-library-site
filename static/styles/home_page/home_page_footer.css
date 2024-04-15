@@ -1,0 +1,19 @@
+@import "../base_styles.css";
+
+.home-page-footer-div {
+    margin-top: 70px;
+    margin-bottom: 20px;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    border-top: 1px solid grey;
+    padding-top: 5px;
+    text-align: center;
+    font-family: var(--base-font-family);
+    font-size: 12px;
+    color: grey;
+}
+
+.home-page-footer-div > a {
+    color: black;
+    text-decoration: inherit;
+}
