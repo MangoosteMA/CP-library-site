@@ -1,5 +1,3 @@
-const EXTRA_LENGTH = 30;
-
 export class Editor {
     /*
     Variables:
