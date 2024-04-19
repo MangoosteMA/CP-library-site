@@ -67,12 +67,12 @@ class Graph {
         });
 
         var result = "";
-        for (let i = 0; i < this.n; i++) {
-            result += (i + 1) + "\n";
-        }
         this.edges.forEach(edge => {
             result += edge.asString() + "\n";
         });
+        for (let i = 0; i < this.n; i++) {
+            result += (i + 1) + "\n";
+        }
         return result;
     }
 }
