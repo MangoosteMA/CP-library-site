@@ -272,13 +272,13 @@ export class RandomGraphsGenerator {
         // Min weight
         this.minWeight = 1;
         createIntegerInfo(rightTable, "Минимальный вес:", this.minWeight, function(value) {
-            randomGraphsGenerator.minWeight = value;
+            randomGraphsGenerator.minWeight = parseInt(value, 0);
         });
 
         // Max weight
         this.maxWeight = 2;
         createIntegerInfo(rightTable, "Максимальный вес:", this.maxWeight, function(value) {
-            randomGraphsGenerator.maxWeight = value;
+            randomGraphsGenerator.maxWeight = parseInt(value, 0);
         });
 
         const buttonHolder = document.createElement("div");
