@@ -99,7 +99,7 @@ export class GraphEditor {
         this.#allEdgesAreDirected = directed;
         this.edgesStateHandler.directAllEdges(directed);
         this.onNodesOrEdgesStateChange();
-        this.play();
+        this.render();
     }
 
     registerNodesStateListener(nodesStateListener) {

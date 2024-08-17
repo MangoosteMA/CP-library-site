@@ -31,11 +31,12 @@ export class Editor {
                 element.scrollTop = scrollTop;
             });
         }
+
         [mainTextarea, background, linesDiv, settingsDiv].forEach(element => {
             element.addEventListener("scroll", function() {
                 syncScroll(element.scrollLeft, element.scrollTop);
             });
-        })
+        });
     }
 
     renameNode(label, newLabel) {

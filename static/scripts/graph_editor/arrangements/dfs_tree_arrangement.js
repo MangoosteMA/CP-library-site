@@ -4,7 +4,7 @@ import { ArrangementOptionInterface }  from "./arrangement_interface.js";
 import { PERFECT_DISTANCE }            from "./arrangement_interface.js";
 
 import { Point }                       from "../geometry.js";
-import { isForest, isTree }                   from "./utils.js";
+import { isForest, isTree }            from "./utils.js";
 import { getUniqueEdges }              from "./utils.js";
 import { buildGraph }                  from "./utils.js";
 import { getComponents }               from "./utils.js";
