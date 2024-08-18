@@ -1,3 +1,5 @@
+const EPS = 1e-7;
+
 export class Point {
     /*
     Variables:
@@ -55,6 +57,10 @@ export class Point {
 
     angleBetween(vector) {
         return (new Point(this.dot(vector), this.cross(vector))).polarAngle();
+    }
+
+    equalTo(point) {
+        return Math.abs(this.x - point.x) < EPS && Math.abs(this.y - point.y) < EPS;
     }
 }
 
@@ -118,7 +124,6 @@ export class Circle {
 
 export function getPointSide(a, b, c) {
     const prod = b.sub(a).cross(c.sub(a));
-    const EPS = 1e-7;
     if (prod > EPS) {
         return -1;
     }

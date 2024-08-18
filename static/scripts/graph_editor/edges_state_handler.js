@@ -1,6 +1,7 @@
 import { Edge }               from "./edge.js";
 import { getRadiusStep }      from "./edge.js";
 import { getPointSide }       from "./geometry.js";
+import { NodesStateHandler }   from "./nodes_state_handler.js";
 import { randomInt }          from "./utils.js";
 import { uniteBoundingBoxes } from "./utils.js";
 import { RandomInt }          from "./random.js";
@@ -37,7 +38,11 @@ export class EdgesStateHandler {
         this.#randomSeed = randomInt(0, (1 << 30));
     }
 
-    updateEdgesSet(newEdges, darkMode) {
+    updateEdgesSet(newEdges, nodesStateHandler, darkMode) {
+        if (!this.findAnyUpdates(newEdges, nodesStateHandler)) {
+            return false;
+        }
+
         const prevEdges = this.edges;
         this.edges = [];
         const curEdgesIndexes = this.getEdgesIndexes(prevEdges).indexes;
@@ -84,6 +89,7 @@ export class EdgesStateHandler {
         }
 
         this.render();
+        return true;
     }
 
     directAllEdges(directed) {
@@ -215,6 +221,19 @@ export class EdgesStateHandler {
 // Pravate:
     #fontSize;   // int
     #randomSeed; // int
+
+    findAnyUpdates(newEdges, nodesStateHandler) {
+        if (this.edges.length != newEdges.length) {
+            return true;
+        }
+        for (let i = 0; i < this.edges.length; i++) {
+            if (!this.edges[i].node1.getCircle().center.equalTo(nodesStateHandler.get(newEdges[i].node1).getCircle().center)
+             || !this.edges[i].node2.getCircle().center.equalTo(nodesStateHandler.get(newEdges[i].node2).getCircle().center)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     getEdgesIndexes(edges) {
         var edgeToIndexMap = new Map();

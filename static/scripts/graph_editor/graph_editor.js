@@ -117,9 +117,11 @@ export class GraphEditor {
             });
         }
         this.nodesStateHandler.updateNodesSet(newNodes, this.#darkModeColor);
-        this.edgesStateHandler.updateEdgesSet(newEdges, this.#darkModeColor != null);
+        const updated = this.edgesStateHandler.updateEdgesSet(newEdges, this.nodesStateHandler, this.#darkModeColor != null);
         this.onNodesOrEdgesStateChange();
-        this.play();
+        if (updated) {
+            this.play();
+        }
     }
 
     isPlaying() {

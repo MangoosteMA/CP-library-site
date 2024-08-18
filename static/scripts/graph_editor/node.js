@@ -17,12 +17,11 @@ export function createText() {
 export class Node {
     /*
     Variables:
-    node:     html <g> object
-    label:    string
-    circle:   svg object
-    text:     svg object
-    position: Point
-    box:      Struct with minX, maxX, minY and maxY
+    node:   html <g> object
+    label:  string
+    circle: svg object
+    text:   svg object
+    box:    Struct with minX, maxX, minY and maxY
     */
 
     constructor(label, radius, nodesGroup, box, fontSize) {
