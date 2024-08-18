@@ -233,10 +233,10 @@ class EdgesDirectionColumn extends ColumnInterface {
 export class EdgesStateListener extends BaseGraphStateListener {
     constructor(edgesDetails, graphTextarea) {
         super(edgesDetails, graphTextarea);
-        super.columsTypes = [new EdgesVisualizationColumn(),
-                             new EdgesWeightsColumn()      ,
-                             new EdgesColorColumn()        ,
-                             new EdgesDirectionColumn()    ];
+        super.columnsTypes = [new EdgesVisualizationColumn(),
+                              new EdgesWeightsColumn()      ,
+                              new EdgesColorColumn()        ,
+                              new EdgesDirectionColumn()    ];
     }
 
     updateState(graphEditor) {

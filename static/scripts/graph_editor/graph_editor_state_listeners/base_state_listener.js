@@ -6,11 +6,11 @@ export class ColumnInterface {
 export class BaseGraphStateListener {
     /*
     Variables:
-    details:     html <details> element
-    summary:     html <summary> element
-    detailsDiv:  html <div> element 
-    table:       html <table> element
-    columsTypes: list[ColumnInterface]
+    details:      html <details> element
+    summary:      html <summary> element
+    detailsDiv:   html <div> element 
+    table:        html <table> element
+    columnsTypes: list[ColumnInterface]
     */
 
     constructor(details, graphTextarea) {
@@ -29,7 +29,7 @@ export class BaseGraphStateListener {
         this.details.appendChild(this.detailsDiv);
         this.clearTable(0);
 
-        this.columsTypes = [];
+        this.columnsTypes = [];
     }
 
 // Protected:
@@ -43,7 +43,7 @@ export class BaseGraphStateListener {
 
     buildHeader(graphEditor) {
         const header = document.createElement("tr");
-        this.columsTypes.forEach(columnClass => {
+        this.columnsTypes.forEach(columnClass => {
             const container = document.createElement("th");
             const buildedElement = columnClass.buildHeader(graphEditor, this.#graphTextarea);
             if (buildedElement) {
@@ -58,7 +58,7 @@ export class BaseGraphStateListener {
         elements.forEach(element => {
             const row = document.createElement("tr");
             row.setAttribute("id", rowId(element));
-            this.columsTypes.forEach(columnClass => {
+            this.columnsTypes.forEach(columnClass => {
                 const container = document.createElement("td");
                 const buildedElement = columnClass.build(element, graphEditor, this.#graphTextarea);
                 if (buildedElement) {

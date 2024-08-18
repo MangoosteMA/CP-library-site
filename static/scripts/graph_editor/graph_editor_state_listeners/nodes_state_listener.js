@@ -197,10 +197,10 @@ class NodesBackgroundColumn extends ColumnInterface {
 export class NodesStateListener extends BaseGraphStateListener {
     constructor(nodesDetails, graphTextarea) {
         super(nodesDetails, graphTextarea);
-        super.columsTypes = [new NodesVisualizationColumn(),
-                             new NodesLabelsColumn()       ,
-                             new NodesColorColumn()        ,
-                             new NodesBackgroundColumn()   ];
+        super.columnsTypes = [new NodesVisualizationColumn(),
+                              new NodesLabelsColumn()       ,
+                              new NodesColorColumn()        ,
+                              new NodesBackgroundColumn()   ];
     }
 
     updateState(graphEditor) {
