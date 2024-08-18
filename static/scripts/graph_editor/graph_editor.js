@@ -48,7 +48,6 @@ export class GraphEditor {
 
         this.registerListeners();
         this.rearrangeNodes();
-        this.updateFontSize();
 
         this.#nodesStateListener = null;
         this.#edgesStateListener = null;
