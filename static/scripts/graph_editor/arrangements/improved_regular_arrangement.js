@@ -62,7 +62,7 @@ export class ImprovedRegularArrangement extends ArrangementBuilderInterface {
     }
 
     isPretty(n, edges) {
-        if (n >= 6) {
+        if (n >= 5) {
             return false;
         }
         const arrangement = this.build(n, edges).getArrangement();
