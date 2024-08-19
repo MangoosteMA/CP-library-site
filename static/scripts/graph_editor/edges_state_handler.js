@@ -227,7 +227,8 @@ export class EdgesStateHandler {
             return true;
         }
         for (let i = 0; i < this.edges.length; i++) {
-            if (!this.edges[i].node1.getCircle().center.equalTo(nodesStateHandler.get(newEdges[i].node1).getCircle().center)
+            if (this.edges[i].weight != newEdges[i].weight
+             || !this.edges[i].node1.getCircle().center.equalTo(nodesStateHandler.get(newEdges[i].node1).getCircle().center)
              || !this.edges[i].node2.getCircle().center.equalTo(nodesStateHandler.get(newEdges[i].node2).getCircle().center)) {
                 return true;
             }
