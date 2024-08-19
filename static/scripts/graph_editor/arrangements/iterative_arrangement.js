@@ -1,14 +1,11 @@
-import { ArrangementInterface }        from "./arrangement_interface.js";
-import { ArrangementBuilderInterface } from "./arrangement_interface.js";
-import { ArrangementOptionInterface }  from "./arrangement_interface.js";
-import { PERFECT_DISTANCE }            from "./arrangement_interface.js";
+import { ArrangementInterface }           from "./arrangement_interface.js";
+import { ArrangementBuilderInterface }    from "./arrangement_interface.js";
+import { ArrangementOptionInterface }     from "./arrangement_interface.js";
+import { PERFECT_DISTANCE }               from "./arrangement_interface.js";
 
-import { buildGraph }                  from "./utils.js";
-import { randomInt }                   from "../utils.js";
-import { Point }                       from "../geometry.js";
-import { Line }                        from "../geometry.js";
-import { differentSide }               from "../geometry.js";
-import { segmentsIntersect }           from "../geometry.js";
+import { buildGraph }                     from "./utils.js";
+import { randomInt }                      from "../utils.js";
+import { Point, Line, segmentsIntersect } from "../geometry.js";
 
 const PRETTIFY_ARRANGEMENT_ITERATIONS = 20;
 const DEFAULT_TEMPERATURE = 0.08;
