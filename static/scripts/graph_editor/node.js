@@ -1,3 +1,4 @@
+import { DraggableObject }    from "./objects/draggable_object.js";
 import { Point, Circle }      from "./geometry.js";
 import { SVG_NAMESPACE }      from "./svg_namespace.js";
 import { randomInt }          from "./utils.js";
@@ -14,18 +15,17 @@ export function createText() {
     return text;
 }
 
-export class Node {
+export class Node extends DraggableObject {
     /*
     Variables:
-    node:   html <g> object
-    label:  string
-    circle: svg object
-    text:   svg object
-    box:    Struct with minX, maxX, minY and maxY
+    node:          html <g> object
+    label:         string
+    circle:        svg object
+    text:          svg object
     */
 
     constructor(label, radius, nodesGroup, box, fontSize) {
-        this.box = box;
+        super(box);
 
         this.node = document.createElementNS(SVG_NAMESPACE, 'g');
         this.node.setAttributeNS(null, "class", "node");
@@ -42,13 +42,8 @@ export class Node {
         this.node.appendChild(this.circle);
         this.node.appendChild(this.text);
         nodesGroup.appendChild(this.node);
-        this.mousePosition = null;
 
         this.setFontSize(fontSize);
-    }
-
-    setBox(newBox) {
-        this.box = newBox;
     }
 
     isMarked() {
@@ -63,10 +58,6 @@ export class Node {
         }
     }
 
-    setMousePosition(mousePosition) {
-        this.mousePosition = mousePosition;
-    }
-
     showLabel() {
         this.setLabel(this.label);
     }
@@ -77,27 +68,6 @@ export class Node {
 
     isLabelHidden() {
         return this.text.textContent != this.label;
-    }
-
-    drag(newMousePosition) {
-        const box = this.box;
-
-        function add(floatStr, delta) {
-            return parseFloat(floatStr) + delta;
-        }
-        function clampX(x) {
-            return Math.min(Math.max(box.minX, x), box.maxX);
-        }
-        function clampY(y) {
-            return Math.min(Math.max(box.minY, y), box.maxY);
-        }
-
-        const deltaX = newMousePosition.x - this.mousePosition.x;
-        const deltaY = newMousePosition.y - this.mousePosition.y;
-        const circle = this.getCircle();
-
-        this.setCoordinates(new Point(clampX(add(circle.center.x, deltaX)), clampY(add(circle.center.y, deltaY))));
-        this.mousePosition = newMousePosition;
     }
 
     setRandomCoordinates() {
@@ -119,6 +89,10 @@ export class Node {
         const x = this.circle.getAttribute("cx");
         const y = this.circle.getAttribute("cy");
         return new Circle(new Point(x, y), this.circle.getAttribute("r"));
+    }
+
+    getCenter() {
+        return this.getCircle().center;
     }
 
     setFontSize(fontSize) {

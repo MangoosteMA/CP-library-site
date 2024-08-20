@@ -38,15 +38,18 @@ export class BaseGraphStateListener {
 
     clearTable(numberOfElements) {
         this.table.innerHTML = "";
-        this.summary.innerText = this.#mainSummaryText + " (" + numberOfElements + ")";
+        this.summary.firstChild.data = this.#mainSummaryText + " (" + numberOfElements + ")";
     }
 
     buildHeader(graphEditor) {
         const header = document.createElement("tr");
-        this.columnsTypes.forEach(columnClass => {
+        this.columnsTypes.forEach((columnClass, i) => {
             const container = document.createElement("th");
             const buildedElement = columnClass.buildHeader(graphEditor, this.#graphTextarea);
             if (buildedElement) {
+                if (i == 0) {
+                    buildedElement.style.marginLeft = "0px";
+                }
                 container.appendChild(buildedElement);
             }
             header.appendChild(container);
@@ -58,10 +61,13 @@ export class BaseGraphStateListener {
         elements.forEach(element => {
             const row = document.createElement("tr");
             row.setAttribute("id", rowId(element));
-            this.columnsTypes.forEach(columnClass => {
+            this.columnsTypes.forEach((columnClass, i) => {
                 const container = document.createElement("td");
                 const buildedElement = columnClass.build(element, graphEditor, this.#graphTextarea);
                 if (buildedElement) {
+                    if (i == 0) {
+                        buildedElement.style.marginLeft = "0px";
+                    }
                     container.appendChild(buildedElement);
                 }
                 row.appendChild(container);

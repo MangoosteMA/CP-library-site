@@ -112,6 +112,9 @@ export class Circle {
         }
         const vecAC = this.center.sub(a);
         const vecBC = this.center.sub(b);
+        if (vecAC.length() < this.radius || vecBC.length() < this.radius) {
+            return true;
+        }
         const vecAB = b.sub(a);
         const vecBA = a.sub(b);
         var angle1 = vecAC.angleBetween(vecAB);

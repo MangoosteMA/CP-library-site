@@ -32,7 +32,7 @@ export class NodesStateHandler {
         }
 
         this.nodes.forEach(node => {
-            const center = node.getCircle().center;
+            const center = node.getCenter();
             node.setBox(newBox);
             node.setCoordinates(new Point(resizeCoordinate(this.box.minX, this.box.maxX, newBox.minX, newBox.maxX, center.x),
                                           resizeCoordinate(this.box.minY, this.box.maxY, newBox.minY, newBox.maxY, center.y)));
@@ -65,7 +65,7 @@ export class NodesStateHandler {
 
     updateNodesSet(newNodes, darkModeColor) {
         if (this.handleShiftIndexesUpdate(newNodes)) {
-            return;
+            return false;
         }
         const prevNodes = this.nodes;
         this.nodes = new Map();
@@ -87,6 +87,8 @@ export class NodesStateHandler {
                 }
             }
         });
+
+        return true;
     }
 
     rearrangeNodes() {
@@ -114,7 +116,7 @@ export class NodesStateHandler {
         const {n, nodeToIndex, indexToNode} = this.enumerateVerteces();
         const arrangement = Array(n);
         for (let i = 0; i < n; i++) {
-            arrangement[i] = this.get(indexToNode.get(i)).getCircle().center;
+            arrangement[i] = this.get(indexToNode.get(i)).getCenter();
         }
         return arrangement;
     }
@@ -148,7 +150,7 @@ export class NodesStateHandler {
             if (!arrangement.has(label)) {
                 return;
             }
-            const center = node.getCircle().center;
+            const center = node.getCenter();
             var vector = arrangement.get(label).sub(center);
             if (!force) {
                 var expectedSpeed = vector.length() / 20;
@@ -200,7 +202,7 @@ export class NodesStateHandler {
 
     shiftNodesBy(vector) {
         this.nodes.forEach(node => {
-            node.setCoordinates(node.getCircle().center.add(vector));
+            node.setCoordinates(node.getCenter().add(vector));
         });
     }
 

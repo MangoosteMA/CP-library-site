@@ -1,12 +1,14 @@
-import { Edge }               from "./edge.js";
-import { EdgesStateHandler }  from "./edges_state_handler.js"
-import { EdgesStateListener } from "./graph_editor_state_listeners/edges_state_listener.js";
-import { Point }              from "./geometry.js";
-import { SVG_NAMESPACE }      from "./svg_namespace.js";
-import { Node }               from "./node.js";
-import { NodesStateHandler }  from "./nodes_state_handler.js";
-import { NodesStateListener } from "./graph_editor_state_listeners/nodes_state_listener.js";
-import { uniteBoundingBoxes } from "./utils.js";
+import { Edge }                from "./edge.js";
+import { EdgesStateHandler }   from "./edges_state_handler.js"
+import { EdgesStateListener }  from "./graph_editor_state_listeners/edges_state_listener.js";
+import { Point }               from "./geometry.js";
+import { SVG_NAMESPACE }       from "./svg_namespace.js";
+import { Node }                from "./node.js";
+import { NodesStateHandler }   from "./nodes_state_handler.js";
+import { NodesStateListener }  from "./graph_editor_state_listeners/nodes_state_listener.js";
+import { ObjectBase }          from "./objects/object_base.js";
+import { ObjectsStateHandler } from "./objects_state_handler.js";
+import { uniteBoundingBoxes }  from "./utils.js";
 
 const DEFAULT_RADIUS = 20;
 const DEFAULT_FONT_SIZE = 16;
@@ -15,11 +17,12 @@ const ANIMATION_DELAY = 10; // ms
 export class GraphEditor {
     /*
     Variables:
-    svg:               html <svg> object
-    width:             int
-    height:            int
-    nodesStateHandler: NodesStateHandler
-    edgesStateHandler: EdgesStateHandler
+    svg:                 html <svg> object
+    width:               int
+    height:              int
+    nodesStateHandler:   NodesStateHandler
+    edgesStateHandler:   EdgesStateHandler
+    objectsStateHandler: ObjectsStateHandler
     */
 
     constructor(svg) {
@@ -29,18 +32,23 @@ export class GraphEditor {
 
         const nodesGroup = document.createElementNS(SVG_NAMESPACE, "g");
         const edgesGroup = document.createElementNS(SVG_NAMESPACE, "g");
+        const objectsGroup = document.createElementNS(SVG_NAMESPACE, "g");
         svg.appendChild(edgesGroup);
         svg.appendChild(nodesGroup);
+        svg.appendChild(objectsGroup);
 
         this.#radius = DEFAULT_RADIUS;
         this.#fontSize = DEFAULT_FONT_SIZE;
 
-        this.nodesStateHandler = new NodesStateHandler(this.getNodesBoundingBox(), nodesGroup);
+        const nodesBox = this.getNodesBoundingBox();
+        this.nodesStateHandler = new NodesStateHandler(nodesBox, nodesGroup);
         this.edgesStateHandler = new EdgesStateHandler(edgesGroup, this.nodesStateHandler);
+        this.objectsStateHandler = new ObjectsStateHandler(nodesBox, objectsGroup);
 
         this.#selectedNode = null;
         this.#selectedNodeMoved = false;
         this.#selectionPaused = false;
+        this.#selectedObject = null;
         this.#allEdgesAreDirected = false;
 
         this.updateRadius();
@@ -51,9 +59,12 @@ export class GraphEditor {
 
         this.#nodesStateListener = null;
         this.#edgesStateListener = null;
+        this.#textObjectsStateListener = null;
+
         this.#isPlaying = false;
         this.#betterArrangement = null;
         this.#edgesRendering = false;
+        this.#objectsRendering = false;
         this.#playButton = null;
         this.#pauseButton = null;
         this.#darkModeColor = null;
@@ -65,8 +76,10 @@ export class GraphEditor {
         this.svg.setAttribute("width", this.width);
         this.svg.setAttribute("height", this.height);
 
-        this.nodesStateHandler.resize(this.getNodesBoundingBox());
-        this.renderEdges();
+        const box = this.getNodesBoundingBox();
+        this.nodesStateHandler.resize(box);
+        this.objectsStateHandler.resize(box);
+        this.renderEdgesAndObjects();
     }
 
     reset() {
@@ -109,14 +122,18 @@ export class GraphEditor {
         this.#edgesStateListener = edgesStateListener;
     }
 
+    registerTextObjectsStateListener(textObjectsStateListener) {
+        this.#textObjectsStateListener = textObjectsStateListener;
+    }
+
     updateNodesAndEdges(newNodes, newEdges) {
         if (this.#allEdgesAreDirected) {
             newEdges.forEach(edge => {
                 edge.directed = true;
             });
         }
-        this.nodesStateHandler.updateNodesSet(newNodes, this.#darkModeColor);
-        const updated = this.edgesStateHandler.updateEdgesSet(newEdges, this.nodesStateHandler, this.#darkModeColor != null);
+        var updated = this.nodesStateHandler.updateNodesSet(newNodes, this.#darkModeColor);
+        updated |= this.edgesStateHandler.updateEdgesSet(newEdges, this.nodesStateHandler, this.#darkModeColor != null);
         this.onNodesOrEdgesStateChange();
         if (updated) {
             this.play();
@@ -148,13 +165,13 @@ export class GraphEditor {
         this.#isPlaying = false;
         this.#pauseButton.style.display = "none";
         this.#playButton.style.display = "";
-        this.renderEdges();
+        this.renderEdgesAndObjects();
     }
 
     skipAnimation() {
         this.buildBetterArrangement();
         this.nodesStateHandler.applyArrangement(this.#betterArrangement.getArrangement(), true);
-        this.renderEdges(true);
+        this.renderEdgesAndObjects(true);
     }
 
     registerPlayPauseButtons(playButton, pauseButton) {
@@ -178,6 +195,15 @@ export class GraphEditor {
         });
     }
 
+    registerNewTextObjectButton(newTextObjectButton) {
+        const editor = this;
+        newTextObjectButton.addEventListener("click", function(evt) {
+            evt.preventDefault();
+            editor.objectsStateHandler.createNewTextObject();
+            editor.onObjectsStateChange();
+        });
+    }
+
     onNodesOrEdgesStateChange() {
         if (this.#nodesStateListener) {
             this.#nodesStateListener.updateState(this);
@@ -187,10 +213,17 @@ export class GraphEditor {
         }
     }
 
+    onObjectsStateChange() {
+        if (this.#textObjectsStateListener) {
+            this.#textObjectsStateListener.updateState(this);
+        }
+    }
+
     setDarkMode(color) {
         this.#darkModeColor = color;
         this.nodesStateHandler.setDarkMode(color);
         this.edgesStateHandler.setDarkMode();
+        this.objectsStateHandler.setDarkMode();
         this.onNodesOrEdgesStateChange();
     }
 
@@ -198,6 +231,7 @@ export class GraphEditor {
         this.#darkModeColor = null;
         this.nodesStateHandler.setLightMode();
         this.edgesStateHandler.setLightMode();
+        this.objectsStateHandler.setLightMode();
         this.onNodesOrEdgesStateChange();
     }
 
@@ -224,25 +258,29 @@ export class GraphEditor {
 
     shiftNodesBy(vector) {
         this.nodesStateHandler.shiftNodesBy(vector);
-        this.renderEdges(true);
+        this.renderEdgesAndObjects(true);
     }
 
 // Private:
-    #radius;              // int
-    #fontSize;            // int
-    #selectedNode;        // Node or null
-    #selectedNodeMoved;   // bool
-    #selectionPaused;     // bool
-    #allEdgesAreDirected; // bool
+    #radius;                   // int
+    #fontSize;                 // int
+    #selectedNode;             // Node or null
+    #selectedNodeMoved;        // bool
+    #selectionPaused;          // bool
+    #selectedObject;           // BaseObject or null
+    #allEdgesAreDirected;      // bool
     
-    #nodesStateListener;  // NodesStateListener
-    #edgesStateListener;  // EdgeStateListener
-    #isPlaying;           // bool
-    #betterArrangement;   // ArrangementInterface or null
-    #edgesRendering;      // bool
-    #playButton;          // html <button> element
-    #pauseButton;         // html <button> element
-    #darkModeColor;       // string or null
+    #nodesStateListener;       // NodesStateListener
+    #edgesStateListener;       // EdgeStateListener
+    #textObjectsStateListener; // TextObjectsStateListener
+
+    #isPlaying;                // bool
+    #betterArrangement;        // ArrangementInterface or null
+    #edgesRendering;           // bool
+    #objectsRendering;         // bool
+    #playButton;               // html <button> element
+    #pauseButton;              // html <button> element
+    #darkModeColor;            // string or null
 
     buildBetterArrangement() {
         this.#betterArrangement = this.nodesStateHandler.betterNodesArrangement(this.edgesStateHandler);
@@ -265,15 +303,16 @@ export class GraphEditor {
     handleStartDragNode(nodeElement, evt) {
         this.#selectedNode = this.nodesStateHandler.get(nodeElement.id);
         this.#selectedNodeMoved = false;
-        if (this.#selectedNode == null) {
-            console.log("There is no node with id", nodeElement.id);
-            return;
-        }
         this.#selectedNode.setMousePosition(this.getMousePosition(evt));
         if (this.isPlaying()) {
             this.pause();
             this.#selectionPaused = true;
         }
+    }
+
+    handleStartDragObject(nodeElement, evt) {
+        this.#selectedObject = this.objectsStateHandler.get(nodeElement.id);
+        this.#selectedObject.setMousePosition(this.getMousePosition(evt));
     }
 
     startDrag(evt) {
@@ -283,6 +322,8 @@ export class GraphEditor {
         }
         if (parentElement.classList.contains("node")) {
             this.handleStartDragNode(parentElement, evt);
+        } else if (parentElement.classList.contains("object")) {
+            this.handleStartDragObject(parentElement, evt);
         }
     }
 
@@ -295,10 +336,24 @@ export class GraphEditor {
                 this.#edgesRendering = true;
                 this.renderEdges();
             }
+            if (!this.#objectsRendering) {
+                this.#objectsRendering = true;
+                this.renderObjects();
+            }
+        } else if (this.#selectedObject != null) {
+            evt.preventDefault();
+            this.#selectedObject.drag(this.getMousePosition(evt));
+            this.onObjectsStateChange();
         }
     }
 
     endDrag() {
+        if (this.#selectedObject != null) {
+            this.#selectedObject = null;
+            this.onObjectsStateChange();
+            return;
+        }
+
         if (!this.#selectedNodeMoved && this.#selectedNode) {
             this.#selectedNode.markOrUnmark();
             this.onNodesOrEdgesStateChange();
@@ -328,17 +383,18 @@ export class GraphEditor {
 
     rearrangeNodes() {
         this.nodesStateHandler.rearrangeNodes();
-        this.renderEdges();
+        this.renderEdgesAndObjects(true);
     }
 
     updateRadius() {
         this.nodesStateHandler.setRadius(this.#radius);
-        this.renderEdges();
+        this.renderEdgesAndObjects();
     }
 
     updateFontSize() {
         this.nodesStateHandler.setFontSize(this.#fontSize);
         this.edgesStateHandler.setFontSize(this.#fontSize);
+        this.objectsStateHandler.setFontSize(this.#fontSize);
     }
 
     startPlaying() {
@@ -348,6 +404,8 @@ export class GraphEditor {
         var done = this.#betterArrangement.prettify();
         done &= this.nodesStateHandler.applyArrangement(this.#betterArrangement.getArrangement());
         this.edgesStateHandler.render();
+        this.objectsStateHandler.render();
+
         if (done) {
             this.pause();
         } else {
@@ -358,10 +416,26 @@ export class GraphEditor {
         }
     }
 
-    renderEdges(force) {
+    renderEdgesAndObjects(force=false) {
         if (!force && this.isPlaying()) {
             return;
         }
+        this.renderObjects(force);
+        this.renderEdges(force);
+    }
+
+    renderObjects(force=false) {
+        if (!this.objectsStateHandler.render(force)) {
+            const editor = this;
+            setTimeout(function() {
+                editor.renderObjects();
+            }, ANIMATION_DELAY);
+        } else {
+            this.#objectsRendering = false;
+        }
+    }
+
+    renderEdges(force=false) {
         if (!this.edgesStateHandler.render(force)) {
             const editor = this;
             setTimeout(function() {

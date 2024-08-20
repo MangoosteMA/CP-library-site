@@ -106,7 +106,7 @@ if (skipAnimationButton) {
     graphEditor.registerSkipAnimationButton(skipAnimationButton);
 }
 
-// Register nodes state listeners
+// Register nodes state listener
 import { NodesStateListener } from "./graph_editor_state_listeners/nodes_state_listener.js";
 const nodesDetails = document.getElementById("nodes-details");
 if (nodesDetails) {
@@ -114,12 +114,26 @@ if (nodesDetails) {
     graphEditor.registerNodesStateListener(nodesStateListener);
 }
 
-// Register edges state listeners
+// Register edges state listener
 import { EdgesStateListener } from "./graph_editor_state_listeners/edges_state_listener.js";
 const edgesDetails = document.getElementById("edges-details");
 if (edgesDetails) {
     const edgesStateListener = new EdgesStateListener(edgesDetails, graphTextarea);
     graphEditor.registerEdgesStateListener(edgesStateListener);
+}
+
+// Register text objects state listener
+import { TextObjectsStateListener } from "./graph_editor_state_listeners/text_objects_state_listener.js";
+const textObjectsDetails = document.getElementById("text-objects-details");
+if (textObjectsDetails) {
+    const textObjectsStateListener = new TextObjectsStateListener(textObjectsDetails, graphTextarea);
+    graphEditor.registerTextObjectsStateListener(textObjectsStateListener);
+}
+
+// Register new text object creation button
+const newTextObjectButton = document.getElementById("create-new-text-object-button");
+if (newTextObjectButton) {
+    graphEditor.registerNewTextObjectButton(newTextObjectButton);
 }
 
 // Register graph resizer

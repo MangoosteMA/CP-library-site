@@ -30,7 +30,6 @@ export class EdgesStateHandler {
         this.group = group;
         this.nodesStateHandler = nodesStateHandler;
         this.#randomSeed = 228;
-        this.random = new RandomInt(this.#randomSeed);
         this.#fontSize = 0;
     }
 
