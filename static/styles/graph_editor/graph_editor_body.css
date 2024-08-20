@@ -24,7 +24,7 @@
     margin-right: auto;
 }
 
-.node {
+.node, .object {
     cursor: move;
 }
 

@@ -127,7 +127,7 @@ input[type="color"]::-webkit-color-swatch {
     text-align: center;
     justify-content: center;
     align-items: center;
-    padding-left: 5px;
+    margin-left: 5px;
 }
 
 .nodes-textarea, .node-checkbox-input-div {
@@ -269,4 +269,15 @@ input[type="color"]::-webkit-color-swatch {
     font-family: var(--base-font-family);
     color: var(--base-white-font-color);
     font-weight: 600;
+}
+
+.add-object-button {
+    position: relative;
+    float: right;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 10px;
+    width: 25px;
+    height: 17px;
+    padding: 0px;
 }
