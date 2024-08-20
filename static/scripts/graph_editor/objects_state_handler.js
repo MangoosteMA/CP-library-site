@@ -18,6 +18,7 @@ export class ObjectsStateHandler {
         this.idsGenerator = new RandomInt();
         this.objects = new Map();
         this.#fontSize = 0;
+        this.#darkMode = false;
     }
 
     get(id) {
@@ -46,12 +47,14 @@ export class ObjectsStateHandler {
     }
 
     setDarkMode() {
+        this.#darkMode = true;
         this.objects.forEach(object => {
             object.setDarkMode();
         });
     }
 
     setLightMode() {
+        this.#darkMode = false;
         this.objects.forEach(object => {
             object.setLightMode();
         });
@@ -67,10 +70,14 @@ export class ObjectsStateHandler {
 
     createNewTextObject() {
         this.appendNewObject(new TextObject(this.group, this.box, this.getRandomId(), this.#fontSize));
+        if (this.#darkMode) {
+            this.setDarkMode();
+        }
     }
 
 // Private:
     #fontSize; // int
+    #darkMode; // bool
 
     getRandomId() {
         while (true) {
