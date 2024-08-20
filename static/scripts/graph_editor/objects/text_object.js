@@ -73,7 +73,6 @@ export class TextObject extends ObjectBase {
     
         const MAX_MOVING_SPEED = (this.box.maxX - this.box.minX + this.box.maxY - this.box.minY) * 0.007;
         const MIN_MOVING_SPEED = MAX_MOVING_SPEED / 5;
-        
         const center = this.getCenter();
         const newCenter = this.getPinPosition();
 
