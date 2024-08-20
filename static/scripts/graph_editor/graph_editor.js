@@ -243,7 +243,9 @@ export class GraphEditor {
     getBoundingBox() {
         const nodesBoundingBox = this.nodesStateHandler.getBoundingBox();
         const edgesBoundingBox = this.edgesStateHandler.getBoundingBox();
+        const objectsBoundingBox = this.objectsStateHandler.getBoundingBox();
         var union = uniteBoundingBoxes(nodesBoundingBox, edgesBoundingBox);
+        union = uniteBoundingBoxes(union, objectsBoundingBox);
         if (union == null) {
             return {x: 0, y: 0, width: 1, height: 1};
         }

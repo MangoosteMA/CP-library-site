@@ -1,7 +1,8 @@
-import { Point }      from "./geometry.js";
-import { ObjectBase } from "./objects/object_base.js";
-import { TextObject } from "./objects/text_object.js";
-import { RandomInt }  from "./random.js";
+import { Point }              from "./geometry.js";
+import { ObjectBase }         from "./objects/object_base.js";
+import { TextObject }         from "./objects/text_object.js";
+import { RandomInt }          from "./random.js";
+import { uniteBoundingBoxes } from "./utils.js";
 
 export class ObjectsStateHandler {
     /*
@@ -44,6 +45,14 @@ export class ObjectsStateHandler {
         this.objects.forEach(object => {
             object.setFontSize(fontSize);
         });
+    }
+
+    getBoundingBox() {
+        var boundingBox = null;
+        this.objects.forEach(object => {
+            boundingBox = uniteBoundingBoxes(boundingBox, object.getBoundingBox());
+        });
+        return boundingBox;
     }
 
     setDarkMode() {

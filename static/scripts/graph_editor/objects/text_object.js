@@ -54,6 +54,10 @@ export class TextObject extends ObjectBase {
         this.text.setAttributeNS(null, "stroke", newColor);
     }
 
+    getBoundingBox() {
+        return this.text.getBBox();
+    }
+
     setDarkMode() {
         this.setColor("#ffffff");
     }

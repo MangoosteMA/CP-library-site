@@ -51,6 +51,7 @@ export class ObjectBase extends DraggableObject {
     getCenter() {}
     setCoordinates(point) {}
     setFontSize(fontSize) {}
+    getBoundingBox() {}
     setDarkMode() {}
     setLightMode() {}
 }
