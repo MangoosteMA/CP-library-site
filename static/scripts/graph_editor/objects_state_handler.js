@@ -1,23 +1,21 @@
 import { Point }              from "./geometry.js";
 import { ObjectBase }         from "./objects/object_base.js";
 import { TextObject }         from "./objects/text_object.js";
-import { RandomInt }          from "./random.js";
 import { uniteBoundingBoxes } from "./utils.js";
 
 export class ObjectsStateHandler {
     /*
     Variables:
-    box:          Struct with minX, maxX, minY and maxY
-    group:        html <g> element
-    idsGenerator: RandomInt
-    objects:      Map[id : ObjectBase]
+    box:     Struct with minX, maxX, minY and maxY
+    group:   html <g> element
+    objects: Map[id : ObjectBase]
     */
 
     constructor(box, group) {
         this.box = box;
         this.group = group;
-        this.idsGenerator = new RandomInt();
         this.objects = new Map();
+        this.#currentId = 0;
         this.#fontSize = 0;
         this.#darkMode = false;
     }
@@ -77,33 +75,43 @@ export class ObjectsStateHandler {
         return finishedRendering;
     }
 
+    sortedObjects() {
+        function compare(a, b) {
+            return parseInt(a.id) - parseInt(b.id);
+        }
+        return [...this.objects.values()].sort(compare);
+    }
+
     createNewTextObject() {
-        this.appendNewObject(new TextObject(this.group, this.box, this.getRandomId(), this.#fontSize));
+        this.appendNewObject(new TextObject(this.group, this.box, this.getNextId(), this.#fontSize));
         if (this.#darkMode) {
             this.setDarkMode();
         }
     }
 
-// Private:
-    #fontSize; // int
-    #darkMode; // bool
+    deleteObject(object) {
+        this.objects.delete(object.id);
+        this.group.removeChild(object.object);
+    }
 
-    getRandomId() {
-        while (true) {
-            const id = String(this.idsGenerator.random());
-            if (!this.objects.has(id)) {
-                return id;
-            }
-        }
+    deleteAllObjects() {
+        this.sortedObjects().forEach(object => {
+            this.deleteObject(object);
+        });
+    }
+
+// Private:
+    #currentId; // int
+    #fontSize;  // int
+    #darkMode;  // bool
+
+    getNextId() {
+        this.#currentId++;
+        return String(this.#currentId - 1);
     }
 
     appendNewObject(newObject) {
         this.objects.set(newObject.id, newObject);
         this.group.appendChild(newObject.object);
-    }
-
-    deleteObject(object) {
-        this.objects.delete(object.id);
-        this.group.removeChild(object.object);
     }
 }

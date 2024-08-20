@@ -133,13 +133,47 @@ class TextObjectsAngleColumn extends ColumnInterface {
     }
 }
 
+class TextObjectsDeleteColumn extends ColumnInterface {
+    buildHeader(graphEditor, graphTextarea) {
+        const button = this.createDeleteButton();
+        button.addEventListener("click", function() {
+            graphEditor.objectsStateHandler.deleteAllObjects();
+            graphEditor.onObjectsStateChange();
+        });
+        return button
+    }
+
+    build(object, graphEditor, graphTextarea) {
+        const button = this.createDeleteButton();
+        button.addEventListener("click", function() {
+            graphEditor.objectsStateHandler.deleteObject(object);
+            graphEditor.onObjectsStateChange();
+        });
+        return button
+    }
+
+// Private:
+    createDeleteButton() {
+        const img = document.createElement("img");
+        img.setAttribute("class", "play-pause-image");
+        img.src = "/images/trash_bin.png";
+        
+        const button = document.createElement("button");
+        button.setAttribute("class", "nodes-button");
+        button.style.width = "30px";
+        button.appendChild(img);
+        return button;
+    }
+}
+
 export class TextObjectsStateListener extends BaseGraphStateListener {
     constructor(textObjectsDetails, graphTextarea) {
         super(textObjectsDetails, graphTextarea);
-        super.columnsTypes = [new TextObjectsDataColumn() ,
-                              new TextObjectsColorColumn(),
-                              new TextObjectsPinColumn()  ,
-                              new TextObjectsAngleColumn()];
+        super.columnsTypes = [new TextObjectsDataColumn()  ,
+                              new TextObjectsColorColumn() ,
+                              new TextObjectsPinColumn()   ,
+                              new TextObjectsAngleColumn() ,
+                              new TextObjectsDeleteColumn()];
     }
 
     updateState(graphEditor) {
@@ -148,7 +182,7 @@ export class TextObjectsStateListener extends BaseGraphStateListener {
         super.clearTable(numberOfObjects);
         if (numberOfObjects > 0) {
             super.buildHeader(graphEditor);
-            super.renderTable(graphEditor, graphEditor.objectsStateHandler.objects, function(object) {
+            super.renderTable(graphEditor, graphEditor.objectsStateHandler.sortedObjects(), function(object) {
                 return "useless-for-now-id";
             });
         }
