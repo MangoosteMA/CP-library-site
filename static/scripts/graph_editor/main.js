@@ -75,9 +75,11 @@ const increaseNodesButton = document.getElementById("increase-nodes-button");
 if (decreaseNodesButton && increaseNodesButton) {
     decreaseNodesButton.addEventListener("click", function() {
         graphTextarea.changeNodesIndexesBy(-1);
+        graphEditor.onObjectsStateChange();
     });
     increaseNodesButton.addEventListener("click", function() {
         graphTextarea.changeNodesIndexesBy(1);
+        graphEditor.onObjectsStateChange();
     });
 }
 
