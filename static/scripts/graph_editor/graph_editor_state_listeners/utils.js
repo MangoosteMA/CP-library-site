@@ -49,14 +49,6 @@ export function createColorInput() {
     return {input: input, inputContainer: inputContainer}
 }
 
-export function saveScroll() {
-    return {top: window.scrollY, left: window.scrollX};
-}
-
-export function restoreScroll(savedScroll) {
-    window.scrollTo(savedScroll);
-}
-
 export function parseColorToHex(color) {
     if (!color.startsWith("rgb")) {
         return color;

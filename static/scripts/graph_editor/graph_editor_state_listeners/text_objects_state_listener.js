@@ -4,8 +4,6 @@ import { ColumnInterface }               from "./base_state_listener.js";
 import { createTableCellDiv }            from "./utils.js";
 import { createHighlightedTableCellDiv } from "./utils.js";
 import { createColorInput }              from "./utils.js";
-import { saveScroll }                    from "./utils.js";
-import { restoreScroll }                 from "./utils.js";
 import { findMajority }                  from "./utils.js";
 import { isInt }                         from "../utils.js";
 
@@ -177,7 +175,7 @@ export class TextObjectsStateListener extends BaseGraphStateListener {
     }
 
     updateState(graphEditor) {
-        const scroll = saveScroll();
+        super.saveScroll();
         const numberOfObjects = graphEditor.objectsStateHandler.objects.size;
         super.clearTable(numberOfObjects);
         if (numberOfObjects > 0) {
@@ -186,6 +184,6 @@ export class TextObjectsStateListener extends BaseGraphStateListener {
                 return "useless-for-now-id";
             });
         }
-        restoreScroll(scroll);
+        super.restoreScroll();
     }
 }

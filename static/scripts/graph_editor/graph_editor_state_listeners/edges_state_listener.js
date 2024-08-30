@@ -6,8 +6,6 @@ import { createHighlightedTableCellDiv } from "./utils.js";
 import { createCheckbox }                from "./utils.js";
 import { cloneNode }                     from "./utils.js";
 import { createColorInput }              from "./utils.js";
-import { saveScroll }                    from "./utils.js";
-import { restoreScroll }                 from "./utils.js";
 import { findMajority }                  from "./utils.js";
 
 import { Edge }                          from "../edge.js";
@@ -240,7 +238,7 @@ export class EdgesStateListener extends BaseGraphStateListener {
     }
 
     updateState(graphEditor) {
-        const scroll = saveScroll();
+        super.saveScroll();
         const numberOfEdges = graphEditor.edgesStateHandler.edges.length;
         super.clearTable(numberOfEdges);
         if (numberOfEdges > 0) {
@@ -249,6 +247,6 @@ export class EdgesStateListener extends BaseGraphStateListener {
                 return generateEdgeInfoRowId(edge.node1.label, edge.node2.label, edge.weight);
             });
         }
-        restoreScroll(scroll);
+        super.restoreScroll();
     }
 }

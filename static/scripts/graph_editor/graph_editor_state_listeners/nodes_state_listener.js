@@ -6,8 +6,6 @@ import { createHighlightedTableCellDiv } from "./utils.js";
 import { createCheckbox }                from "./utils.js";
 import { cloneNode }                     from "./utils.js";
 import { createColorInput }              from "./utils.js";
-import { saveScroll }                    from "./utils.js";
-import { restoreScroll }                 from "./utils.js";
 import { parseColorToHex }               from "./utils.js";
 import { findMajority }                  from "./utils.js";
 
@@ -204,7 +202,7 @@ export class NodesStateListener extends BaseGraphStateListener {
     }
 
     updateState(graphEditor) {
-        const scroll = saveScroll();
+        super.saveScroll();
         const numberOfNodes = graphEditor.nodesStateHandler.nodes.size;
         super.clearTable(numberOfNodes);
         if (numberOfNodes > 0) {
@@ -213,6 +211,6 @@ export class NodesStateListener extends BaseGraphStateListener {
                 return node.label + NODE_INFO_ROW;
             });
         }
-        restoreScroll(scroll);
+        super.restoreScroll();
     }
 }

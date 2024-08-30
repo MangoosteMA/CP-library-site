@@ -35,6 +35,20 @@ export class BaseGraphStateListener {
 // Protected:
     #mainSummaryText;
     #graphTextarea;
+    #windowScroll;
+    #detailsScroll;
+
+    saveScroll() {
+        this.#windowScroll = {scrollX: window.scrollX, scrollY: window.scrollY};
+        this.#detailsScroll = {scrollTop: this.details.scrollTop, scrollLeft: this.details.scrollLeft};
+    }
+
+    restoreScroll() {
+        window.scrollX = this.#windowScroll.scrollX;
+        window.scrollY = this.#windowScroll.scrollY;
+        this.details.scrollTop = this.#detailsScroll.scrollTop;
+        this.details.scrollLeft = this.#detailsScroll.scrollLeft;
+    }
 
     clearTable(numberOfElements) {
         this.table.innerHTML = "";
