@@ -67,17 +67,26 @@ label:hover {
     font-size: 28px;
     font-weight: 600;
     text-align: center;
+    padding-top: 5px;
     padding-bottom: 5px;
+    display: inline-block;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
     font-family: var(--base-font-family);
 }
 
-.library-file-folder-button {
+.library-file-folder-button, .library-file-folder-button-draft {
     border: 1px solid transparent;
     height: 33px;
     width: 100%;
     background-color: transparent;
     text-align: left;
     padding-left: 40px;
+}
+
+.library-file-folder-button-draft {
+    background-color: rgba(255, 70, 0, 0.4);
 }
 
 .library-file-folder-button:hover {

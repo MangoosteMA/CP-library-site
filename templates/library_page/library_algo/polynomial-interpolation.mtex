@@ -1,0 +1,179 @@
+\title[]{Интерполяция}
+
+\details[mode=main; summary=Постановка задачи] {
+    Даны $n \ge 1$ точек $(x_i,\ y_i)$. Все $x_i$ различны. Требуется восстановить многочлен $f$ степени $\le (n - 1)$, что $f(x_i) = y_i$.
+    
+    Такой многочлен существует и он единственный.
+    
+    \details[summary=Доказательство] {
+        \details[summary=Существование] {
+            Интерполяционный многочлен Лагранжа, про который написано ниже, явно предоставляет пример такого многочлена. \qed
+        }
+
+        \details[summary=Единственность] {
+            Если таких многочленов два (обозначим их за $f$ и $g$), то $(f - g)(x_i) = 0$. То есть разность многочленов имеет не меньше $n$ корней \implies степень разности не меньше $n$, чего не может быть, так как степени $f$ и $g$ не превосходят $n - 1$. Получили противоречие. \qed
+        }
+    }
+}
+
+\center[] {<h2>Интерполяционный многочлен Лагранжа</h2>}
+
+\details[mode=main; summary=Теория] {
+    Сначала научимся находить многочлен, который имеет значение $1$ в точке $x_i$ и значения $0$ в точках $x_j$ ($j \neq i$). Оказывается, что его легко построить:
+    $$
+    f_i(x) = \prod\limits_{j \neq i} \frac{x - x_j}{x_i - x_j}
+    $$
+    Так как $f_i(x)$ кратен $(x - x_j)$, если $i \neq j$, \implies $f_i(x_j) = 0$. Так же, нетрудно видеть, что если $x = x_i$, то каждый множитель выше равен $1$. Поэтому данный многочлен действительно удовлетворяет нужным нам свойствам. Более того, степень такого многочлена равна $n - 1$, что нам и нужно.
+    
+    Теперь найти искомый многочлен $f$ несложно:
+    $$
+    f(x) = \sum\limits_{i=1}^n y_i f_i(x)
+    $$
+    Из описанных выше свойств следует, что он действительно удовлетворяет свойству $f(x_i) = y_i$, а так же имеет степень $\le (n - 1)$.
+    
+    Для того, чтобы найти этот многочлен, наивно посчитаем за \complexity$(n^2)$ следующий многочлен:
+    $$
+    g(x) = \prod\limits_{i=1}^n (x - x_i)
+    $$
+    Теперь, $f_i(x)$ можно находить, благодаря следующей формуле:
+    $$
+    f_i(x) = \frac{g(x)}{x - x_i} \cdot y_i \cdot \prod\limits_{i \neq j} \frac{1}{x_i - x_j}
+    $$
+    Данную формулу можно вычислять за \complexity$(n)$, если восстанавливать коэффициенты $\frac{g(x)}{x - x_i}$ от старших к младшим.
+}
+
+\details[mode=main; summary=Время работы] {
+    Описанный выше алгоритм, очевидно работает за \complexity$(n^2)$.
+}
+
+\details[mode=main; summary=Реализация] {
+\code[language=C++] {
+/*
+ ! WARNING: implementation won't work for T = integer type.
+ * Operator / must be defined for type T.
+ * Given n points (x[i], y[i]). All x[i] must be distinct.
+ * Returns a polynomial f of degree (n - 1) such that f(x[i]) = y[i].
+ */
+template<typename T>
+std::vector<T> lagrange_interpolation(const std::vector<T> &x, const std::vector<T> &y) {
+    assert(x.size() == y.size());
+    int n = x.size();
+    std::vector<T> prod(n + 1);
+    prod[0] = 1;
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j >= 0; j--) {
+            prod[j] *= -x[i];
+            if (j > 0) {
+                prod[j] += prod[j - 1];
+            }
+        }
+    }
+
+    std::vector<T> f(n);
+    for (int i = 0; i < n; i++) {
+        T denom = 1;
+        for (int j = 0; j < n; j++) {
+            if (i != j) {
+                denom *= x[i] - x[j];
+            }
+        }
+        T coeff = y[i] / denom, val = prod[n];
+        for (int j = n - 1; j >= 0; j--) {
+            f[j] += val * coeff;
+            val = prod[j] + x[i] * val;
+        }
+    }
+    return f;
+}
+}
+}
+
+\center[] {<h2>Быстрый способ</h2>}
+
+\details[mode=main; summary=Теория] {
+    Мы не будем изобретать велосипед, а просто соптимизируем интерполяционный многочлен Лагранжа:
+    $$
+    f(x) = \sum\limits_{i=1}^n y_i \prod\limits_{j \neq i} \frac{x - x_j}{x_i - x_j}
+    $$
+    Сначала научимся для каждого $i$ находить следующую величину:
+    $$
+    d_i = \prod\limits_{j \neq i} (x_i - x_j)
+    $$
+    Это знаменатель $i$-го слагаемого. Для нахождения этих величин мы используем такое же дерево отрезков, как и в multipoint evaluation и найдём следующий многочлен:
+    $$
+    g(x) = \prod\limits_{i = 1}^n (x - x_i)
+    $$
+    Это можно было сделать с помощью обычной разделяйки, но далее нам понадобится именно построенное дерево отрезков на таких многочленах.
+    
+    Чтобы найти $d_i$ заметим следующий факт:
+    $$
+    g(x) = (x - x_i) \cdot h(x)
+    $$
+    $$
+    g'(x) = h(x) + (x - x_i) \cdot h'(x)
+    $$
+    Таким образом, $d_i = h(x_i) = g'(x_i)$, поэтому найти $v_i$ можно с помощью multipoint evaluation.
+    
+    Чтобы интерполировать искомый многочлен, напишем разделяйку $\mathrm{solve}(l, r)$, которая будет возвращать:
+    $$
+    \sum\limits_{i=l}^{r - 1} y_i \prod\limits_{j \neq i,\ l \le j < r} (x - x_j) \prod\limits_{j \neq i,\ 1 \le j \le n}(x_i - x_j)
+    $$
+    Таким образом, искомым многочленом будет равен $\mathrm{solve}(1, n + 1)$. Реализовать $\mathrm{solve}(l, r)$ можно следующим образом:
+    
+    \itemize[] {
+        \item[] {
+            Если $r - l = 1$, то надо вернуть $\frac{y_l}{d_l}$.
+        }
+        \item[] {
+            Иначе, пусть $m = \frac{l + r}{2}$, $L$~--- результат $\mathrm{solve}(l, m)$, а $R$~--- результат $\mathrm{solve}(m, r)$. Тогда надо вернуть:
+            $$
+            L \prod\limits_{m \le i < r} (x - x_i) + R \prod\limits_{l \le i < m} (x - x_i)
+            $$
+            Дополнительные произведения, которые появились в этой формуле оказывается уже насчитаны деревом отрезков, которое было построено в самом начале.
+        }
+    }
+}
+
+\details[mode=main; summary=Время работы] {
+    Данный алгоритм работает, очевидно, столько же, сколько и multipoint evaluation, просто имеет большую константу. То есть время работы составляет \complexity$(n\log^2 n)$.
+}
+
+\details[mode=main; summary=Реализация] {
+    Данная реализация не очень быстрая, её можно сделать намного быстрее. Я вставил её сюда, чтобы было понятно, как данный алгоритм можно реализовать.
+\code[language=C++] {
+/*
+ * Given n points (x[i], y[i]). All x[i] must be distinct.
+ * Returns a polynomial f of degree (n - 1) such that f(x[i]) = y[i].
+ */
+polynom interpolate(const std::vector<mint> &x, const std::vector<mint> &y) {
+    assert(x.size() == y.size());
+    int n = x.size();
+    std::vector<polynom> segtree(2 * n);
+    for (int i = 0; i < n; i++) {
+        segtree[n + i] = {-x[i], 1};
+    }
+    for (int i = n - 1; i > 0; i--) {
+        segtree[i] = segtree[2 * i] * segtree[2 * i + 1];
+    }
+    auto values = segtree[1].derivative().multipoint_evaluation(x);
+    std::vector<polynom> inter(2 * n);
+    for (int i = 0; i < n; i++) {
+        inter[n + i] = {y[i] / values[i]};
+    }
+    for (int i = n - 1; i > 0; i--) {
+        inter[i] = inter[2 * i] * segtree[2 * i + 1] + inter[2 * i + 1] * segtree[2 * i];
+    }
+    return inter[1];
+}
+}
+}
+
+\center[] {<h2>Приложения</h2>}
+
+\details[mode=main; summary=Задачи] {
+    \item[] {\link[href=https://judge.yosupo.jp/problem/polynomial_interpolation]{Yosupo library checker. Polynomial interpolation}}
+    \item[] {\link[href=https://contest.ucup.ac/contest/1780/problem/8942]{The 3rd Universal Cup. Stage 8: Cangqian. Задача K}}
+    \item[] {\link[href=https://www.codechef.com/problems/WRDSUM]{Codechef. Weird Sum}}
+    \item[] {\link[href=https://codeforces.com/contest/1731/problem/F]{Codeforces 1731-F}}
+    \item[] {\link[href=https://codeforces.com/contest/1988/problem/F]{Codeforces 1988-F}}
+}

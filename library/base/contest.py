@@ -1,5 +1,7 @@
-from copy     import deepcopy
-from datetime import datetime, timedelta
+from .platform import Platform
+
+from copy      import deepcopy
+from datetime  import datetime, timedelta
 
 class Contest:
     '''
@@ -8,27 +10,29 @@ class Contest:
     duration:   int      (seconds)
     start:      datetime (utc+0)
     end:        datetime (utc+0)
-    platform:   str      (codeforces, atcoder...)
+    platform:   Platform
     '''
 
-    def __init__(self, name=None, duration=None, start=None, platform=None):
+    def __init__(self, name: str = None, duration: int = None, start: datetime = None, platform: Platform = None):
         self.name = name
         self.duration = duration
         self.start = start
+
         if duration is None or start is None:
             self.end = None
         else:
             self.end = start + timedelta(seconds=duration)
+
         self.platform = platform
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'name:       {self.name}      \n' +\
                f'duration:   {self.duration}  \n' +\
                f'start:      {self.start}     \n' +\
                f'end:        {self.end}       \n' +\
                f'platform:   {self.platform}'
 
-    def shiftBy(self, minutes: int):
+    def shiftBy(self, minutes: int) -> None:
         delta = timedelta(seconds=minutes * 60)
         self.start = self.start + delta
         if self.end is not None:

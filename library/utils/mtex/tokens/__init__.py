@@ -5,7 +5,7 @@ from .details_token                import DetailsToken
 from .enumerate_token              import EnumerateToken
 from .item_token                   import ItemToken
 from .itemize_token                import ItemizeToken
-from .list_token_interface         import ListTokenInterface
+from .link_token                   import LinkToken
 from .math_token                   import MathToken
 from .tab_zone_token               import TabZoneToken
 from .text_token                   import TextToken

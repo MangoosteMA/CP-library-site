@@ -1,0 +1,32 @@
+@import "../base_styles.css";
+
+.main-textarea {
+    width: 600px;
+    height: 600px;
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.save-button {
+    margin-top: 10px;
+    border-radius: 10px;
+    background-color: rgb(43, 207, 2);
+    border: none;
+    display: block;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    font-weight: 500;
+    width: 60px;
+}
+
+.save-button:hover {
+    box-shadow: 0px 0px 1px 1px rgba(43, 207, 2, 0.7);
+}
+
+.save-button:active {
+    background-color: rgb(49, 158, 21);
+}

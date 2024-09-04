@@ -1,0 +1,435 @@
+\title[]{Xor-friendly хеширование}
+
+\details[mode=main; summary=Введение] {
+    Обычный полиномиальный хеш $H_p(A)$ обладает простым, но очень полезным свойством:
+    $$
+    H_p(A + B) = H_p(A) + H_p(B)
+    $$
+    Здесь $A + B$ означает поэлементную сумму двух последовательностей одинаковой длины. Мы же хотим придумать другую функцию хеширования $H_x(A)$, удовлетворяющую следующему свойству:
+    $$
+    H_x(A \oplus B) = H_x(A) \circ H_x(B)
+    $$
+    Здесь $A \oplus B$ означает поэлементный битовый ксор, а $x \circ y$ означает произвольную легко вычислимую операцию.
+}
+
+\center[]{<h2>Хеширование через многочлены</h2>}
+
+\details[mode=main; summary=Теория] {
+    Предлагается сделать что-то очень похожее на полиномиальный хеш. Давайте зафиксируем не очень большое число $K$, а так же случайный многочлен $g$ над полем $\mathbb{F}_2$ по модулю $M$, где $M$~--- многочлен степени $K$. Поле $\mathbb{F}_2$ означает, что при операциях с этими многочленами, все коэффициенты будут браться по модулю $2$.
+    
+    Предлагается определить хеш от последовательности $A = \{a_0, \ldots, a_{n-1}\}$ следующим образом:
+    $$
+    H_x(A) = \Big(\sum\limits_{t=0}^{n-1} a_t g^{n - 1 - t} \Big) \bmod M
+    $$
+    По факту это тот же полиномиальный хеш, просто со странным основанием и модулем. Это значит, что с ним можно работать так же, как и с полиномиальным, например, вычислять хеш на отрезке через префиксные суммы.
+}
+
+\details[mode=main; summary=Основные операции] {
+    Чтобы пользоваться этим хешированием, надо эффективно умножать и складывать многочлены. Предлагается сделать так: пусть $K = 32$, тогда коэффициенты многочлена можно хранить одним 32-битным числом, в котором $t$-й бит равен коэффициенту перед $x^t$. Модуль $M$ мы так же сохраним в числовом типе.
+    
+    Тогда операции над многочленами можно реализовать следующим образом:
+    
+    \itemize[] {
+        \item[] {
+            Сложение двух многочленов эквивалентно битовому ксору.
+        }
+        \item[] {
+            С умножением всё немного сложнее. Сначала, с помощью битовых сдвигов и ксора в 64-битном типе посчитаем произведение этих многочленов. Для этого достаточно перебрать все единичные биты одного из многочленов.
+            
+            Чтобы взять это произведение по модулю, достаточно пройтись от старших битов к младшим и, если очередной бит равен единице, надо вычесть определённый многочлен, что в нашем случае эквивалентно сложению, то есть ксору.
+            
+            Таким образом, за \complexity$(64)$ можно перемножать два многочлена. На x86 (возможно и на других архитектурах), есть специальные инструкции, позволяющие умножать многочлены таким образом быстрее. Подробнее можно прочитать в этой \link[href=https://en.wikipedia.org/wiki/CLMUL_instruction_set]{статье}.
+        }
+    }
+}
+
+\details[mode=main; summary=Выбор модуля] {
+    Оказывается, выбрать правильный модуль очень важно для этого алгоритма. Например, если выбрать $M = x^{32} + 1$, то порядок случайного многочлена по этому модулю будет около $32$. Порядок~--- это минимальная степень, в которую надо возвести многочлен, чтобы получить $1$ по модулю $M$.
+    
+    Построить антихештест против всех маленьких порядков легко, поэтому чем больше порядок, тем меньше вероятность коллизии. Существуют модули, для которых порядок случайного многочлена доказуемо большой. Например, для $M = x^{64} + x^4 + x^3 + x + 1$ порядок случайного многочлена ожидаемо равен матожиданию $\frac{2^{64} - 1}{\gcd(2^{64} - 1, x)}$ при случайном выборе $x$ от $1$ до $2^{64} - 1$.
+    
+    Если выбрать \link[href=https://ru.wikipedia.org/wiki/Неприводимый_многочлен]{неприводимый многочлен} в качестве модуля, то полученная модель будет \link[href=https://en.wikipedia.org/wiki/Finite_field]{полем}. Здесь неприводимые многочлены выступают в роле простых чисел для обычных полиномиальных хешей.
+    
+    Поле обладает очень полезными свойствами. Например, ожидаемый порядок элемента в поле можно посчитать аналогично формуле выше. Перебором можно найти неприводимый модуль степени $32$:
+    $$
+    M = x^{32} + x^7 + x^3 + x^2 + 1
+    $$
+    Реализация ниже использует именно его, хотя можно выбрать любой другой. Можно доказать, что полученные поля будут изоморфны, поэтому это абсолютно неважно.
+}
+
+\details[mode=main; summary=Выбор оснований] {
+    Обычно хватает случайной генерации оснований. Но, чтобы гарантировать большой порядок, можно также использовать неприводимые многочлены. Некоторые из таких многочленов можно найти \link[href=https://oeis.org/A058943]{здесь}.
+}
+
+\details[mode=main; summary=Оценка вероятности коллизии] {
+    Вероятность коллизии таких хешей с использованием только одного основания можно оценивать также, как и вероятность коллизии обычных хешей для модуля порядка $2^{32}$ (так как это количество различных многочленов). То есть можно сказать, что вероятность коллизии примерно равна $\frac{1}{2^{32}}$. Если использовать $D$ оснований, то вероятность экспоненциально уменьшается: $\Big(\frac{1}{2^{32}}\Big)^D$.
+}
+
+\details[mode=main; summary=Реализация] {
+\code[language=C++] {
+/*
+ ! WARNING: hash works only for 32-bit types. If 64-bit is required, reduce it to two 32-bits values.
+ ! WARNING: addition and subtraction of hashes work in O(64).
+ * DIMS is the number of bases for hash to use.
+ * Bases are generated automatically, there's no need to run any init function.
+ * Addition:
+     H([a_1,..., a_n]) + H([b_1,..., b_m]) =  H([a_1,..., a_n, b_1,..., b])
+ * Subtraction:
+     H([b_1,..., b_m, a_1,..., a_n]) - H([b_1,..., b_m]) = H([a_1,..., a_n])
+ * Merge:
+     Merge(H([a_1,..., a_n]), H([b_1,..., b_n])) = H([a_1 ^ b_1,..., a_n ^ b_n])
+ */
+template<int DIMS>
+class xor_friendly_hash {
+public:
+    static_assert(DIMS > 0 && "DIMS must be positive");
+    using T = uint32_t;
+    using Tl = uint64_t;
+
+    inline static constexpr int LG = 31;
+    inline static constexpr Tl BASE_MASK = (static_cast<Tl>(1) << (LG + 1)) + 141;
+
+private:
+    inline static bool initialized = false;
+    inline static T base[DIMS] = {};
+    inline static std::vector<T> powers[DIMS];
+
+    static void initialize() {
+        initialized = true;
+        std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
+        for (int d = 0; d < DIMS; d++) {
+            base[d] = rng();
+            powers[d].push_back(1);
+        }
+    }
+
+    static T multiply(T x, T y) {
+        if (x == 0 || y == 0) {
+            return 0;
+        }
+        Tl product = 0;
+        for (int i = 0; i <= LG; i++) {
+            if (x >> i & 1) {
+                product ^= (static_cast<Tl>(y) << i);
+            }
+        }
+        for (int i = (LG << 1); i > LG; i--) {
+            if (product >> i & 1) {
+                product ^= (BASE_MASK << (i - LG));
+            }
+        }
+        return static_cast<T>(product);
+    }
+
+    static void resize(int n) {
+        if (static_cast<int>(powers[0].size()) >= n) {
+            return;
+        }
+        for (int d = 0; d < DIMS; d++) {
+            for (int p = static_cast<int>(powers[d].size()); p < n; p++) {
+                powers[d].push_back(multiply(powers[d][p - 1], base[d]));
+            }
+        }
+    }
+
+    int length;
+    std::array<T, DIMS> data;
+
+public:
+    xor_friendly_hash() : length(0) {
+        data.fill(0);
+        if (!initialized) {
+            initialize();
+        }
+    }
+
+    xor_friendly_hash(T value, int length = 1) : length(length) {
+        data.fill(0);
+        if (!initialized) {
+            initialize();
+        }
+        resize(length);
+        for (int p = 0; p < length; p++) {
+            for (int d = 0; d < DIMS; d++) {
+                data[d] ^= multiply(value, powers[d][p]);
+            }
+        }
+    }
+
+    xor_friendly_hash& operator+=(const xor_friendly_hash &x) {
+        resize(x.length + 1);
+        length += x.length;
+        for (int d = 0; d < DIMS; d++) {
+            data[d] = (multiply(data[d], powers[d][x.length]) ^ x.data[d]);
+        }
+        return *this;
+    }
+
+    xor_friendly_hash& operator-=(const xor_friendly_hash &x) {
+        length -= x.length;
+        resize(length + 1);
+        for (int d = 0; d < DIMS; d++) {
+            data[d] = (multiply(x.data[d], powers[d][length]) ^ data[d]);
+        }
+        return *this;
+    }
+
+    friend xor_friendly_hash operator+(const xor_friendly_hash &x, const xor_friendly_hash &y) {
+        return xor_friendly_hash(x) += y;
+    }
+
+    friend xor_friendly_hash operator-(const xor_friendly_hash &x, const xor_friendly_hash &y) {
+        return xor_friendly_hash(x) -= y;
+    }
+
+    bool operator==(const xor_friendly_hash &x) const = default;
+
+    bool operator<(const xor_friendly_hash &x) const {
+        return std::tie(length, data) < std::tie(x.length, x.data);
+    }
+
+    int size() const {
+        return length;
+    }
+
+    // Require x.size() == y.size()
+    static xor_friendly_hash merge(const xor_friendly_hash &x, const xor_friendly_hash &y) {
+        assert(x.size() == y.size());
+        xor_friendly_hash merged;
+        merged.length = x.length;
+        for (int d = 0; d < DIMS; d++) {
+            merged.data[d] = (x.data[d] ^ y.data[d]);
+        }
+        return merged;
+    }
+};
+}
+}
+
+\center[]{<h2>Приложения</h2>}
+
+\details[mode=main; summary=Пример использования] {
+    Данный код решает \link[href=https://atcoder.jp/contests/abc274/tasks/abc274_h]{Atcoder ABC274-Ex}.
+\code[language=C++] {
+#include <bits/stdc++.h>
+using namespace std;
+
+/*
+ ! WARNING: hash works only for 32-bit types. If 64-bit is required, reduce it to two 32-bits values.
+ ! WARNING: addition and subtraction of hashes work in O(64).
+ * DIMS is the number of bases for hash to use.
+ * Bases are generated automatically, there's no need to run any init function.
+ * Addition:
+     H([a_1,..., a_n]) + H([b_1,..., b_m]) =  H([a_1,..., a_n, b_1,..., b])
+ * Subtraction:
+     H([b_1,..., b_m, a_1,..., a_n]) - H([b_1,..., b_m]) = H([a_1,..., a_n])
+ * Merge:
+     Merge(H([a_1,..., a_n]), H([b_1,..., b_n])) = H([a_1 ^ b_1,..., a_n ^ b_n])
+ */
+template<int DIMS>
+class xor_friendly_hash {
+public:
+    static_assert(DIMS > 0 && "DIMS must be positive");
+    using T = uint32_t;
+    using Tl = uint64_t;
+
+    inline static constexpr int LG = 31;
+    inline static constexpr Tl BASE_MASK = (static_cast<Tl>(1) << (LG + 1)) + 141;
+
+private:
+    inline static bool initialized = false;
+    inline static T base[DIMS] = {};
+    inline static std::vector<T> powers[DIMS];
+
+    static void initialize() {
+        initialized = true;
+        std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
+        for (int d = 0; d < DIMS; d++) {
+            base[d] = rng();
+            powers[d].push_back(1);
+        }
+    }
+
+    static T multiply(T x, T y) {
+        if (x == 0 || y == 0) {
+            return 0;
+        }
+        Tl product = 0;
+        for (int i = 0; i <= LG; i++) {
+            if (x >> i & 1) {
+                product ^= (static_cast<Tl>(y) << i);
+            }
+        }
+        for (int i = (LG << 1); i > LG; i--) {
+            if (product >> i & 1) {
+                product ^= (BASE_MASK << (i - LG));
+            }
+        }
+        return static_cast<T>(product);
+    }
+
+    static void resize(int n) {
+        if (static_cast<int>(powers[0].size()) >= n) {
+            return;
+        }
+        for (int d = 0; d < DIMS; d++) {
+            for (int p = static_cast<int>(powers[d].size()); p < n; p++) {
+                powers[d].push_back(multiply(powers[d][p - 1], base[d]));
+            }
+        }
+    }
+
+    int length;
+    std::array<T, DIMS> data;
+
+public:
+    xor_friendly_hash() : length(0) {
+        data.fill(0);
+        if (!initialized) {
+            initialize();
+        }
+    }
+
+    xor_friendly_hash(T value, int length = 1) : length(length) {
+        data.fill(0);
+        if (!initialized) {
+            initialize();
+        }
+        resize(length);
+        for (int p = 0; p < length; p++) {
+            for (int d = 0; d < DIMS; d++) {
+                data[d] ^= multiply(value, powers[d][p]);
+            }
+        }
+    }
+
+    xor_friendly_hash& operator+=(const xor_friendly_hash &x) {
+        resize(x.length + 1);
+        length += x.length;
+        for (int d = 0; d < DIMS; d++) {
+            data[d] = (multiply(data[d], powers[d][x.length]) ^ x.data[d]);
+        }
+        return *this;
+    }
+
+    xor_friendly_hash& operator-=(const xor_friendly_hash &x) {
+        length -= x.length;
+        resize(length + 1);
+        for (int d = 0; d < DIMS; d++) {
+            data[d] = (multiply(x.data[d], powers[d][length]) ^ data[d]);
+        }
+        return *this;
+    }
+
+    friend xor_friendly_hash operator+(const xor_friendly_hash &x, const xor_friendly_hash &y) {
+        return xor_friendly_hash(x) += y;
+    }
+
+    friend xor_friendly_hash operator-(const xor_friendly_hash &x, const xor_friendly_hash &y) {
+        return xor_friendly_hash(x) -= y;
+    }
+
+    bool operator==(const xor_friendly_hash &x) const = default;
+
+    bool operator<(const xor_friendly_hash &x) const {
+        return std::tie(length, data) < std::tie(x.length, x.data);
+    }
+
+    int size() const {
+        return length;
+    }
+
+    // Require x.size() == y.size()
+    static xor_friendly_hash merge(const xor_friendly_hash &x, const xor_friendly_hash &y) {
+        assert(x.size() == y.size());
+        xor_friendly_hash merged;
+        merged.length = x.length;
+        for (int d = 0; d < DIMS; d++) {
+            merged.data[d] = (x.data[d] ^ y.data[d]);
+        }
+        return merged;
+    }
+};
+
+/*
+Type T require to have:
+    - Default constroctor
+    - operator+(T, T)
+    - operator-(T, T)
+*/
+template<typename T>
+class prefix_sums {
+private:
+    int n;
+    std::vector<T> pref;
+
+public:
+    prefix_sums() : n(0), pref(0) {}
+
+    template<typename V>
+    prefix_sums(const V &container) : n(container.size()), pref(n + 1) {
+        for (int i = 0; i < n; i++) {
+            pref[i + 1] = pref[i] + static_cast<T>(container[i]);
+        }
+    }
+
+    // Returns the sum of the elements on the interval [l, r)
+    T query(int l, int r) const {
+        assert(l <= r);
+        return pref[r] - pref[l];
+    }
+
+    int size() const {
+        return n;
+    }
+};
+
+int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
+
+    int n, q;
+    cin >> n >> q;
+    vector<long long> a(n);
+    vector<int> low(n), high(n);
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+
+        static constexpr int LG = 30;
+        low[i] = (a[i] & ((1 << LG) - 1));
+        high[i] = (a[i] >> LG);
+    }
+
+    using hash = xor_friendly_hash<2>;
+    prefix_sums<hash> lhash(low), rhash(high);
+
+    while (q--) {
+        int l1, r1, l2, r2, l3, r3;
+        cin >> l1 >> r1 >> l2 >> r2 >> l3 >> r3;
+        l1--, l2--, l3--;
+
+        int lb = 0, rb = min(r1 - l1, r3 - l3) + 1;
+        while (rb - lb > 1) {
+            int m = (lb + rb) / 2;
+            ([&]() {
+                if (hash::merge(lhash.query(l1, l1 + m), lhash.query(l2, l2 + m)) != lhash.query(l3, l3 + m)) {
+                    return false;
+                }
+                return hash::merge(rhash.query(l1, l1 + m), rhash.query(l2, l2 + m)) == rhash.query(l3, l3 + m);
+            }() ? lb : rb) = m;
+        }
+
+        if (lb == r3 - l3) {
+            cout << "No\n";
+        } else if (lb == r1 - l1) {
+            cout << "Yes\n";
+        } else {
+            cout << ((a[l1 + lb] ^ a[l2 + lb]) < a[l3 + lb] ? "Yes" : "No") << '\n';
+        }
+    }
+}
+}
+}
+
+\details[mode=main; summary=Задачи] {
+    \item[] {\link[href=https://atcoder.jp/contests/abc274/tasks/abc274_h]{Atcoder ABC274-Ex}}
+}

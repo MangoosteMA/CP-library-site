@@ -1,6 +1,7 @@
 from .token_interface   import TokenInterface
-from library.utils.html import HtmlBuilder, BaseHtmlItem
+from library.utils.html import HtmlBuilder, BaseHtmlItem, FixedHtmlItem
 
+import html
 import uuid
 
 '''
@@ -37,7 +38,7 @@ class CodeBlockToken(TokenInterface):
 
     @staticmethod
     def getTokenName() -> str:
-        return 'codeBlock'
+        return 'code'
 
     def apply(self, htmlBuilder: HtmlBuilder) -> HtmlBuilder:
         blockId = uuid.uuid4().hex + '.cpp'
@@ -48,7 +49,8 @@ class CodeBlockToken(TokenInterface):
         navigation.addEdge(BaseHtmlItem('button'), className=CodeBlockToken.COPY_BUTTON, onclick=f'{CodeBlockToken.ONCLICK_BUTTON}(\'{blockId}\')').innerHtml = CodeBlockToken.BUTTON_TEXT
         navigation.addEdge(BaseHtmlItem('img'), className=CodeBlockToken.CHECK_MARK_IMG, src=CodeBlockToken.CHECK_MARK_SRC, id=f'{blockId}-check-img')
 
+        codeData = html.escape((htmlBuilder.htmlToStr() if htmlBuilder is not None else '').strip())
         root.addEdge(BaseHtmlItem('pre'))\
-            .addEdge(BaseHtmlItem('code'), destNode=htmlBuilder, className=self.language, id=str(blockId))
+            .addEdge(BaseHtmlItem('code'), className=self.language, id=str(blockId)).innerHtml = codeData
 
         return root.parent

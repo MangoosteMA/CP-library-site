@@ -3,19 +3,42 @@
 <div class="login-body-div">
     <div class="login-body-inside-div">
         <div class="login-title-div">Вход</div>
-        <form method="post" action="/login">
+        <form onsubmit="submitForm(event, this)">
             <div class="flex-div">
                 <div class="login-element-div">Логин</div>
-                <input class="data-input" type="text" name="fname">
+                <input class="data-input" type="text" name="login" value=>
             </div>
             <div class="flex-div">
                 <div class="login-element-div">Пароль</div>
-                <input class="data-input" type="password" name="fname">
+                <input class="data-input" type="password" name="password">
             </div>
             <input class="submit-input" type="submit" value="Bход">
+            <div class="error-div" id="error-div">{{ error }}</div>
             <div class="register-link-div">
                 <a href="/register" class="register-link">Регистрация</a>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+    function submitForm(event, form) {
+        event.preventDefault();
+
+        fetch(window.location.href, {
+            method: "POST",
+            body: new FormData(form),
+        }).then(response => {
+            return response.text();
+        }).then(message => {
+            if (message.length == 0) {
+                location.replace("/");
+            }
+
+            const errorsContainer = document.getElementById("error-div");
+            if (errorsContainer != null) {
+                errorsContainer.innerText = message;
+            }
+        });
+    }
+</script>

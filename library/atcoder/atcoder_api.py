@@ -1,4 +1,4 @@
-from library.base      import Contest
+from library.base      import Contest, Platform
 from library.common    import getPageHtmlCode
 from library.utils.str import removeAllNonASCIISymbols
 
@@ -42,7 +42,7 @@ def tryParseScheduledContests() -> list[Contest]:
                 parsedContests.append(Contest(name=removeAllNonASCIISymbols(nodes[1].text).strip(),
                                               duration=getContestDuration(contestLink),
                                               start=parseDatetimeFromStr(nodes[0].text) - JAPAN_UTC,
-                                              platform='atcoder'))
+                                              platform=Platform.ATCODER))
             except BaseException as exc:
                 print(f'Failed to parse contest. Reason: {exc}')
         return parsedContests

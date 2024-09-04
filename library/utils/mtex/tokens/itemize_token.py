@@ -1,19 +1,14 @@
-from .item_token           import ItemToken
-from .list_token_interface import ListTokenInterface
-from .token_interface      import TokenInterface
-from library.utils.html    import HtmlBuilder
+from .base_html_item_wrapper_token import BaseHtmlItemWrapperToken
 
-class ItemizeToken(TokenInterface, ListTokenInterface):
+'''
+structure:
+<ul> {insideData} </ul>
+'''
+
+class ItemizeToken(BaseHtmlItemWrapperToken):
     def __init__(self, parameters: dict[str, str]):
-        pass
+        super().__init__('ul', parameters)
 
     @staticmethod
     def getTokenName() -> str:
         return 'itemize'
-
-    @staticmethod
-    def setIdForItem(item: ItemToken, index: int) -> str:
-        item.setData('&#9679;')
-
-    def apply(self, htmlBuilder: HtmlBuilder) -> HtmlBuilder:
-        return htmlBuilder

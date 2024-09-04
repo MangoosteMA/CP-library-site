@@ -1,64 +1,167 @@
 from backend.api import buildLibraryBodyHtml
 from backend.api import buildScheduleHtml
-from backend.api import compileMtexTo
-from backend.api import getMtexSourceFileData
-from backend.api import getSourceCodeFile
+from backend.api import papersContainer
+from backend.api import usersHandler
 
+from flask       import abort
 from flask       import Blueprint
+from flask       import redirect
 from flask       import render_template
 from flask       import request
 from flask       import send_file
 from flask       import session
-from pathlib     import Path
 
-import json
+from dataclasses import dataclass
+from pathlib     import Path
+from secrets     import token_urlsafe
+from typing      import Optional
 
 view = Blueprint('views', __name__)
 
+SESSION_KEY = 'session'
+SECRET_REGULAR = token_urlsafe(15)
+SECRET_ADMIN = token_urlsafe(15)
+
+with open('data/users/secret.txt', 'w') as secretFile:
+    secretFile.write(SECRET_REGULAR + '\n')
+    secretFile.write(SECRET_ADMIN + '\n')
+
+@dataclass
+class BaseSessionInfo:
+    loggedIn: bool
+    admin:    bool
+    username: str
+
+def logOut():
+    if SESSION_KEY in session:
+        session.pop(SESSION_KEY)
+
+def getSessionInfo() -> BaseSessionInfo:
+    runningSession = usersHandler.getSessionByKey(session.get(SESSION_KEY, ''))
+    if runningSession is None:
+        return BaseSessionInfo(loggedIn=False, admin=False, username='')
+    
+    return BaseSessionInfo(loggedIn=True,
+                           admin=runningSession.user.admin,
+                           username=runningSession.user.username)
+
+def renderTemplate(path, **kwargs):
+    sessionInfo = getSessionInfo()
+    if not sessionInfo.loggedIn:
+        logOut()
+
+    return render_template(path,
+                           loggedIn=sessionInfo.loggedIn,
+                           admin=sessionInfo.admin,
+                           username=sessionInfo.username,
+                           **kwargs)
+
 @view.route('/', methods=['GET', 'POST'])
 def homePage():
-    return render_template('home_page/home_page.html')
+    return renderTemplate('home_page/home_page.html')
+
+def tryLoginUser() -> str:
+    login = request.form['login']
+    password = request.form['password']
+
+    try:
+        user = usersHandler.getUser(login, password)
+        session[SESSION_KEY] = usersHandler.createSession(user).key
+    except BaseException as exc:
+        return str(exc)
+
+    return ''
 
 @view.route('/login', methods=['GET', 'POST'])
 def loginPage():
-    return render_template('login_page/login_page.html')
+    if request.method == 'POST':
+        return tryLoginUser()
+
+    return renderTemplate('login_page/login_page.html')
+
+def tryRegisterUser() -> str:
+    username = request.form['login']
+    password = request.form['password']
+    rpassword = request.form['rpassword']
+    secret = request.form['secret']
+
+    if len(username) == 0:
+        return 'Empty login is not allowed'
+
+    if password != rpassword:
+        return 'Passwords don\'t match'
+
+    if secret != SECRET_REGULAR and secret != SECRET_ADMIN:
+        return 'Incorrect secret'
+
+    try:
+        usersHandler.validatePassword(password)
+        user = usersHandler.registreUser(username, password, secret == SECRET_ADMIN)
+        session[SESSION_KEY] = usersHandler.createSession(user).key
+    except BaseException as exc:
+        return str(exc)
+
+    return ''
 
 @view.route('/register', methods=['GET', 'POST'])
 def registerPage():
-    return render_template('register_page/register_page.html')
+    if request.method == 'POST':
+        return tryRegisterUser()
+
+    return renderTemplate('register_page/register_page.html')
+
+@view.route('/log-out', methods=['POST'])
+def loggedOutPage():
+    logOut()
+    return homePage()
 
 @view.route('/library', methods=['GET', 'POST'])
 def libraryPage():
+    if request.method == 'POST' and getSessionInfo().admin:
+        try:
+            papersContainer.updateConfig(request.data.decode())
+        except:
+            abort(406)
+
     try:
-        libraryBody = buildLibraryBodyHtml()
+        libraryBody = buildLibraryBodyHtml(getSessionInfo().admin)
+        libraryConfig = papersContainer.getConfig()
     except BaseException as exc:
         print(f'Failed to build library html body. Reason: {exc}')
         libraryBody = ''
-    return render_template('library_page/library_page.html', libraryBody=libraryBody)
+        libraryConfig = ''
 
-@view.route('/library-algo/<filePath>', methods=['GET', 'POST'])
-def libraryAlgoPage(filePath):
-    pathPrefix = f'library_page/library_algo/{filePath}'
-    htmlPath = f'{pathPrefix}.html'
-    mtexPath = f'templates/{pathPrefix}.mtex'
+    return renderTemplate('library_page/library_page.html',
+                           libraryBody=libraryBody,
+                           configAlgo=libraryConfig)
 
+@view.route('/library-algo/<htmlName>', methods=['GET', 'POST'])
+def libraryAlgoPage(htmlName: str):
     try:
-        if request.method == 'POST':
-            with open(mtexPath, 'w') as mtexFile:
-                mtexFile.write(json.loads(request.data.decode())['newData'])
-            compileMtexTo(mtexPath, f'templates/{htmlPath}')
+        if request.method == 'POST' and getSessionInfo().admin:
+            content = request.get_json()
+            method = content['method']
+            if method == 'save':
+                papersContainer.compileMtex(htmlName, content['data'])
+            elif method == 'rename':
+                papersContainer.renamePaper(content['prevHtmlName'], content['htmlName'],
+                                            content['fileName'], content['filePath'])
+                return ''
 
-        return render_template(f'library_page/library_file_info.html',
-                               fileInfo=render_template(htmlPath, mainCpp=getSourceCodeFile(filePath)),
-                               filePath=filePath,
-                               mtexData=getMtexSourceFileData(mtexPath))
+        return renderTemplate(f'library_page/library_file_info.html',
+                              fileInfo=render_template(papersContainer.getHtmlPath(htmlName)),
+                              htmlName=htmlName,
+                              fileName=papersContainer.getFileName(htmlName),
+                              filePath=papersContainer.getFilePath(htmlName),
+                              mtexData=papersContainer.getMtexSource(htmlName))
     except:
-        return f'Error happened while handling request to {filePath}.'
+        return f'Error happened while handling request to {htmlName}.'
 
 @view.route('/apps/<app>', methods=['GET'])
 def appsPage(app):
     if app == 'graph-editor':
-        return render_template('graph_editor/graph_editor.html')
+        return renderTemplate('graph_editor/graph_editor.html')
+
     return f'There is no such app yet: {app}'
 
 @view.route('/api/schedule', methods=['GET'])
@@ -67,6 +170,7 @@ def apiSchedule():
         offset = int(request.args.get('offset', 0))
     except:
         offset = 0
+
     return buildScheduleHtml(offset)
 
 @view.route('/images/<image>', methods=['GET'])
@@ -74,4 +178,5 @@ def sendFile(image):
     path = f'data/images/{image}'
     if Path(path).is_file():
         return send_file(path, mimetype='image/gif')
+
     return 'There is not such image ;('

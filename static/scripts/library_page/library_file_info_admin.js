@@ -1,54 +1,43 @@
-function showEditButton() {
-    var button = document.getElementById("library-edit-button");
-    if (button != null) {
-        button.style.display = 'block';
-    }
-}
+// Create text coloring rules
+import { TextColoring } from "./text_coloring.js";
+const textColoring = new TextColoring();
 
-async function saveChangedData() {
-    const editor = document.getElementById("editor");
-    const newData = editor.value;
-    const currentUrl = window.location.href;
-    await fetch(currentUrl, {
-        method: "POST",
-        body: JSON.stringify({
-            newData: newData
-        }),
-        headers: {
-            "Content-type": "application/json; charset=UTF-8"
-        }
-    }).then(function(response) {
-        return response.text();
-    }).then(function(html) {
-        var auxDiv = document.createElement('div');
-        auxDiv.innerHTML = html;
-        const candidates = auxDiv.getElementsByClassName("library-body-inside-div");
-        if (candidates.length > 0) {
-            const detailsElements = candidates[0].getElementsByTagName('details');
-            for (let i = 0; i < detailsElements.length; i++) {
-                detailsElements[i].open = true;
-            }
-            document.getElementById("admin-fileinfo-div").innerHTML = candidates[0].innerHTML;
-            if (MathJax) {
-                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-            }
-            if (hljs) {
-                hljs.highlightAll();
-            }
-        }
-    });
-}
+// Add special symbols coloring rule
+import { KeyWordsColoringRule } from "./text_coloring_rules/key_words_coloring_rule.js";
+textColoring.addRule(new KeyWordsColoringRule(["&lt;", "=", "&gt;", "+", "-", "&quot;", "&#x27;", "#"], "rgb(235,101,164)"));
 
-async function saveChangedDataAndExit() {
-    await saveChangedData().then(function() {
-        location.reload();
-    });
-}
+// Add '$' coloring
+textColoring.addRule(new KeyWordsColoringRule(["$"], "rgb(225,146,82)"));
+
+// Add mtex key words coloring rule
+textColoring.addRule(new KeyWordsColoringRule(["\\title", "\\code", "\\details",
+                                               "\\link", "\\itemize", "\\item", "\\center"], "rgb(139,233,253)"));
+
+// Add utf symbols coloring rule
+textColoring.addRule(new KeyWordsColoringRule(["\\complexity", "\\implies", "\\qed"], "rgb(225,146,82)"));
+
+// Add bracket coloring rule
+import { BracketColoringRule } from "./text_coloring_rules/bracket_coloring_rule.js";
+textColoring.addRule(new BracketColoringRule(["rgb(235,101,164)", "rgb(225,146,82)", "rgb(69,178,207)"], "rgb(255,69,69)"));
+
+// Create editor
+import { Editor }            from "./editor.js";
+import { InputPreprocessor } from "./input_preprocessor.js";
+
+const textarea = document.getElementById("main-textarea");
+const background = document.getElementById("main-textarea-background");
+const linesDiv = document.getElementById("lines-holder-div");
+const editor = new Editor(textarea, background, linesDiv, textColoring, new InputPreprocessor());
+
+// Handle edit button
+const editButton = document.getElementById("library-edit-button");
+editButton.style.display = 'block';
 
 function resizeAdminBodyDiv() {
     if (document.getElementById("admin-div").style.display == "block") {
-        document.getElementById("body-div").style.width = (window.innerWidth - 100) + "px";
+        document.getElementById("body-div").style.width = (window.innerWidth - 70) + "px";
     }
+    editor.build();
 }
 
 function editLibrary() {
@@ -58,4 +47,4 @@ function editLibrary() {
 }
 
 window.addEventListener("resize", resizeAdminBodyDiv);
-showEditButton();
+editButton.addEventListener("click", editLibrary);

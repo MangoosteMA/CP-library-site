@@ -3,27 +3,50 @@
 <div class="login-body-div">
     <div class="login-body-inside-div">
         <div class="login-title-div">Регистрация</div>
-        <form method="post" action="/register">
+        <form onsubmit="submitForm(event, this)">
             <div class="flex-div">
                 <div class="login-element-div">Логин</div>
-                <input class="data-input" type="text" name="fname">
+                <input class="data-input" type="text" name="login">
             </div>
             <div class="flex-div">
                 <div class="login-element-div">Пароль</div>
-                <input class="data-input" type="password" name="fname">
+                <input class="data-input" type="password" name="password">
             </div>
             <div class="flex-div">
                 <div class="login-element-div" style="transform: translateY(-20%);">Повторите пароль</div>
-                <input class="data-input" type="password" name="fname">
+                <input class="data-input" type="password" name="rpassword">
             </div>
             <div class="flex-div">
                 <div class="login-element-div">Секрет</div>
-                <input class="data-input" type="еуче" name="fname" style="content: '\f06e';">
+                <input class="data-input" type="text" name="secret" style="content: '\f06e';">
             </div>
             <input class="submit-input" type="submit" value="Зарегестрироваться">
+            <div class="error-div" id="error-div"></div>
             <div class="register-link-div">
                 <a href="/login" class="register-link">Войти</a>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+    function submitForm(event, form) {
+        event.preventDefault();
+
+        fetch(window.location.href, {
+            method: "POST",
+            body: new FormData(form),
+        }).then(response => {
+            return response.text();
+        }).then(message => {
+            if (message.length == 0) {
+                location.replace("/");
+            }
+
+            const errorsContainer = document.getElementById("error-div");
+            if (errorsContainer != null) {
+                errorsContainer.innerText = message;
+            }
+        });
+    }
+</script>

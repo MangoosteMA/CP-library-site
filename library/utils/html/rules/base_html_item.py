@@ -5,7 +5,7 @@ class BaseHtmlItem(HtmlRuleInterface):
         self.itemType = itemType
 
     def nextLineAfterHeaderAvailable(self) -> bool:
-        return self.itemType not in {'img', 'code', 'pre'}
+        return self.itemType not in {'img', 'code', 'pre', 'a', 'li'}
 
     def buildHeader(self, parameters: dict[str, str]) -> str:
         result = f'<{self.itemType}'
@@ -13,9 +13,11 @@ class BaseHtmlItem(HtmlRuleInterface):
             if name == 'className':
                 name = 'class'
             result += f' {name}=\"{data}\"'
+
         return result + '>'
 
     def buildFooter(self, parameters: dict[str, str]) -> str:
         if self.itemType in {'img'}:
             return ''
+
         return f'</{self.itemType}>'

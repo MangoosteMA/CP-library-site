@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .rules import HtmlRuleInterface
 
 class HtmlBuilder:
@@ -29,16 +31,16 @@ class HtmlBuilder:
         self.innerHtml = None
         self.parent = None
 
-    def addEdge(self, rule: HtmlRuleInterface, destNode=None, **edgeParameters):
+    def addEdge(self, rule: HtmlRuleInterface, destNode=None, **edgeParameters) -> HtmlBuilder:
         self.children.append(HtmlBuilder.Edge(rule, edgeParameters, node=destNode))
         self.children[-1].node.parent = self
         return self.children[-1].node
 
-    def addMultipleEdges(self, rule: HtmlRuleInterface, innerHtml: list[str], **nodesParameters):
+    def addMultipleEdges(self, rule: HtmlRuleInterface, innerHtml: list[str], **nodesParameters) -> None:
         for index, inner in enumerate(innerHtml):
             self.addEdge(rule, **dict([(name, arr[index]) for name, arr in nodesParameters.items()])).innerHtml = inner
 
-    def htmlToStr(self):
+    def htmlToStr(self) -> str:
         def dfsHtmlBuilder(node: HtmlBuilder, tabsNumber: int = 0) -> str:
             resultHtml = ''
             indention = HtmlBuilder.TAB_STR * tabsNumber
@@ -52,6 +54,7 @@ class HtmlBuilder:
                 resultHtml += curIndention + edge.rule.buildHeader(edge.parameters) + separator
                 resultHtml += dfsHtmlBuilder(edge.node, tabsNumber + 1 if nextLine else 0) + separator
                 resultHtml += (curIndention if nextLine else '') + edge.rule.buildFooter(edge.parameters) + separator
+
             return resultHtml
 
         return dfsHtmlBuilder(self)

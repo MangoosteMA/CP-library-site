@@ -10,6 +10,7 @@ class MtexTokenizer:
                             EnumerateToken,
                             ItemToken     ,
                             ItemizeToken  ,
+                            LinkToken     ,
                             MathToken     ,
                             TabZoneToken  ,
                             TitleToken    ]
@@ -19,7 +20,7 @@ class MtexTokenizer:
         self.text = '\n'.join([line.rstrip() for line in textData.strip().split('\n')])
         self.processingStack = []
         if len(textData) > 0:
-            self.processingStack.append(MtexTokenizer.__ParsingInfo(leftPosition=0, rightPosition=len(self.text)))
+            self.processingStack.append(MtexTokenizer.__ParsingInfo(leftPosition=0, rightPosition=len(self.text), simpleText=False))
 
     def empty(self) -> bool:
         return len(self.processingStack) == 0
@@ -47,22 +48,10 @@ class MtexTokenizer:
     class __ParsingInfo:
         leftPosition:  int
         rightPosition: int
+        simpleText:    bool
 
         def __iter__(self):
             return iter(astuple(self))
-
-    def __tryParseMathToken(self) -> MathToken:
-        leftPosition, rightPosition = self.processingStack[-1]
-        if self.text[leftPosition] != '$':
-            return None
-
-        nextPosition = leftPosition + 1 + self.text[leftPosition + 1:rightPosition].find('$')
-        if nextPosition <= leftPosition:
-            return None
-
-        self.processingStack[-1].leftPosition = self.__findNextUsefulPosition(nextPosition + 1, rightPosition)
-        self.processingStack.append(MtexTokenizer.__ParsingInfo(leftPosition=leftPosition + 1, rightPosition=nextPosition))
-        return MathToken(dict())
 
     def __findDataEndPos(self, dataStartPos: int, rightPosition: int) -> int:
         bracketBalance = 0
@@ -91,10 +80,9 @@ class MtexTokenizer:
         return position
 
     def __tryFindToken(self) -> TokenInterface:
-        leftPosition, rightPosition = self.processingStack[-1]
-        parsedToken = self.__tryParseMathToken()
-        if parsedToken is not None:
-            return parsedToken
+        leftPosition, rightPosition, simpleText = self.processingStack[-1]
+        if simpleText:
+            return None
 
         if self.text[leftPosition] != '\\':
             return None
@@ -119,15 +107,18 @@ class MtexTokenizer:
             return None
 
         self.processingStack[-1].leftPosition = self.__findNextUsefulPosition(dataEndPos + 1, rightPosition)
-        self.processingStack.append(MtexTokenizer.__ParsingInfo(leftPosition=dataStartPos, rightPosition=dataEndPos))
+        self.processingStack.append(MtexTokenizer.__ParsingInfo(leftPosition=dataStartPos, rightPosition=dataEndPos, simpleText=(tokenClass == CodeBlockToken)))
         return parsedToken
 
     def __parseTextToken(self) -> TextToken:
-        leftPosition, rightPosition = self.processingStack[-1]
+        leftPosition, rightPosition, simpleText = self.processingStack[-1]
         nextPosition = leftPosition + 1
-        while nextPosition < rightPosition and self.text[nextPosition] not in {'\\', '$'}:
+        while nextPosition < rightPosition and (simpleText or self.text[nextPosition] not in {'\\', '$'}):
             nextPosition += 1
         self.processingStack[-1].leftPosition = nextPosition
+
+        if simpleText:
+            return TextToken(self.text[leftPosition : nextPosition])
 
         text = ''
         i = leftPosition

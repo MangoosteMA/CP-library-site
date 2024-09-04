@@ -1,22 +1,14 @@
-from .token_interface   import TokenInterface
-from library.utils.html import HtmlBuilder, FixedHtmlItem
+from .base_html_item_wrapper_token import BaseHtmlItemWrapperToken
 
-class ItemToken(TokenInterface):
+'''
+structure:
+<li> {insideData} </li>
+'''
+
+class ItemToken(BaseHtmlItemWrapperToken):
     def __init__(self, parameters: dict[str, str]):
-        self.data = None
+        super().__init__('li', parameters)
 
     @staticmethod
     def getTokenName() -> str:
         return 'item'
-
-    def setData(self, data: str):
-        print('Set data', data)
-        self.data = data
-
-    def apply(self, htmlBuilder: HtmlBuilder) -> HtmlBuilder:
-        root = HtmlBuilder()
-        print('Aboba', self.data)
-        root.addEdge(FixedHtmlItem(header=f'{self.data} '))
-        root.addEdge(FixedHtmlItem(), destNode=htmlBuilder)
-        root.addEdge(FixedHtmlItem()).innerHtml = '<br>'
-        return root

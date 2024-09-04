@@ -1,0 +1,238 @@
+\title[]{Хроматическое число}
+
+\details[mode=main; summary=Введение] {
+    Хроматическое число графа~--- это минимальное количество цветов, в которые можно раскрасить вершины этого графа, чтобы каждое ребро соединяло вершины разного цвета. Например, хроматическое число двудольного графа $\le 2$, а хроматическое число планарного графа $\le 4$ (это совсем не очевидно, но это доказанный факт).
+    
+    В общем случае, поиск хроматического числа~--- это np-complete задача. Мы научимся искать хроматическое число за довольно быструю экспоненту.
+}
+
+\center[] {<h2>Наивный алгоритм</h2>}
+
+\details[mode=main; summary=Теория] {
+    Сначала, для каждого подмножества вершин определим, является ли оно независимым (то есть нет ребра, соединяющего вершины из этого подмножества). Это можно сделать наивно за \complexity$(2^n n)$.
+
+    Напишем dp по подмножествам: для каждого подмножетсва найдём хроматическое число графа, если мы оставим только вершины из этого подмножества. Базой динамики будет $dp$ от пустого подмножества, равное нулю.
+    
+    Для пересчёта динамики, переберём множество вершин, которое покрасим в первый цвет. Это множество должно быть независимым. После этого, надо обновить значение динамики через $1 + $ значение динамики для множества вершин, без уже покрашенных в первый цвет.
+}
+
+\details[mode=main; summary=Время работы] {
+    Так как для кажой маски перебирается её подмаска, этот алгоритм работает за \complexity$(3^n)$.
+}
+
+\details[mode=main; summary=Реализация] {
+\code[language=C++] {
+/*
+ * n is the number of vertices.
+ * edges is the list of edges (0-indexed).
+ * For each subset of vertices of the graph returns it's chromatic number.
+ */
+std::vector<int> chromatic_number(int n, const std::vector<std::pair<int, int>> &edges) {
+    std::vector<int> adj(n);
+    for (const auto &[v, u] : edges) {
+        adj[v] |= (1 << u);
+        adj[u] |= (1 << v);
+    }
+
+    const int M = (1 << n);
+    std::vector<bool> independed(M, true);
+    std::vector<int> chromatic(M, n);
+    chromatic[0] = 0;
+
+    for (int mask = 1; mask < M; mask++) {
+        for (int v = 0; v < n; v++) {
+            if ((mask >> v & 1) && (adj[v] & mask) != 0) {
+                independed[mask] = false;
+                break;
+            }
+        }
+        for (int s = mask; s > 0; s = (s - 1) & mask) {
+            if (independed[s]) {
+                chromatic[mask] = std::min(chromatic[mask], chromatic[mask ^ s] + 1);
+            }
+        }
+    }
+    return chromatic;
+}
+}
+}
+
+\center[] {<h2>Быстрый алгорим</h2>}
+
+\details[mode=main; summary=Включения и исключения] {
+    Сначала рассмотрим формулу, помогающую решить искомую задачу.
+    
+    Пусть даны $m$ множеств $S_1$, $\ldots$, $S_m$, являющихся подмножествами $G = \{1, \ldots, n\}$. Тогда количество элементов $x \in [1, n]$, не принадлежащих ни одному из этих множеств равно:
+    $$
+    \sum\limits_{X \subseteq \{1, \ldots, m\}} (-1)^{|X|} \Big|\bigcap\limits_{i \in X} S_i \Big|
+    $$
+    Здесь $X$ может быть пустым множеством. В этом случае считаем, что $\bigcap S_i = G$.
+
+    \details[summary=Доказательство] {
+        Рассмотрим вклад элемента $x \in [1, n]$ в эту сумму. Пусть он содержится в $k$ множествах $S_i$. Тогда вклад этого элемента равен:
+        $$
+        \sum\limits_{t=0}^k (-1)^t {k\choose t}
+        $$
+        Эта сумма равна $0$, если $k > 0$ и равна $1$, если $k = 0$.\qed
+    }
+}
+
+\details[mode=main; summary=Set cover] {
+    Сформулируем ещё одну, потенциально полезную задачу , помогающую решить искомую. Пусть даны множества $S_1$, $\ldots$, $S_m$, являющиеся подможествами $G = \{1, \ldots, n\}$. Так же, пусть дано число $k$. Назовём $k$-покрытием множества $G$, набор множеств $S_{a_1}$, $\ldots$, $S_{a_k}$ (в дальнейшем назовём этот набор кортежем), что:
+    $$
+    \bigcup\limits_{i=1}^k S_{a_i} = G
+    $$
+    Требуется найти количество $k$-покрытий множества $G$.
+    
+    Пусть $f(X)$~--- количество множеств $S_i$, не пересекающихся с $X$. Оказывается, что количество $k$-покрытий равно следующей величине:
+    $$
+    \sum\limits_{X \subseteq G} (-1)^{|X|} f(X)^k
+    $$
+    \details[summary=Доказательство] {
+        Эта формула является нетрудным следствием предыдущей. Пусть $g(i)$~--- количество кортежей, не содержащих $i$. Тогда нам надо посчитать количество кортежей, которые не содержатся ни в одном из $g(X)$.
+        
+        Нетрудно видеть, что $\big|g(i_1) \cap \ldots \cap g(i_m)\big| = f(X)^k$, где $X = \{i_1, \ldots, i_m\}$. Тогда, если в такой формулировке записать искомую формулу через предыдущую, то получиться тоже самое.\qed
+    }
+}
+
+\details[mode=main; summary=Теория] {
+    Зная решение задачи \<<set cover\>> уже легко найти хроматическое число графа. В качестве $S_i$ в этом случае выступают независимые множества исходного графа. Поэтому достаточно по множеству вершин находить количество независимых множеств, не содержащих ни одну вершину из множества. Такую величину можно найти с помощью динамики по подмножествам за \complexity$(2^n)$.
+    
+    Теперь остаётся только перебирать ответ $k$ , пока ответ на задачу \<<set cover\>> не станет ненулевым. По мере вычислений могут возникать большие числа. Чтобы решить эту проблему, достаточно считать эти величины по случайному простому модулю, тогда вероятность, что ответ получится равным нулю, когда на самом деле это не так, очень маленькая (порядка $\frac{1}{\mathrm{mod}}$).
+    
+    Для восстановления самой раскраски далее понадобится для каждого подмножества вершин графа найти хроматическое число (как мы делали в наивном алгоритме). Но зная это решение, нетрудно заметить, что при переборе ответа, чтобы для каждой маски проверить, что хроматическое число не превосходит ответ, достаточно посчитать сумму описанных выше величин, по всем подмаскам всех масок. Это известная задача, которую можно решить за \complexity$(2^n n)$.
+}
+
+\details[mode=main; summary=Время работы] {
+    Если нужно найти только хроматическое число графа, то решение работает за \complexity$(2^n n)$ из-за перебора ответа. Ответ так же можно найти бинпоиском, что ускорит решение до \complexity$(2^n \log n)$, но это не является очень эффективной отимизацией.
+    
+    Если нужно найти хроматическое число для каждого подмножества вершин, то решение замедляется в $n$ раз из-за суммы по подмаскам, что приводит к \complexity$(2^n n^2)$.
+}
+
+\details[mode=main; summary=Реализация] {
+    Ниже приведена реализация, работающая за \complexity$(2^n n^2)$, находящая ответ для каждого подмножества вершин. Но её нетрудно переделать для поиска хроматического числа только исходного графа, чтобы она работала за \complexity$(2^n n)$ или \complexity$(2^n \log n)$. Это остаётся читателю, в качестве лёгкого упражнения.
+\code[language=C++] {
+/*
+ * n is the number of vertices.
+ * edges is the list of edges (0-indexed).
+ * For each subset of vertices of the graph returns it's chromatic number.
+ */
+std::vector<int> chromatic_number(int n, const std::vector<std::pair<int, int>> &edges) {
+    std::vector<int> adj(n);
+    for (const auto &[v, u] : edges) {
+        adj[v] |= (1 << u);
+        adj[u] |= (1 << v);
+    }
+
+    constexpr int MOD = 998244353;
+    const int M = (1 << n);
+    std::vector<int> independed_subsets(M);
+    independed_subsets[0] = 1;
+
+    for (int mask = 1; mask < M; mask++) {
+        int v = __builtin_ctz(mask);
+        independed_subsets[mask] = independed_subsets[mask ^ (1 << v)]
+                                 + independed_subsets[(mask ^ (1 << v)) & ~adj[v]];
+        if (independed_subsets[mask] >= MOD) {
+            independed_subsets[mask] -= MOD;
+        }
+    }
+
+    std::vector<int> value(M);
+    for (int mask = 0; mask < M; mask++) {
+        value[mask] = (n - __builtin_popcount(mask)) % 2 == 0 ? 1 : MOD - 1;
+    }
+
+    std::vector<int> chromatic(M, n);
+    for (int x = 0; x < n && chromatic.back() == n; x++) {
+        auto subset_sum = value;
+        for (int bit = 0; bit < n; bit++) {
+            for (int mask = 0; mask < M; mask++) {
+                if (mask >> bit & 1) {
+                    subset_sum[mask] += subset_sum[mask ^ (1 << bit)];
+                    if (subset_sum[mask] >= MOD) {
+                        subset_sum[mask] -= MOD;
+                    }
+                }
+            }
+        }
+
+        for (int mask = 0; mask < M; mask++) {
+            if (chromatic[mask] == n && subset_sum[mask] != 0) {
+                chromatic[mask] = x;
+            }
+        }
+
+        for (int mask = 0; mask < M; mask++) {
+            value[mask] = static_cast<int64_t>(value[mask]) * independed_subsets[mask] % MOD;
+        }
+    }
+    return chromatic;
+}
+}
+}
+
+\center[] {<h2>Восстановление раскраски</h2>}
+
+\details[mode=main; summary=Теория] {
+    Используя алгоритм выше, для каждого подмножества надём хроматическое число. Тогда ответ восстанавливается очень легко: перебираем множество вершин, которые будут покрашены в первый цвет, проверяем что оно независимое и, что остальные вершины можно покрасить на один цвет меньше, и красим эти вершины в первый цвет. Продолжаем делать тоже самое, пока не покрасим все вершины.
+    
+    При реализации этого алгоритма я рекомендую перебирать не множество вершин, которые будут покрашены в первый цвет, а множество вершин, которые не будут покрашены в первый цвет. В этом случае этот алгоритм можно реализовать за один перебор всех подмножеств от больших к меньшим.
+}
+
+\details[mode=main; summary=Время работы] {
+    Время работы алгоритма, очевидно, совпадает с поиском хроматического числа для каждого подмножетсва вершин, то есть составляет \complexity$(2^n n^2)$.
+}
+
+\details[mode=main; summary=Реализация] {
+\code[language=C++] {
+/*
+ * n is the number of vertices.
+ * edges is the list of edges (0-indexed).
+ * Returns color of each vertex (0-indexed).
+ */
+std::vector<int> find_coloring(int n, const std::vector<std::pair<int, int>> &edges) {
+    std::vector<int> adj(n);
+    for (const auto &[v, u] : edges) {
+        adj[v] |= (1 << u);
+        adj[u] |= (1 << v);
+    }
+
+    const int M = (1 << n);
+    std::vector<bool> independed(M, true);
+    for (int mask = 1; mask < M; mask++) {
+        for (int v = 0; v < n; v++) {
+            if ((mask >> v & 1) && (mask & adj[v]) != 0) {
+                independed[mask] = false;
+                break;
+            }
+        }
+    }
+
+    auto chromatic = chromatic_number(n, edges);
+    int free_color = 0, vset = M - 1;
+    std::vector<int> color(n, -1);
+
+    for (int mask = M - 1; mask >= 0; mask--) {
+        if ((mask & vset) == mask && chromatic[mask] == chromatic[vset] - 1 && independed[vset ^ mask]) {
+            for (int v = 0; v < n; v++) {
+                if ((vset ^ mask) >> v & 1) {
+                    color[v] = free_color;
+                }
+            }
+            vset = mask;
+            free_color++;
+        }
+    }
+
+    assert(vset == 0);
+    return color;
+}
+}
+}
+
+\center[] {<h2>Приложения</h2>}
+
+\details[mode=main; summary=Задачи] {
+    \item[] {\link[href=https://atcoder.jp/contests/arc171/tasks/arc171_d]{Atcoder ARC171-D}}
+}

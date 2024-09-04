@@ -1,34 +1,26 @@
 {
-    "Структуры данных": {
-        "Дерево Фенвика": {
-            "code_path": "Data structures/binary_indexed_tree.cpp",
-            "html_path": "binary_indexed_tree"
-        },
-        "Структуры данных": {
-            "Дерево Фенвика": {
-                "code_path": "Data structures/binary_indexed_tree.cpp",
-                "html_path": "binary_indexed_tree"
-            }
-        }
-    },
-    "Строки": {
-        "Префикс функция": {
-            "code_path": "Strings/prefix_function.cpp",
-            "html_path": "prefix_function"
-        },
-        "N функция": {
-            "code_path": "Strings/z_function.cpp",
-            "html_path": "z_function"
-        },
-        "Манакер (поиск палиндромов)": {
-            "code_path": "Strings/manacher.cpp",
-            "html_path": "manacher"
-        }
-    },
-    "Свёртки и многочлены": {
-        "AND свёртка": {
-            "code_path": "Convolutions/and_convolution.cpp",
-            "html_path": "and_convolution"
-        }
-    }
+  "Графы": {
+    "Лемма Холла": "halls-theorem",
+    "КСС": "scc",
+    "КСС ofline": "scc-ofline",
+    "Дп на деревьях": "dp-on-trees",
+    "Хроматическое число": "chromatic-number"
+  },
+  "Строки": {
+    "Xor-friendly хеширование": "xor-friendly-hashing"
+  },
+  "Математика": {
+    "Floor сумма": "floor-sum"
+  },
+  "Комбинаторика": {
+    "Скобочные последовательности": "combinatorics-bracket-sequences",
+    "Деревья": "combinatorics-on-trees"
+  },
+  "Многочлены": {
+    "Свёртка online": "convolution-online",
+    "Интерполяция": "polynomial-interpolation"
+  },
+  "Производящие функции": {
+    "Примеры задач": "ogf-egf-problems"
+  }
 }

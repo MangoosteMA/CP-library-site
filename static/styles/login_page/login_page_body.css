@@ -94,11 +94,19 @@
 }
 
 .register-link-div {
-    margin-top: 15px;
     text-align: right;
 }
 
 .register-link {
     font-family: var(--base-font-family);
     color: var(--base-white-font-color);
+}
+
+.error-div {
+    height: 15px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 13px;
+    color: red;
+    font-family: var(--base-font-family);
 }

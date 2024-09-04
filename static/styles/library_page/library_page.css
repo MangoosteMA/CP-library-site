@@ -1,1 +1,28 @@
 @import "../base_styles.css";
+
+.library-edit-button {
+    display: none;
+    background-color: var(--base-white-font-color);
+    border: none;
+    text-align: center;
+    margin-left: auto;
+    float: right;
+    margin-right: 20px;
+    width: 50px;
+    padding: 0px;
+    font-size: 13px;
+    height: 15px;
+    line-height: 15px;
+    border-radius: 5px;
+    font-weight: 500;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.library-edit-button:hover {
+    background-color: white;
+    cursor: pointer;
+}
+
+.library-edit-button:active {
+    background-color: var(--base-white-font-color);
+}

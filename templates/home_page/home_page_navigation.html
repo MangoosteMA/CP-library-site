@@ -5,11 +5,28 @@
         <a href="/" class="title-link">Mangooste</a>
     </div>
     <div class="options-div">
-        <a href="/library" class="option-link">Библиотека</a>
-        <a href="/apps" class="option-link option-last-link">Приложения</a>
+        <span class="option-link-span">
+            <a href="/library" class="option-link">Библиотека</a>
+        </span>
+        <span class="option-last-link-span">
+            <a href="/apps/graph-editor" class="option-link">Редактор</a>
+        </span>
     </div>
     <div class="sing-in-up-div">
-        <a href="/login" class="sign-in-up-link">Вход / Регистрация</a>
+        {% if loggedIn %}
+            <a onclick="logOut()" class="sign-in-up-link log-out-link">{{ username }}</a>
+            <script>
+                function logOut() {
+                    fetch("/log-out", { method: "POST", }).then(response => {
+                        return response.text()
+                    }).then(() => {
+                        location.reload();
+                    });
+                }
+            </script>
+        {% else %}
+            <a href="/login" class="sign-in-up-link">Вход / Регистрация</a>
+        {% endif %}
     </div>
 </nav>
 

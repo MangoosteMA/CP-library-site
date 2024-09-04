@@ -2,25 +2,60 @@
 
 <div class="half-half-div">
     <div class="left-half-div">
-        <div class="library-title-div" style="padding-bottom: 0;">{{ filePath }}</div>
+        <div class="library-title-div" style="padding-bottom: 0;">{{ htmlName }}</div>
+        <div class="library-editor-outer">
+            <div class="editor-buttons-holder">
+                <button class="editor-button" onclick="panelSave()">сохранить</button>
+                <button class="editor-button" onclick="panelExit()">выйти</button>
+                <button class="editor-button" onclick="panelRename()">переименовать</button>
+            </div>
 
-        <div class="edit-outside-div">
-            <div class="edit-background-div" id="editor-back"></div>
-            <textarea class="edit-editable-textarea" id="editor">{{ mtexData }}</textarea>
-        </div>
+            <div class="panel-rename-div" id="panel-rename-div" style="display: none;">
+                <form id="panel-rename-form">
+                    <table>
+                        <tr>
+                            <td><span>Html name:</span></td>
+                            <td><input type="text" name="htmlName" value="{{ htmlName }}"></td>
+                        </tr>
+                        <tr>
+                            <td><span>File name:</span></td>
+                            <td><input type="text" name="fileName" value="{{ fileName }}"></td>
+                        </tr>
+                        <tr>
+                            <td><span>File path:</span></td>
+                            <td><input type="text" name="filePath" value="{{ filePath }}"></td>
+                        </tr>
+                    </table>
+                </form>
+                <button class="panel-rename-button" onclick="applyRename('{{ htmlName }}')">
+                    Применить
+                </button>
+                <button class="panel-rename-button" onclick="cancelRename()">
+                    Отменить
+                </button>
+            </div>
 
-        <div class="cancel-save-buttons-div">
-            <button class="cancel-save-button save-button" onclick="saveChangedData()">Save</button>
-            <button class="cancel-save-button save-and-exit-button" onclick="saveChangedDataAndExit()">Save &amp; Exit</button>
-            <button class="cancel-save-button exit-button" onclick="location.reload();">Exit</button>
+            <div class="library-editor" id="library-editor">
+                <div class="editor-lines-indexes-div" id="lines-holder-div"></div>
+                <div class="editor-inside-container">
+                    <div class="editor-textarea-background" id="main-textarea-background"></div>
+                    <textarea class="editor-textarea" id="main-textarea">{{ mtexData | safe }}</textarea>
+                </div>
+            </div>
         </div>
     </div>
     <div class="right-half-div">
-        <div class="library-body-inside-div" id="admin-fileinfo-div">
+        <div class="library-body-inside-div admin-fileinfo-div" id="admin-fileinfo-div">
             {{ fileInfo | safe }}
         </div>
     </div>
 </div>
 
-<script src="{{ url_for('static', filename='scripts/library_page/library_editor.js') }}" type="text/javascript"></script>
-<script src="{{ url_for('static', filename='scripts/library_page/library_file_info_admin.js') }}" type="text/javascript"></script>
+<script src="{{ url_for('static', filename='scripts/library_page/text_coloring_rules/text_modifier.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/library_page/text_coloring_rules/coloring_rule_interface.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/library_page/text_coloring_rules/bracket_coloring_rule.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/library_page/text_coloring_rules/key_words_coloring_rule.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/library_page/input_preprocessor.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/library_page/editor.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/library_page/library_file_info_admin.js') }}" type="module"></script>
+<script src="{{ url_for('static', filename='scripts/library_page/panel.js') }}"></script>

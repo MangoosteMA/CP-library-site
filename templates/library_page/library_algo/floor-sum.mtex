@@ -1,0 +1,198 @@
+\title[]{Floor сумма}
+
+\details[mode=main; summary=Введение] {
+    Хочется по числам $k \ge 0$, $b \ge 0$, $n \ge 0$ и $m > 0$ находить такую сумму эффективно:
+    $$
+    \sum\limits_{x=0}^{n-1} \Big\lfloor \frac{kx + b}{m} \Big\rfloor
+    $$
+}
+
+\details[mode=main; summary=Теория] {
+    Сначала рассмотрим тривиальные случаи:
+
+    \itemize[] {
+        \item[] {
+            Если $k = 0$, то искомая сумма равна $n\big\lfloor \frac{b}{m} \big\rfloor$.
+        }
+        \item[] {
+            Если $k \ge m$ или $b \ge m$, то задачу можно свести к случаю $b, k \in [0, m)$ следующим образом:
+            $$
+            \Big\lfloor \frac{kx + b}{m} \Big\rfloor = 
+            \Big\lfloor \frac{k}{m} \Big\rfloor x +
+            \Big\lfloor \frac{b}{m} \Big\rfloor +
+            \Big\lfloor \frac{(k \bmod m) x + (b \bmod m)}{m} \Big\rfloor
+            \implies
+            $$
+            $$
+            \implies
+            \sum\limits_{x=0}^{n-1} \Big\lfloor \frac{kx + b}{m} \Big\rfloor =
+            \frac{n(n - 1)}2 \Big\lfloor \frac{k}{m} \Big\rfloor + n\Big\lfloor \frac{b}{m} \Big\rfloor +
+            \sum\limits_{x=0}^{n-1} \Big\lfloor \frac{(k \bmod m) x + (b \bmod m)}{m} \Big\rfloor
+            $$
+        }
+    }
+    
+    Таким образом осталось разобраться со случаем $k \in (0, m)$ и $b \in [0, m)$.
+    
+    Если мы будем воспринимать $\big\lfloor \frac{kx + b}{m} \big\rfloor$, как количество положительных чисел кратных $m$, не превосходящих $kx + b$, то задачу можно переформулироть следующих образом:
+    
+    \itemize[] {
+        \item[] {
+            Посчитать количество точек  $(x, m \cdot y)$ с целочислеными координатами под или на прямой $kx + b$, такими, что $x \in [0, n)$ и $y > 0$.
+        }
+    }
+    
+    Искомая величина суммирует эти точки по каждой $x$ координате. Но эту величину так же можно просуммировать по $y$ координате. Давайте зафиксируем $y$ координату. Пусть она равна $y \cdot m$. Минимальное значение $x_{\mathrm{min}}$, при котором $kx_{\mathrm{min}} + b \ge ym$ можно вычислить следующим образом:
+    $$
+    kx_{\mathrm{min}} + b \ge ym \implies x_{\mathrm{min}} \ge \frac{ym - b}{k} \implies
+    $$
+    $$
+    \implies
+    x_{\mathrm{min}} = \Big\lfloor \frac{ym + (k - b - 1)}{k} \Big\rfloor
+    $$
+    Максимальное значение $y$ координаты $y_{\mathrm{max}}$, которое надо учесть можно вычислить следующим образом:
+    $$
+    k(n - 1) + b \ge y_{\mathrm{max}}m \implies
+    y_{\mathrm{max}} = \Big\lfloor \frac{k(n - 1) + b}{m} \Big\rfloor
+    $$
+    Получаем, что искомая сумма равна:
+    $$
+    \sum\limits_{y=1}^{y_{\mathrm{max}}} n - \Big\lfloor \frac{ym + (k - b - 1)}{k} \Big\rfloor =
+    $$
+    $$
+    =
+    ny_{\mathrm{max}} - \sum\limits_{y=0}^{y_{\mathrm{max}} - 1} \Big\lfloor \frac{ym + (m + k - b - 1)}{k} \Big\rfloor
+    $$
+    Таким образом свели задачу к аналогичной.
+}
+
+\details[mode=main; summary=Время работы] {
+    Будем следить за парой $(k, m)$. Если $k=0$, то это просто формула, то есть задача решается за \complexity$(1)$, иначе, если сразу же обработать случай $k \ge m$, то задача сведётся к паре $(m \bmod k, k)$. Таким образом, этот алгоритм работает за такое же время, как и алгоритм Евклида для чисел $k$ и $m$.
+    
+    То есть время работы алгоритма можно оценить, как \complexity$(\log \min(k, m))$.
+}
+
+\details[mode=main; summary=Реализация] {
+\code[language=C++] {
+/*
+ ! WARNING: careful with overflow. Don't forget to specify large enough type T.
+ * Returns sum_{x = 0}^{n - 1} floor((kx + b) / m).
+ * Require: k >= 0, b >= 0, m > 0, n >= 0.
+ */
+template<typename T>
+T floor_sum(T k, T b, T m, T n) {
+    if (k == 0) {
+        return (b / m) * n;
+    }
+    if (k >= m || b >= m) {
+        return n * (n - 1) / 2 * (k / m) + n * (b / m) + floor_sum(k % m, b % m, m, n);
+    }
+    T ymax = (k * (n - 1) + b) / m;
+    return n * ymax - floor_sum(m, m + k - b - 1, k, ymax);
+}
+}
+}
+
+\center[]{<h2>Mod сумма</h2>}
+
+\details[mode=main; summary=Введение] {
+    Хочется по числам $k$, $b$, $m > 0$ и $n \ge 0$ находить такую сумму:
+    $$
+    \sum\limits_{x=0}^{n-1} \Big( (kx + b) \bmod m \Big)
+    $$
+}
+
+\details[mode=main; summary=Теория] {
+    Заметим следующий факт:
+    $$
+    x \bmod m = x - m \Big\lfloor \frac{x}{m} \Big\rfloor
+    $$
+    Получаем, что искомая сумма равна:
+    $$
+    \sum\limits_{x=0}^{n-1} \Big(kx + b - m \Big\lfloor \frac{kx + b}{m} \Big\rfloor\Big)=
+    $$
+    $$
+    =
+    \frac{n(n-1)}{2}k + nb - m\sum\limits_{x=0}^{n-1} \Big\lfloor \frac{kx + b}{m} \Big\rfloor
+    $$
+    Получается, что эту величину можно найти через floor сумму.
+}
+
+\details[mode=main; summary=Реализация] {
+\code[language=C++] {
+/*
+ ! WARNING: careful with overflow. Don't forget to specify large enough to fit floor_sum type T.
+ * Returns sum_{x = 0}^{n - 1} (kx + b) % m.
+ * Require: m > 0, n >= 0.
+ */
+template<typename T>
+T mod_sum(T k, T b, ll m, ll n) {
+    k = (k % m + m) % m;
+    b = (b % m + m) % m;
+    return n * (n - 1) / 2 * k + n * b - m * floor_sum(k, b, m, n);
+}
+}
+}
+
+\center[]{<h2>Количество остатков на префиксе</h2>}
+
+\details[mode=main; summary=Введение] {
+    Хочется по числам $k$, $b$, $v$, $m > 0$ и $n \ge 0$ находить количество $x$, удовлетворяющих следующим условиям:
+    
+    \itemize[] {
+        \item[] {
+            $0 \le x < n$
+        }
+        \item[] {
+            $(kx + b) \bmod m \le v$
+        }
+    }
+}
+
+\details[mode=main; summary=Теория] {
+    Рассмотрим величины $r_1 = (kx + b) \bmod m$ и $r_2 = (kx + b - v - 1) \bmod m$. Заметим, что если $r_1 > v$, то $r_2 \le r_1$, а иначе $r_2 > r_1$. Таким образом, в первом случае $r_1 - r_2 = v + 1$, а в другом случае $r_1 - r_2 = v + 1 - m$.
+    
+    Обозначим за $c$ ответ на искомую задачу. Так же, пусть:
+    $$
+    S_1 = \sum\limits_{x=0}^{n-1} \Big((kx + b) \bmod m \Big)
+    $$
+    $$
+    S_2 = \sum\limits_{x=0}^{n-1} \Big((kx + b - v - 1) \bmod m \Big)
+    $$
+    Объединив всё выше перечисленное, получаем:
+    $$
+    S_1 - S_2 = n(v + 1) - cm
+    $$
+    $$
+    c = \frac{S_2 - S_1 + n(v + 1)}{m}
+    $$
+    Таким образом, данную задачу можно решить через mod сумму.
+}
+
+\details[mode=main; summary=Реализация] {
+\code[language=C++] {
+/*
+ ! WARNING: WARNING: careful with overflow. Don't forget to specify large enough to fit floor_sum type T.
+ * Returns the number of 0 <= x < n, such that (kx + b) mod m <= v.
+ * Require: m > 0, n >= 0.
+ */
+template<typename T>
+T count_remainders(T k, T b, T v, T m, T n) {
+    if (v < 0) {
+        return 0;
+    }
+    if (v >= m - 1) {
+        return n;
+    }
+    return (mod_sum<T>(k, b - v - 1, m, n) - mod_sum<T>(k, b, m, n) + n * (v + 1)) / m;
+}
+}
+}
+
+\center[] {<h2>Приложения</h2>}
+
+\details[mode=main; summary=Задачи] {
+    \item[] {\link[href=https://judge.yosupo.jp/problem/sum_of_floor_of_linear]{Yosupo library checker (Sum of floor of linear)}}
+    \item[] {\link[href=https://atcoder.jp/contests/arc111/tasks/arc111_e]{Atcoder ARC111-E}}
+    \item[] {\link[href=https://atcoder.jp/contests/arc182/tasks/arc182_e]{Atcoder ARC182-E}}
+}

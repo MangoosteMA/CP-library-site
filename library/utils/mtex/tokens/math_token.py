@@ -3,12 +3,12 @@ from library.utils.html import HtmlBuilder, FixedHtmlItem
 
 '''
 Structure:
-\({insideData}\)
+${insideData}$
 '''
 
 class MathToken(TokenInterface):
-    HEADER = '\\('
-    FOOTER = '\\)'
+    HEADER = '$'
+    FOOTER = '$'
     NEXT_LINE_AVAILABLE = False
 
     def __init__(self, parameters: dict[str, str]):

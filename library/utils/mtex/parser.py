@@ -1,6 +1,6 @@
 from .preprocessor      import MtexPreprocessor
 from .tokenizer         import MtexTokenizer
-from .tokens            import ItemToken, ListTokenInterface, TextToken
+from .tokens            import ItemToken, TextToken
 from library.utils.html import HtmlBuilder, FixedHtmlItem
 
 class MtexParser:
@@ -14,21 +14,14 @@ class MtexParser:
             if parentTokenClass == TextToken:
                 return None
 
-            childId = 0
             root = HtmlBuilder()
-            while True:
+            while not tokenizer.empty():
                 token = tokenizer.nextToken()
                 if token is None:
                     break
 
                 childHtml = compileDfs(type(token))
-                if parentTokenClass is not None and issubclass(parentTokenClass, ListTokenInterface):
-                    if not isinstance(token, ItemToken):
-                        continue
-                    parentTokenClass.setIdForItem(token, childId)
-
                 root.addEdge(FixedHtmlItem(nextLineAvailable=False), destNode=token.apply(childHtml))
-                childId += 1
 
             return root
 

@@ -8,7 +8,7 @@
 .body-div {
     margin-left: auto;
     margin-right: auto;
-    width: 900px;
+    width: 1000px;
     max-width: 95%;
     margin-top: 40px;
     margin-bottom: 20px;
@@ -22,10 +22,16 @@
 }
 
 .library-body-inside-div {
-    margin-left: auto;
-    margin-right: auto;
-    margin-left: 90px;
-    margin-right: 90px;
+    margin-left: calc(100px - var(--default-tab-size-main));
+    margin-right: 100px;
+    min-height: 15px;
+    overflow: scroll;
+}
+
+.library-body-inside-div > * {
+    font-family: var(--base-font-family);
+    color: var(--base-white-font-color);
+    word-wrap: break-word;
 }
 
 .library-title-div {
@@ -34,16 +40,33 @@
     font-weight: 800;
     color: var(--base-white-font-color);
     padding-bottom: 10px;
+    display: block;
+    padding-left: var(--default-tab-size-main);
 }
 
 summary {
     color: var(--base-white-font-color);
     font-weight: 600;
+    margin: 0px;
+    padding: 0px;
+    margin-bottom: 5px;
+}
+
+details[open] summary {
+    margin: 0px;
+    margin-bottom: 10px;
+}
+
+details {
+    font-size: 17px;
+}
+
+details[open] {
     margin-bottom: 10px;
 }
 
 .main-summary {
-    font-size: 21px;
+    font-size: 20px;
 }
 
 .simple-summary {
@@ -54,13 +77,15 @@ summary {
     display: inline-flex;
     align-items: center;
     height: 100%;
+    line-height: 100%;
     margin-left: 10px;
     color: var(--base-font-color);
-    font-size: 20px;
+    font-size: 15px;
 }
 
 .code-details-div {
-    margin-top: 5px;
+    margin-top: 12px;
+    margin-bottom: 15px;
     font-weight: 600;
     background-color: var(--base-white-font-color);
     box-shadow: 0px 0px 1px 1px rgba(255, 255, 255, 0.7);
@@ -72,13 +97,13 @@ summary {
 }
 
 .code-navigation-div {
-    height: 20px;
+    height: 18px;
     margin-bottom: 2px;
 }
 
 .copy-code-button {
     float: right;
-    font-size: 11px;
+    font-size: 10px;
     background-color: white;
     border: 1px solid var(--base-font-color);
     border-radius: 5px;
@@ -108,16 +133,12 @@ summary {
     padding-right: 5px;
 }
 
-details {
-    padding: 0px;
-    font-size: 17px;
-    margin-top: 5px;
-}
-
 .main-details {
     margin-top: 7px;
-    transform: translateX(calc(0px - var(--default-tab-size-main)));
-    width: calc(100% + var(--default-tab-size-main));
+}
+
+.link {
+    color: inherit;
 }
 
 pre {
@@ -127,7 +148,8 @@ pre {
 
 code {
     border-radius: 10px;
-    font-size: 16px;
+    font-size: 15px;
+    max-height: 400px;
 }
 
 .add-tab-div {
@@ -139,4 +161,15 @@ code {
 .center-align-div {
     text-align: center;
     align-items: center;
+    padding-left: var(--default-tab-size-main);
 }
+
+li {
+    margin-bottom: 8px;
+}
+
+ol, ul {
+    margin: 0;
+    padding-left: 25px;
+}
+
