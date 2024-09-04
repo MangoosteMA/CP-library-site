@@ -59,7 +59,7 @@ class UsersHandler:
     def __loadUsers(self) -> None:
         self.storagePath.parent.mkdir(exist_ok=True, parents=True)
         self.users = []
-        with self.storagePath.open('a+') as database:
+        with self.storagePath.open('r') as database:
             for userInfo in database.read().split('\n'):
                 if len(userInfo) == 0:
                     continue
