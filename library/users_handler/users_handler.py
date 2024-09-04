@@ -58,7 +58,7 @@ class UsersHandler:
 # Private:
     def __loadUsers(self) -> None:
         self.users = []
-        with self.storagePath.open('r') as database:
+        with self.storagePath.open('a+') as database:
             for userInfo in database.read().split('\n'):
                 if len(userInfo) == 0:
                     continue
