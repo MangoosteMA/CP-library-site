@@ -7,16 +7,26 @@ import json
 class PapersContainer:
     '''
     Variables:
+    title:       str
+    url:         str
     configPath:  str
     storagePath: str
     papers:      list[Paper]
     configStr:   str
     '''
 
-    def __init__(self, configPath: str, storagePath: str):
+    def __init__(self, title: str, url: str, configPath: str, storagePath: str):
+        self.title = title
+        self.url = url
         self.configPath = configPath
         self.storagePath = storagePath
         self.__loadPapers(True)
+
+    def getTitle(self) -> str:
+        return self.title
+
+    def getUrl(self) -> str:
+        return self.url
 
     def getPapers(self) -> list[Paper]:
         return self.papers

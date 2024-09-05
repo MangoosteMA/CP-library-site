@@ -1,20 +1,23 @@
-from backend.api import buildLibraryBodyHtml
-from backend.api import buildScheduleHtml
-from backend.api import papersContainer
-from backend.api import usersHandler
+from backend.api              import buildLibraryBodyHtml
+from backend.api              import buildScheduleHtml
+from backend.api              import papersContainerAlgo
+from backend.api              import papersContainerDev
+from backend.api              import usersHandler
 
-from flask       import abort
-from flask       import Blueprint
-from flask       import redirect
-from flask       import render_template
-from flask       import request
-from flask       import send_file
-from flask       import session
+from library.papers_container import PapersContainer
 
-from dataclasses import dataclass
-from pathlib     import Path
-from secrets     import token_urlsafe
-from typing      import Optional
+from flask                    import abort
+from flask                    import Blueprint
+from flask                    import redirect
+from flask                    import render_template
+from flask                    import request
+from flask                    import send_file
+from flask                    import session
+
+from dataclasses              import dataclass
+from pathlib                  import Path
+from secrets                  import token_urlsafe
+from typing                   import Optional
 
 view = Blueprint('views', __name__)
 
@@ -115,8 +118,7 @@ def loggedOutPage():
     logOut()
     return homePage()
 
-@view.route('/library', methods=['GET', 'POST'])
-def libraryPage():
+def libraryPage(papersContainer: PapersContainer):
     if request.method == 'POST' and getSessionInfo().admin:
         try:
             papersContainer.updateConfig(request.data.decode())
@@ -124,7 +126,7 @@ def libraryPage():
             abort(406)
 
     try:
-        libraryBody = buildLibraryBodyHtml(getSessionInfo().admin)
+        libraryBody = buildLibraryBodyHtml(papersContainer, getSessionInfo().admin)
         libraryConfig = papersContainer.getConfig()
     except BaseException as exc:
         print(f'Failed to build library html body. Reason: {exc}')
@@ -133,7 +135,15 @@ def libraryPage():
 
     return renderTemplate('library_page/library_page.html',
                            libraryBody=libraryBody,
-                           configAlgo=libraryConfig)
+                           libraryConfig=libraryConfig)
+
+@view.route('/library-algo', methods=['GET', 'POST'])
+def libraryPageAlgo():
+    return libraryPage(papersContainerAlgo)
+
+@view.route('/library-dev', methods=['GET', 'POST'])
+def libraryPageDev():
+    return libraryPage(papersContainerDev)
 
 @view.route('/library-algo/<htmlName>', methods=['GET', 'POST'])
 def libraryAlgoPage(htmlName: str):
@@ -142,18 +152,18 @@ def libraryAlgoPage(htmlName: str):
             content = request.get_json()
             method = content['method']
             if method == 'save':
-                papersContainer.compileMtex(htmlName, content['data'])
+                papersContainerAlgo.compileMtex(htmlName, content['data'])
             elif method == 'rename':
-                papersContainer.renamePaper(content['prevHtmlName'], content['htmlName'],
+                papersContainerAlgo.renamePaper(content['prevHtmlName'], content['htmlName'],
                                             content['fileName'], content['filePath'])
                 return ''
 
         return renderTemplate(f'library_page/library_file_info.html',
-                              fileInfo=render_template(papersContainer.getHtmlPath(htmlName)),
+                              fileInfo=render_template(papersContainerAlgo.getHtmlPath(htmlName)),
                               htmlName=htmlName,
-                              fileName=papersContainer.getFileName(htmlName),
-                              filePath=papersContainer.getFilePath(htmlName),
-                              mtexData=papersContainer.getMtexSource(htmlName))
+                              fileName=papersContainerAlgo.getFileName(htmlName),
+                              filePath=papersContainerAlgo.getFilePath(htmlName),
+                              mtexData=papersContainerAlgo.getMtexSource(htmlName))
     except:
         return f'Error happened while handling request to {htmlName}.'
 

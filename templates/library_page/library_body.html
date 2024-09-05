@@ -2,28 +2,13 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/library_page/library_body_admin.css') }}" type="text/css">
 
 <div class="body-div">
-    <!-- <span class="library-span" role="radiogroup" aria-label="library-type" onChange="changeLibrary(event.target.value)">
-        <input class="library-input" name="library-type" type="radio" value="algo" id="algo" checked>
-        <label for="algo">
-            <div class="label-div">
-                Алгоритмы
-            </div>
-        </label>
-        <input class="library-input" name="library-type" type="radio" value="polygon" id="polygon">
-        <label for="polygon">
-            <div class="label-div">
-                Разработка
-            </div>
-        </label>
-    </span> -->
-
     <div id="simple-div">
         {{ libraryBody | safe }}
     </div>
 
     {% if admin %}
         <div style="display: none; margin-top: 30px" id="admin-div">
-            <textarea class="main-textarea" id="main-textarea">{{ configAlgo }}</textarea>
+            <textarea class="main-textarea" id="main-textarea">{{ libraryConfig }}</textarea>
             <button class="save-button" id="save-button">save</button>
         </div>
 
