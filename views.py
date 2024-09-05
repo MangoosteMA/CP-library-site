@@ -180,3 +180,9 @@ def sendFile(image):
         return send_file(path, mimetype='image/gif')
 
     return 'There is not such image ;('
+
+@view.route('/secret/login-secrets')
+def secretLoginSecrets():
+    if getSessionInfo().admin:
+        return f'Regular: {SECRET_REGULAR}\nAdmin: {SECRET_ADMIN}\n'
+    return 'banned!'
