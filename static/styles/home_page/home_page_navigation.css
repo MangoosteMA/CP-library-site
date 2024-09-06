@@ -119,6 +119,7 @@
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.9);
+    clip-path: inset(0px -5px -5px -5px);
     display: none;
     border-left: 2px solid var(--base-white-font-color);
     border-right: 2px solid var(--base-white-font-color);
