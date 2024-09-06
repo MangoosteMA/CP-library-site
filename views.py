@@ -145,27 +145,34 @@ def libraryPageAlgo():
 def libraryPageDev():
     return libraryPage(papersContainerDev)
 
-@view.route('/library-algo/<htmlName>', methods=['GET', 'POST'])
-def libraryAlgoPage(htmlName: str):
+def libraryFileInfoPage(papersContainer: papersContainer, htmlName: str):
     try:
         if request.method == 'POST' and getSessionInfo().admin:
             content = request.get_json()
             method = content['method']
             if method == 'save':
-                papersContainerAlgo.compileMtex(htmlName, content['data'])
+                papersContainer.compileMtex(htmlName, content['data'])
             elif method == 'rename':
-                papersContainerAlgo.renamePaper(content['prevHtmlName'], content['htmlName'],
+                papersContainer.renamePaper(content['prevHtmlName'], content['htmlName'],
                                             content['fileName'], content['filePath'])
                 return ''
 
         return renderTemplate(f'library_page/library_file_info.html',
-                              fileInfo=render_template(papersContainerAlgo.getHtmlPath(htmlName)),
+                              fileInfo=render_template(papersContainer.getHtmlPath(htmlName)),
                               htmlName=htmlName,
-                              fileName=papersContainerAlgo.getFileName(htmlName),
-                              filePath=papersContainerAlgo.getFilePath(htmlName),
-                              mtexData=papersContainerAlgo.getMtexSource(htmlName))
+                              fileName=papersContainer.getFileName(htmlName),
+                              filePath=papersContainer.getFilePath(htmlName),
+                              mtexData=papersContainer.getMtexSource(htmlName))
     except:
         return f'Error happened while handling request to {htmlName}.'
+
+@view.route('/library-algo/<htmlName>', methods=['GET', 'POST'])
+def libraryFileInfoPageAlgo(htmlName: str):
+    return libraryFileInfoPage(papersContainerAlgo, htmlName)
+
+@view.route('/library-dev/<htmlName>', methods=['GET', 'POST'])
+def libraryFileInfoPageAlgo(htmlName: str):
+    return libraryFileInfoPage(papersContainerDev, htmlName)
 
 @view.route('/apps/<app>', methods=['GET'])
 def appsPage(app):
