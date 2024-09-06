@@ -145,7 +145,7 @@ def libraryPageAlgo():
 def libraryPageDev():
     return libraryPage(papersContainerDev)
 
-def libraryFileInfoPage(papersContainer: papersContainer, htmlName: str):
+def libraryFileInfoPage(papersContainer: PapersContainer, htmlName: str):
     try:
         if request.method == 'POST' and getSessionInfo().admin:
             content = request.get_json()
@@ -171,7 +171,7 @@ def libraryFileInfoPageAlgo(htmlName: str):
     return libraryFileInfoPage(papersContainerAlgo, htmlName)
 
 @view.route('/library-dev/<htmlName>', methods=['GET', 'POST'])
-def libraryFileInfoPageAlgo(htmlName: str):
+def libraryFileInfoPageDev(htmlName: str):
     return libraryFileInfoPage(papersContainerDev, htmlName)
 
 @view.route('/apps/<app>', methods=['GET'])
