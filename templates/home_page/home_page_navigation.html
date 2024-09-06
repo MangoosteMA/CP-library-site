@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/home_page/home_page_navigation.css') }}" type="text/css">
 
 <nav class="main-nav" id="main-nav">
@@ -5,12 +6,23 @@
         <a href="/" class="title-link">Mangooste</a>
     </div>
     <div class="options-div">
-        <span class="option-link-span">
-            <a href="/library-algo" class="option-link">Библиотека</a>
-        </span>
-        <span class="option-last-link-span">
-            <a href="/apps/graph-editor" class="option-link">Редактор</a>
-        </span>
+        <div class="option-link-div">
+            <button class="option-button">Библиотека
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="navigation-link-options-div">
+                <a class="option-link" href="/library-algo">Алгоритмы</a>
+                <a class="option-link" href="/library-dev">Разработка</a>
+            </div>
+        </div>
+        <div class="option-link-div">
+            <button class="option-button">Приложения
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="navigation-link-options-div">
+                <a class="option-link" href="/apps/graph-editor">Графы</a>
+            </div>
+        </div>
     </div>
     <div class="sing-in-up-div">
         {% if loggedIn %}
