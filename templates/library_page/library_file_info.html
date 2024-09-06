@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Библиотека</title>
+    {% include "head_template.html" %}
+
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/library_page/library_page.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/library_page/library_body.css') }}" type="text/css">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/library_page/library_file_info.css') }}" type="text/css">
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/contrib/highlight/atom_one_dark.min.css') }}" type="text/css">
-
-    <title>Библиотека</title>
 </head>
 <body>
     {% include "home_page/home_page_navigation.html" %}
