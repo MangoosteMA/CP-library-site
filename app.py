@@ -5,6 +5,7 @@ from views   import view
 app = Flask(__name__)
 app.secret_key = token_hex()
 app.register_blueprint(view, url_prefix='/')
+app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 def main():
     app.run(debug=True, port=1337)
