@@ -9,6 +9,9 @@
   "Строки": {
     "Xor-friendly хеширование": "xor-friendly-hashing"
   },
+  "Структуры данных": {
+    "Disjoint sparse table": "disjoint-sparse-table"
+  },
   "Математика": {
     "Floor сумма": "floor-sum"
   },

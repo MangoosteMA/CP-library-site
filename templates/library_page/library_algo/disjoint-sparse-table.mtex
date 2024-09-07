@@ -1,0 +1,212 @@
+\title[] {Disjoint sparse table}
+
+\details[mode=main; summary=Введение] {
+    Эта структура является несложной модификацией обычного sparse table. Обычный sparse table разбивал отрезок запроса на два возможно пересекающихся отрезка таким образом, что они покрывали весь отрезок запроса. Для таких функций, как gcd, min или max, такое разбиение допустимо, так как факт пересечения отрезков в разбиении не влияет на результат.
+    
+    Допустим, нам надо считать не только минимум на отрезке, но и количество вхождений минимума на этом отрезке. Обычный sparse table не работает, так как при наивной реализации, все минимумы в пересечении отрезков будут посчитаны несколько раз. Но оказывается, что sparse table можно построить немного по-другому, чтобы каждый отрезок разбивался на два непересекающихся, но полностью покрывающих его отрезка. Такое разбиение уже позволяет решать описанную ранее задачу. Более того, как мы увидим далее, оно не теряет эффективность и реализационную простоту.
+    
+    Часто в задачах наличие самой этой структуры не нужно, так как это занимает больше памяти и её хранения можно избежать.
+}
+
+\details[mode=main; summary=Теория] {
+    Пусть дан массив $a$ длины $n$ и запросы $(l_i, r_i)$ для которых надо найти минимум и количество минимумов в массиве $a[l_i:r_i]$. Предполагаем, что запросы даны заранее, так как отвечать на них будет ofline.
+    
+    Напишем разделяйку $\mathrm{solve}(l, r)$, которая будет отвечать на все запросы $(l_i, r_i)$, вложенные в $[l, r]$ (то есть $l \le l_i \le r_i \le r$). Таким образом, чтобы ответить на все запросы, надо вызвать $\mathrm{solve}(1, n)$. Данную разделяйку можно реализовать следующим образом:
+    
+    \itemize[] {
+        \item[] {
+            Если $l=r$, то длина всех оставшихся запросов равна $1$. Такие запросы не очень интересные, поэтому можно предполагать, что на них мы ответили заранее.
+        }
+        \item[] {
+            Иначе, пусть $m = \frac{l+r}{2}$. Вызовем $\mathrm{solve}(l, m)$ и $\mathrm{solve}(m + 1, r)$. После этого, надо ответить на все запросы, которые содержат элементы $m$ и $m + 1$.
+            
+            Предлагается для каждого $l \le i \le m$ найти минимум и количество минимумов на отрезке $a[i : m]$. Это можно сделать за один линейный проход. Аналогичным образом, для каждого $m + 1 \le i \le r$ насчитаем ту же информацию для отрезка $a[m + 1 : i]$.
+            
+            Теперь, ответить на запрос $(l_i, r_i)$, зная эту информаю, можно за \complexity$(1)$.
+        }
+    }
+    
+    По факту, такой способ позволяет разбивать любой отрезок $[l < r]$ на ровно два отрезка, для которых нужную нам информацию легко посчитать.
+    
+    Теперь предположим, что нам нужно узнавать ответы на подобные запросы online (например, последующие действия алгоритма должны зависеть от ответа на предыдущие). Предлагается всю информацию, которую насчитывала разделяйка сохранить. Это решит нашу проблему. Осталось только понять, как это сделать так, чтобы это было приятно писать.
+    
+    Предположим, что $n = 2^k$. Разобьём нашу рекурсию по слоям. Тогда $i$-й слой содержит разбиение массива $a$ на отрезки длины $2^i$ ($[1, 2^i]$, $[2^i + 1, 2^{i + 1}]$, $\ldots$). Для каждого слоя и каждого $i$ посчитаем ту же информацию, что и в разделяйке. Это нетрудно сделать, явно перебрав все отрезки на слою.
+    
+    Теперь рассмотрим запрос $(l_i, r_i)$. Если понять, на каком слое разделяйка бы ответила на этот запрос, то, взяв $l_i$-e и $r_i$-e значения этого слоя, мы бы получили искомое разбиение данного отрезка на две уже посчитанные части. Оказывается понять это не так сложно. Для этого заметим, что при разделении отрезка $[l, r]$ на $i$-м слое, все индексы, у которых $(i - 1)$-й бит равен нулю, попадают в левую половину, а остальные~--- в правую. Поэтому, чтобы найти слой, на котором $l_i$ и $r_i$ попали в разные половины, достаточно найти старший бит, который в $l_i$ и $r_i$ отличается. Это в свою очередь и будет слой, на котором разделяйка бы ответила на этот запрос.
+    
+    \details[summary=Как найти старший отличающийся бит?] {
+        Чтобы найти старший бит, отличающийся в $x$ и $y$ ($x \neq y$), достаточно найти старший бит числа $x \oplus y$ (битовый ксор). Это можно сделать с помощью предподсчёта или функции std::__lg.
+    }
+    
+    Такие несложные махинации позволяют без какой-либо боли хранить строить данную структуру и отвечать на запросы. Обратите внимание, что отрезки длины $1$ всё ещё остались частным случаем, их надо обрабатывать отдельно. Для лучшего понимания описанного, рекомендую ознакомиться с реализацией.
+}
+
+\details[mode=main; summary=Время работы] {
+    Построение данной структуры работает за столько же, за сколько и разделяйка, то есть за \complexity$(n\log n)$, так как сумма длин отрезков на каждом слою рекурсии равна $n$. Из минусов, память в данном алгоритме совпадает со временем. Но, если на запросы не надо отвечать online, то память может быть сокращена до \complexity$(n)$, если обработать каждый слой независимо.
+}
+
+\details[mode=main; summary=Замечание] {
+    Конечно, данный алгоритм позволяет считать более сложные функции от отрезков, но чаще всего о нём удобно думать именно, как о разделяйке. По сути, это даже не совсем честный алгоритм, а скорее техника удобного хранения подобной информации о массиве.
+}
+
+\details[mode=main; summary=Реализация] {
+\code[language=C++] {
+/*
+ * 0-indexed.
+ * T is the data type with:
+     - constructor()
+     - constructor(container::value_type)
+ * merge_t must be commutative.
+ */
+template<typename T, typename merge_t = std::function<T(T, T)>>
+class disjoint_sparse_table {
+private:
+    merge_t merge;
+    std::vector<T> single;
+    std::vector<std::vector<T>> sparse;
+
+public:
+    disjoint_sparse_table(const merge_t &merge) : merge(merge) {}
+
+    template<typename U>
+    disjoint_sparse_table(const U &container, const merge_t &merge)
+        : merge(merge), single(container.begin(), container.end())
+    {
+        int n = container.size();
+        int h = std::__lg(std::max(2, n) - 1) + 1;
+        sparse.resize(h, std::vector<T>(n));
+
+        for (int l = 0; l < h; l++) {
+            int len = (1 << l);
+            for (int m = len; m < n; m += (len << 1)) {
+                sparse[l][m] = T(container[m]);
+                sparse[l][m - 1] = T(container[m - 1]);
+                for (int i = 1; i < len; i++) {
+                    if (m + i < n) {
+                        sparse[l][m + i] = merge(sparse[l][m + i - 1], T(container[m + i]));
+                    }
+                    sparse[l][m - i - 1] = merge(sparse[l][m - i], T(container[m - i - 1]));
+                }
+            }
+        }
+    }
+
+    // Returns the result of merging elements on the interval [l, r).
+    T query(int l, int r) {
+        assert(l < r);
+        if (r - l == 1) {
+            return T(single[l]);
+        }
+        r--;
+        int level = std::__lg(l ^ r);
+        return merge(sparse[level][l], sparse[level][r]);
+    }
+};
+}
+}
+
+\center[] {<h2>Приложения</h2>}
+
+\details[mode=main; summary=Пример использования] {
+    Данный код выводит минимум и количество минимумов на отрезке заданного массива.
+\code[language=C++] {
+#include <bits/stdc++.h>
+using namespace std;
+
+/*
+ * 0-indexed.
+ * T is the data type with:
+     - constructor()
+     - constructor(container::value_type)
+ * merge_t must be commutative.
+ */
+template<typename T, typename merge_t = std::function<T(T, T)>>
+class disjoint_sparse_table {
+private:
+    merge_t merge;
+    std::vector<T> single;
+    std::vector<std::vector<T>> sparse;
+
+public:
+    disjoint_sparse_table(const merge_t &merge) : merge(merge) {}
+
+    template<typename U>
+    disjoint_sparse_table(const U &container, const merge_t &merge)
+        : merge(merge), single(container.begin(), container.end())
+    {
+        int n = container.size();
+        int h = std::__lg(std::max(2, n) - 1) + 1;
+        sparse.resize(h, std::vector<T>(n));
+
+        for (int l = 0; l < h; l++) {
+            int len = (1 << l);
+            for (int m = len; m < n; m += (len << 1)) {
+                sparse[l][m] = T(container[m]);
+                sparse[l][m - 1] = T(container[m - 1]);
+                for (int i = 1; i < len; i++) {
+                    if (m + i < n) {
+                        sparse[l][m + i] = merge(sparse[l][m + i - 1], T(container[m + i]));
+                    }
+                    sparse[l][m - i - 1] = merge(sparse[l][m - i], T(container[m - i - 1]));
+                }
+            }
+        }
+    }
+
+    // Returns the result of merging elements on the interval [l, r).
+    T query(int l, int r) {
+        assert(l < r);
+        if (r - l == 1) {
+            return T(single[l]);
+        }
+        r--;
+        int level = std::__lg(l ^ r);
+        return merge(sparse[level][l], sparse[level][r]);
+    }
+};
+
+template<typename T>
+struct minimum_counter {
+    T min_value;
+    int cnt;
+
+    minimum_counter() {}
+    minimum_counter(T value) : min_value(value), cnt(1) {}
+
+    static minimum_counter merge(const minimum_counter &x, const minimum_counter &y) {
+        minimum_counter res;
+        res.min_value = std::min(x.min_value, y.min_value);
+        res.cnt = x.cnt * (res.min_value == x.min_value) + y.cnt * (res.min_value == y.min_value);
+        return res;
+    }
+};
+
+int main() {
+    cin.tie(nullptr)->sync_with_stdio(false);
+
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for (auto &x : a) {
+        cin >> x;
+    }
+
+    using T = minimum_counter<int>;
+    disjoint_sparse_table<T> sparse(a, T::merge);
+
+    int q;
+    cin >> q;
+    while (q--) {
+        int l, r;
+        cin >> l >> r;
+        l--;
+        auto [min_value, cnt] = sparse.query(l, r);
+        cout << min_value << ' ' << cnt << '\n';
+    }
+}
+}
+}
+
+\details[mode=main; summary=Задачи] {
+    \item[] {\link[href=https://contest.ucup.ac/contest/1784/problem/9245]{The 3rd Universal Cup. Stage 9: Xi'an. Задача D}}
+}
