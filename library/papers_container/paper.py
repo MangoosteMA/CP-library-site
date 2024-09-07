@@ -22,7 +22,7 @@ class Paper:
 
     def create(self, prefix: str) -> None:
         for extension in EXTENTIONS:
-            with open(f'{self.fullPath(prefix)}.{extension}', 'a') as newFile:
+            with open(f'{self.fullPath(prefix)}.{extension}', 'w') as newFile:
                 newFile.write('')
 
     def compileMtex(self, prefix: str, mtexCode: str) -> None:
