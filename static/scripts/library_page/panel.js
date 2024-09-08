@@ -76,7 +76,7 @@ function applyRename(prevHtmlName) {
             'Content-Type': 'application/json'
         }
     }).then(() => {
-        location.replace('/library');
+        location.replace('/library-algo');
     });
 }
 
