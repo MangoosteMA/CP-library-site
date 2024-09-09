@@ -1,53 +1,66 @@
-from .user                import User
+from .user                import User, UserAccess
 from .session             import Session
 from .sessions_controller import SessionsController
 
 from pathlib              import Path
 from typing               import Optional, Dict
 
-MIN_PASSWORD_LENGTH = 3
+import sqlite3
 
 class UsersHandler:
     '''
     Variables:
-    storagePath:        Path
     users:              List[User]
+    connection:         sqlite3.Connection
+    cursor:             sqlite3.Cursor
     sessionsController: SessionsController
     '''
 
-    def __init__(self, storagePath: str):
-        self.storagePath = Path(storagePath)
-        self.__loadUsers()
+    MIN_PASSWORD_LENGTH = 3
+    USERS_TABLE_NAME = 'Users'
+
+    def __init__(self, dataBasePath: str):
+        self.connection = sqlite3.connect(dataBasePath, check_same_thread=False)
+        self.connection.row_factory = sqlite3.Row
+        self.cursor = self.connection.cursor()
+        self.cursor.execute(f'''CREATE TABLE IF NOT EXISTS {UsersHandler.USERS_TABLE_NAME} (
+                                {User.USERNAME} TEXT PRIMARY KEY,
+                                {User.PASSWORD} TEXT,
+                                {User.ACCESS}   INTEGER
+                            )''')
+        self.connection.commit()
         self.sessionsController = SessionsController()
 
-    def registreUser(self, username: str, password: str, admin: bool) -> User:
-        for user in self.users:
-            if user.username == username:
-                raise Exception('Login is already used')
+    def registreUser(self, username: str, password: str, access: UserAccess) -> User:
+        registeredUser = self.__getUserByUsername(username)
+        if registeredUser is not None and registeredUser.username == username:
+            raise Exception('Login is already used')
 
         try:
-            user = User(username=username, password=password, admin=admin)
-            self.users.append(user)
-            self.__storeUsers()
-            return user
-        except:
+            self.cursor.execute(f'''INSERT INTO {UsersHandler.USERS_TABLE_NAME}
+                                    ({User.USERNAME}, {User.PASSWORD}, {User.ACCESS})
+                                    VALUES
+                                    (?, ?, ?)
+                                ''', (username, password, access.value))
+            self.connection.commit()
+            return self.__getUserByUsername(username)
+        except BaseException as exc:
+            print(f'While registering user error happened: {exc}')
             raise Exception('Something went wrong')
 
     def validatePassword(self, password: str) -> None:
-        if len(password) < MIN_PASSWORD_LENGTH:
-            raise Exception(f'Password length must be at least {MIN_PASSWORD_LENGTH}')
+        if len(password) < UsersHandler.MIN_PASSWORD_LENGTH:
+            raise Exception(f'Password length must be at least {UsersHandler.MIN_PASSWORD_LENGTH}')
 
     def getUser(self, username: str, password: str) -> User:
-        for user in self.users:
-            if user.username != username:
-                continue
+        user = self.__getUserByUsername(username)
+        if user is None:
+            raise Exception('Incorrect login')
+        
+        if user.password != password:
+            raise Exception('Incorrect password')
 
-            if user.password != password:
-                raise Exception('Incorrect password')
-
-            return user
-
-        raise Exception('Incorrect login')
+        return user
 
     def createSession(self, user: User) -> Session:
         return self.sessionsController.createSession(user)
@@ -56,17 +69,13 @@ class UsersHandler:
         return self.sessionsController.getSessionByKey(key)
 
 # Private:
-    def __loadUsers(self) -> None:
-        self.storagePath.parent.mkdir(exist_ok=True, parents=True)
-        self.users = []
-        with self.storagePath.open('r') as database:
-            for userInfo in database.read().split('\n'):
-                if len(userInfo) == 0:
-                    continue
+    def __getUserByUsername(self, username: str) -> Optional[User]:
+        self.cursor.execute(f'''SELECT * FROM {UsersHandler.USERS_TABLE_NAME}
+                                where {User.USERNAME} = (?)
+                                LIMIT 1
+                                ''', (username,))
+        userInfo = self.cursor.fetchone()
+        if userInfo is None:
+            return None
 
-                self.users.append(User(dataDict=eval(userInfo)))
-
-    def __storeUsers(self) -> None:
-        with self.storagePath.open('w') as database:
-            for user in self.users:
-                print(str(user), file=database)
+        return User(userInfo)

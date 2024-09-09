@@ -5,6 +5,7 @@ from backend.api              import papersContainerDev
 from backend.api              import usersHandler
 
 from library.papers_container import PapersContainer
+from library.users_handler    import User, UserAccess
 
 from flask                    import abort
 from flask                    import Blueprint
@@ -32,7 +33,7 @@ with open('data/users/secret.txt', 'w') as secretFile:
 @dataclass
 class BaseSessionInfo:
     loggedIn: bool
-    admin:    bool
+    access:   UserAccess
     username: str
 
 def logOut() -> None:
@@ -42,10 +43,10 @@ def logOut() -> None:
 def getSessionInfo() -> BaseSessionInfo:
     runningSession = usersHandler.getSessionByKey(session.get(SESSION_KEY, ''))
     if runningSession is None:
-        return BaseSessionInfo(loggedIn=False, admin=False, username='')
+        return BaseSessionInfo(loggedIn=False, access=UserAccess.NONE, username='')
     
     return BaseSessionInfo(loggedIn=True,
-                           admin=runningSession.user.admin,
+                           access=runningSession.user.access,
                            username=runningSession.user.username)
 
 def renderTemplate(path: str, **kwargs):
@@ -55,7 +56,7 @@ def renderTemplate(path: str, **kwargs):
 
     return render_template(path,
                            loggedIn=sessionInfo.loggedIn,
-                           admin=sessionInfo.admin,
+                           admin=sessionInfo.access == UserAccess.ADMIN,
                            username=sessionInfo.username,
                            **kwargs)
 
@@ -99,7 +100,8 @@ def tryRegisterUser() -> str:
 
     try:
         usersHandler.validatePassword(password)
-        user = usersHandler.registreUser(username, password, secret == SECRET_ADMIN)
+        access = UserAccess.ADMIN if secret == SECRET_ADMIN else UserAccess.REGULAR
+        user = usersHandler.registreUser(username, password, access)
         session[SESSION_KEY] = usersHandler.createSession(user).key
     except BaseException as exc:
         return str(exc)
@@ -119,14 +121,14 @@ def loggedOutPage():
     return homePage()
 
 def libraryPage(papersContainer: PapersContainer):
-    if request.method == 'POST' and getSessionInfo().admin:
+    if request.method == 'POST' and getSessionInfo().access == UserAccess.ADMIN:
         try:
             papersContainer.updateConfig(request.data.decode())
         except:
             abort(406)
 
     try:
-        libraryBody = buildLibraryBodyHtml(papersContainer, getSessionInfo().admin)
+        libraryBody = buildLibraryBodyHtml(papersContainer, getSessionInfo().access == UserAccess.ADMIN)
         libraryConfig = papersContainer.getConfig()
     except BaseException as exc:
         print(f'Failed to build library html body. Reason: {exc}')
@@ -147,7 +149,7 @@ def libraryPageDev():
 
 def libraryFileInfoPage(papersContainer: PapersContainer, htmlName: str):
     try:
-        if request.method == 'POST' and getSessionInfo().admin:
+        if request.method == 'POST' and getSessionInfo().access == UserAccess.ADMIN:
             content = request.get_json()
             method = content['method']
             if method == 'save':
@@ -197,6 +199,6 @@ def sendFile(image: str):
 
 @view.route('/secret/login-secrets')
 def secretLoginSecrets():
-    if getSessionInfo().admin:
+    if getSessionInfo().access == UserAccess.ADMIN:
         return f'Regular: {SECRET_REGULAR}\nAdmin: {SECRET_ADMIN}\n'
     return 'banned!'

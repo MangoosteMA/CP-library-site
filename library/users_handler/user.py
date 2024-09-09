@@ -1,32 +1,24 @@
 from typing import Dict
+from enum   import Enum
+
+class UserAccess(Enum):
+    NONE = 0
+    REGULAR = 1
+    ADMIN = 2
 
 class User:
     '''
     Variables:
     username: str
     password: str
-    admin:    bool
+    access:   UserAccess
     '''
 
     USERNAME = 'username'
     PASSWORD = 'password'
-    ADMIN    = 'admin'
+    ACCESS   = 'access'
 
-    def __init__(self, dataDict: Dict = {}, username: str = None, password: str = None, admin: bool = None):
-        if username is not None:
-            dataDict[User.USERNAME] = username
-        if password is not None:
-            dataDict[User.PASSWORD] = password
-        if admin is not None:
-            dataDict[User.ADMIN] = admin
-
-        self.username = dataDict[User.USERNAME]
-        self.password = dataDict[User.PASSWORD]
-        self.admin    = dataDict[User.ADMIN]
-
-    def __str__(self) -> str:
-        info = {}
-        info[User.USERNAME] = self.username
-        info[User.PASSWORD] = self.password
-        info[User.ADMIN]    = self.admin
-        return str(info)
+    def __init__(self, data: Dict = {}):
+        self.username = data[User.USERNAME]
+        self.password = data[User.PASSWORD]
+        self.access   = UserAccess(data[User.ACCESS])

@@ -5,14 +5,14 @@ from datetime import datetime, timedelta
 from typing   import Optional
 from queue    import Queue
 
-EXPIRATION_DATE = timedelta(days=10)
-
 class SessionsController:
     '''
     Variables:
     sessionsDict:  Dict[str, Session]
     creationQueue: Queue[Session]
     '''
+
+    EXPIRATION_DATE = timedelta(days=10)
 
     def __init__(self):
         self.sessionsDict = {}
@@ -34,6 +34,7 @@ class SessionsController:
 
 # Private:
     def __removeExpiredSessions(self) -> None:
-        while not self.creationQueue.empty() and datetime.now() - self.creationQueue.queue[0].creationDate > EXPIRATION_DATE:
+        while not self.creationQueue.empty()\
+              and datetime.now() - self.creationQueue.queue[0].creationDate > SessionsController.EXPIRATION_DATE:
             expiredSession = self.creationQueue.get()
             self.sessionsDict.pop(expiredSession.key)
