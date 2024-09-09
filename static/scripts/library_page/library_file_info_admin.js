@@ -1,9 +1,9 @@
 // Create text coloring rules
-import { TextColoring } from "./text_coloring.js";
+import { TextColoring } from "../text_editor/text_coloring.js";
 const textColoring = new TextColoring();
 
 // Add special symbols coloring rule
-import { KeyWordsColoringRule } from "./text_coloring_rules/key_words_coloring_rule.js";
+import { KeyWordsColoringRule } from "../text_editor/text_coloring_rules/key_words_coloring_rule.js";
 textColoring.addRule(new KeyWordsColoringRule(["&lt;", "=", "&gt;", "+", "-", "&quot;", "&#x27;", "#"], "rgb(235,101,164)"));
 
 // Add '$' coloring
@@ -17,12 +17,12 @@ textColoring.addRule(new KeyWordsColoringRule(["\\title", "\\code", "\\details",
 textColoring.addRule(new KeyWordsColoringRule(["\\complexity", "\\implies", "\\qed"], "rgb(225,146,82)"));
 
 // Add bracket coloring rule
-import { BracketColoringRule } from "./text_coloring_rules/bracket_coloring_rule.js";
+import { BracketColoringRule } from "../text_editor/text_coloring_rules/bracket_coloring_rule.js";
 textColoring.addRule(new BracketColoringRule(["rgb(235,101,164)", "rgb(225,146,82)", "rgb(69,178,207)"], "rgb(255,69,69)"));
 
 // Create editor
-import { Editor }            from "./editor.js";
-import { InputPreprocessor } from "./input_preprocessor.js";
+import { Editor }            from "../text_editor/editor.js";
+import { InputPreprocessor } from "../text_editor/input_preprocessor.js";
 
 const textarea = document.getElementById("main-textarea");
 const background = document.getElementById("main-textarea-background");
