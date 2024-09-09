@@ -35,7 +35,7 @@ class BaseSessionInfo:
     admin:    bool
     username: str
 
-def logOut():
+def logOut() -> None:
     if SESSION_KEY in session:
         session.pop(SESSION_KEY)
 
@@ -48,7 +48,7 @@ def getSessionInfo() -> BaseSessionInfo:
                            admin=runningSession.user.admin,
                            username=runningSession.user.username)
 
-def renderTemplate(path, **kwargs):
+def renderTemplate(path: str, **kwargs):
     sessionInfo = getSessionInfo()
     if not sessionInfo.loggedIn:
         logOut()
@@ -188,7 +188,7 @@ def apiSchedule():
     return buildScheduleHtml(offset)
 
 @view.route('/images/<image>', methods=['GET'])
-def sendFile(image):
+def sendFile(image: str):
     path = f'data/images/{image}'
     if Path(path).is_file():
         return send_file(path, mimetype='image/gif')
