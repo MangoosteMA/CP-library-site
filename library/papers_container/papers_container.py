@@ -43,8 +43,7 @@ class PapersContainer:
         try:
             self.__updatePapers(newPapers)
             self.configStr = newConfig
-            with open(self.configPath, 'w') as config:
-                config.write(newConfig)
+            self.__dumpConfig()
         except:
             self.__loadPapers(False)
             raise Exception("Failed to create/delete papers")
