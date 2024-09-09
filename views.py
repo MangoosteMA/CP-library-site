@@ -174,12 +174,9 @@ def libraryFileInfoPageAlgo(htmlName: str):
 def libraryFileInfoPageDev(htmlName: str):
     return libraryFileInfoPage(papersContainerDev, htmlName)
 
-@view.route('/apps/<app>', methods=['GET'])
-def appsPage(app):
-    if app == 'graph-editor':
-        return renderTemplate('graph_editor/graph_editor.html')
-
-    return f'There is no such app yet: {app}'
+@view.route('/apps/graph-editor', methods=['GET'])
+def graphEditorPage():
+    return renderTemplate('graph_editor/graph_editor.html')
 
 @view.route('/api/schedule', methods=['GET'])
 def apiSchedule():
