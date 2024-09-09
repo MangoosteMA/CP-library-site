@@ -1,12 +1,10 @@
 @import "../base_styles.css";
 
-.main-textarea {
+.admin-div {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
     width: 600px;
-    height: 600px;
-    position: relative;
-    display: inline-block;
-    left: 50%;
-    transform: translateX(-50%);
 }
 
 .save-button {
@@ -29,4 +27,12 @@
 
 .save-button:active {
     background-color: rgb(49, 158, 21);
+}
+
+.editor-lines-indexes-div {
+    border-top-left-radius: 5px;
+}
+
+.editor-textarea-background {
+    border-top-right-radius: 5px;
 }

@@ -1,29 +1,29 @@
 {
-  "Графы": {
-    "Лемма Холла": "halls-theorem",
-    "КСС": "scc",
-    "КСС ofline": "scc-ofline",
-    "Дп на деревьях": "dp-on-trees",
-    "Хроматическое число": "chromatic-number"
-  },
-  "Строки": {
-    "Xor-friendly хеширование": "xor-friendly-hashing"
-  },
-  "Структуры данных": {
-    "Disjoint sparse table": "disjoint-sparse-table"
-  },
-  "Математика": {
-    "Floor сумма": "floor-sum"
-  },
-  "Комбинаторика": {
-    "Скобочные последовательности": "combinatorics-bracket-sequences",
-    "Деревья": "combinatorics-on-trees"
-  },
-  "Многочлены": {
-    "Свёртка online": "convolution-online",
-    "Интерполяция": "polynomial-interpolation"
-  },
-  "Производящие функции": {
-    "Примеры задач": "ogf-egf-problems"
-  }
+    "Графы": {
+        "Лемма Холла": "halls-theorem",
+        "КСС": "scc",
+        "КСС ofline": "scc-ofline",
+        "Дп на деревьях": "dp-on-trees",
+        "Хроматическое число": "chromatic-number"
+    },
+    "Строки": {
+        "Xor-friendly хеширование": "xor-friendly-hashing"
+    },
+    "Структуры данных": {
+        "Disjoint sparse table": "disjoint-sparse-table"
+    },
+    "Математика": {
+        "Floor сумма": "floor-sum"
+    },
+    "Комбинаторика": {
+        "Скобочные последовательности": "combinatorics-bracket-sequences",
+        "Деревья": "combinatorics-on-trees"
+    },
+    "Многочлены": {
+        "Свёртка online": "convolution-online",
+        "Интерполяция": "polynomial-interpolation"
+    },
+    "Производящие функции": {
+        "Примеры задач": "ogf-egf-problems"
+    }
 }

@@ -38,6 +38,7 @@
 
 .editor-textarea, .editor-textarea-background, .editor-lines-indexes-div {
     padding-top: 4px;
+    font-size: 16px;
 }
 
 .editor-lines-indexes-div {

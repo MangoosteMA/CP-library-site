@@ -116,7 +116,7 @@ class PapersContainer:
 
             vertex[paper.fileName] = paper.htmlName
 
-        self.configStr = json.dumps(config, ensure_ascii=False, indent=2)
+        self.configStr = json.dumps(config, ensure_ascii=False, indent=4)
 
     def __parsePapers(self, config: OrderedDict) -> list[Paper]:
         parsedPapers = []

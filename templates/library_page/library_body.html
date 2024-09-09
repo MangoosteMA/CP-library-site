@@ -1,5 +1,4 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='styles/library_page/library_body.css') }}" type="text/css">
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/library_page/library_body_admin.css') }}" type="text/css">
 
 <div class="body-div">
     <div id="simple-div">
@@ -7,12 +6,7 @@
     </div>
 
     {% if admin %}
-        <div style="display: none; margin-top: 30px" id="admin-div">
-            <textarea class="main-textarea" id="main-textarea">{{ libraryConfig }}</textarea>
-            <button class="save-button" id="save-button">save</button>
-        </div>
-
-        <script src="{{ url_for('static', filename='scripts/library_page/library_body_admin.js') }}"></script>
+        {% include "library_page/library_body_admin.html" %}
     {% endif %}
 </div>
 
