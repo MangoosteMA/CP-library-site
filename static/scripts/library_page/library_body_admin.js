@@ -7,7 +7,7 @@ import { KeyWordsColoringRule } from "../text_editor/text_coloring_rules/key_wor
 textColoring.addRule(new KeyWordsColoringRule(["-", "&quot;", ":"], "rgb(235,101,164)"));
 
 // Add draft mark coloring
-textColoring.addRule(new KeyWordsColoringRule(["-draft"], "rgb(139,233,253)"));
+textColoring.addRule(new KeyWordsColoringRule(["draft"], "rgb(139,233,253)"));
 
 // Add bracket coloring rule
 import { BracketColoringRule } from "../text_editor/text_coloring_rules/bracket_coloring_rule.js";
