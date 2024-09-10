@@ -19,8 +19,8 @@ class UsersHandler:
     MIN_PASSWORD_LENGTH = 3
     USERS_TABLE_NAME = 'Users'
 
-    def __init__(self, dataBasePath: str):
-        self.connection = sqlite3.connect(dataBasePath, check_same_thread=False)
+    def __init__(self, databasePath: str):
+        self.connection = sqlite3.connect(databasePath, check_same_thread=False)
         self.connection.row_factory = sqlite3.Row
         self.cursor = self.connection.cursor()
         self.cursor.execute(f'''CREATE TABLE IF NOT EXISTS {UsersHandler.USERS_TABLE_NAME} (
