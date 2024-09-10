@@ -10,7 +10,6 @@ import sqlite3
 class UsersHandler:
     '''
     Variables:
-    users:              List[User]
     connection:         sqlite3.Connection
     cursor:             sqlite3.Cursor
     sessionsController: SessionsController
