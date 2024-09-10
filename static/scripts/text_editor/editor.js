@@ -78,7 +78,7 @@ export class Editor {
         this.background.childNodes.forEach((child, index) => {
             const div = document.createElement("div");
             div.innerText = index + 1;
-            div.style.height = child.offsetHeight + "px";
+            div.style.height = child.getBoundingClientRect().height + "px";
             div.style.textAlign = "right";
             div.style.paddingRight = "5px";
             newLines.appendChild(div);
