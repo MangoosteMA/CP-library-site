@@ -72,7 +72,7 @@ class UsersHandler:
         self.cursor.execute(f'''SELECT * FROM {UsersHandler.USERS_TABLE_NAME}
                                 where {User.USERNAME} = (?)
                                 LIMIT 1
-                                ''', (username,))
+                            ''', (username,))
         userInfo = self.cursor.fetchone()
         if userInfo is None:
             return None
