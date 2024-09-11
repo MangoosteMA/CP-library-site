@@ -26,3 +26,13 @@
 .library-edit-button:active {
     background-color: var(--base-white-font-color);
 }
+
+details {
+    overflow: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+details::-webkit-scrollbar {
+    display: none;
+}
