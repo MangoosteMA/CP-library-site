@@ -17,7 +17,8 @@
     },
     "Комбинаторика": {
         "Скобочные последовательности": "combinatorics-bracket-sequences",
-        "Деревья": "combinatorics-on-trees"
+        "Деревья": "combinatorics-on-trees",
+        "Полезные формулы": "combinatorics-formulas"
     },
     "Многочлены": {
         "Свёртка online": "convolution-online",
