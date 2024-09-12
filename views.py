@@ -1,9 +1,11 @@
 from backend.api              import buildLibraryBodyHtml
 from backend.api              import buildScheduleHtml
+from backend.api              import guessTheCodeGame
 from backend.api              import papersContainerAlgo
 from backend.api              import papersContainerDev
 from backend.api              import usersHandler
 
+from library.guess_the_code   import GameTest
 from library.papers_container import PapersContainer
 from library.users_handler    import User, UserAccess
 
@@ -195,10 +197,45 @@ def sendFile(image: str):
     if Path(path).is_file():
         return send_file(path, mimetype='image/gif')
 
-    return 'There is not such image ;('
+    abort(404)
 
 @view.route('/secret/login-secrets')
 def secretLoginSecrets():
     if getSessionInfo().access == UserAccess.ADMIN:
         return f'Regular: {SECRET_REGULAR}\nAdmin: {SECRET_ADMIN}\n'
-    return 'banned!'
+
+    abort(403)
+
+@view.route('/apps/guess-the-code/new-game', methods=['GET'])
+def guessTheCodeNewGamePage():
+    if getSessionInfo().access != UserAccess.ADMIN:
+        abort(403)
+
+    newGameId = guessTheCodeGame.addNewGame()
+    return redirect(f'/apps/guess-the-code/game/{newGameId}')
+
+@view.route('/apps/guess-the-code/game/<int:gameId>', methods=['GET', 'POST'])
+def guessTheCodePage(gameId: int):
+    game = guessTheCodeGame.getGameById(gameId)
+    if game is None:
+        abort(404)
+
+    if request.method == 'POST':
+        content = request.get_json()
+        method = content['method']
+        if method == 'add_test':
+            verdict = guessTheCodeGame.correctAnswer(gameId, GameTest(int(content['a']), int(content['b']), int(content['c'])))
+            return str(verdict.value)
+        elif method == 'run_code':
+            tests = [GameTest(int(data['a']), int(data['b']), int(data['c'])) for data in content['tests']]
+            result = guessTheCodeGame.runCode(content['code'], tests)
+            return ','.join([str(verdict.value) for verdict in result])
+        elif method == 'submit':
+            return str(guessTheCodeGame.submit(game, content['code']))
+        elif method == 'update_game' and getSessionInfo().access == UserAccess.ADMIN:
+            guessTheCodeGame.updateGame(gameId, content['code'], content['testsDescriber'])
+
+    return renderTemplate('guess_the_code/guess_the_code_game.html',
+                          gameId=gameId,
+                          gameCode=game.code,
+                          testsDescriber=game.testsDescriber)

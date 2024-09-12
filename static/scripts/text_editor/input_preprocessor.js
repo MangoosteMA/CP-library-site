@@ -16,6 +16,15 @@ function isCloseBracket(symbol) {
 }
 
 export class InputPreprocessor {
+    /*
+    Variables:
+    breakingSymbolsSet: Set[char]
+    */
+
+    constructor(breakingSymbols) {
+        this.breakingSymbolsSet = new Set(breakingSymbols);
+    }
+
     processInput(textarea, event) {
         if (event.inputType == "insertLineBreak") {
             this.processLineBreak(textarea);
@@ -53,7 +62,7 @@ export class InputPreprocessor {
 
         var stringToInsert = " ".repeat(cntSpaces);
         var positionToFocus = pos + cntSpaces;
-        if (pos - 2 >= 0 && value[pos - 2] == '{') {
+        if (pos - 2 >= 0 && this.breakingSymbolsSet.has(value[pos - 2])) {
             stringToInsert += " ".repeat(TAB_SIZE);
             if (pos < value.length && value[pos] == '}') {
                 stringToInsert += "\n" + " ".repeat(cntSpaces);

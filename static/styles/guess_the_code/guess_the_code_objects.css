@@ -1,0 +1,28 @@
+@import "../base_styles.css";
+
+.true-verdict-div, .false-verdict-div, .error-verdict-div, .none-verdict-div {
+    display: inline-block;
+    width: 70px;
+    border-radius: 70px;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+    font-family: var(--base-font-family);
+    margin: 3px;
+}
+
+.true-verdict-div {
+    background-color: rgb(93, 184, 91);
+}
+
+.false-verdict-div {
+    background-color: rgb(184, 60, 60);
+}
+
+.error-verdict-div {
+    background-color: rgb(240, 173, 78);
+}
+
+.none-verdict-div {
+    background-color: rgb(188, 147, 249);
+}

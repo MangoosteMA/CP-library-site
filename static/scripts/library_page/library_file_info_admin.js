@@ -27,7 +27,7 @@ import { InputPreprocessor } from "../text_editor/input_preprocessor.js";
 const textarea = document.getElementById("main-textarea");
 const background = document.getElementById("main-textarea-background");
 const linesDiv = document.getElementById("lines-holder-div");
-const editor = new Editor(textarea, background, linesDiv, textColoring, new InputPreprocessor());
+const editor = new Editor(textarea, background, linesDiv, textColoring, new InputPreprocessor(['{']));
 
 // Handle edit button
 const editButton = document.getElementById("library-edit-button");

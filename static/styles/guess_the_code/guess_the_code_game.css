@@ -1,0 +1,197 @@
+@import "../base_styles.css";
+
+.body-div {
+    display: inline-block;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 25px;
+    padding: 0px;
+    background-color: var(--base-font-color);
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.9);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+}
+
+.game-title-div {
+    font-family: var(--base-font-family);
+    font-size: 27px;
+    font-weight: 600;
+    display: inline-block;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--base-white-font-color);
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.editor-outer-div {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    height: calc(100% - calc(115px));
+}
+
+.left-div {
+    width: 500px;
+    height: 600px;
+}
+
+.right-div {
+    width: 500px;
+    flex: 1;
+    height: 600px;
+}
+
+.top-buttons-container {
+    display: flex;
+    height: 21px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.library-editor {
+    height: 100%;
+    padding-bottom: 5px;
+}
+
+.editor-shadow-div {
+    height: 100%;
+    border-radius: 7px;
+    box-sizing: border-box;
+    background-color: var(--base-light-dark-background-color);
+    border: 2px solid var(--base-white-font-color);
+    overflow: hidden;
+}
+
+.editor-lines-indexes-div {
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 0px;
+}
+
+.editor-textarea-background {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.editor-textarea-background, .editor-textarea, .editor-lines-indexes-div {
+    font-family: monospace;
+}
+
+.test-to-submit-div {
+    height: 115px;
+    background-color: var(--base-font-color);
+    border-top: 1px solid var(--base-white-font-color);
+}
+
+.variables-td {
+    text-align: center;
+    color: var(--base-white-font-color);
+    font-family: var(--base-font-family);
+    font-weight: 600;
+    font-size: 17px;
+    padding: 0px;
+    padding-top: 5px
+}
+
+.variable-input {
+    resize: none;
+    outline: none;
+    border-radius: 10px;
+    line-height: 20px;
+    height: 20px;
+    font-size: 17px;
+    width: 140px;
+}
+
+.variable-input, .action-button {
+    color: var(--base-white-font-color);
+    font-size: 15px;
+    text-align: center;
+    background-color: var(--base-font-color);
+    box-shadow: 0px 0px 4px rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--base-white-font-color);
+}
+
+.centered-div {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-block;
+}
+
+.action-button {
+    font-size: 15px;
+    border-radius: 5px;
+    width: 100px;
+}
+
+.action-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.action-button:active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.editor-left-shadow-div {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.editor-right-shadow-div {
+    border-left: 0px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+.variable-col {
+    width: 95px;
+}
+
+.result-col {
+    width: 105px;
+}
+
+.output-table {
+    border: none;
+    border-collapse: collapse;
+}
+
+.output-table > * {
+    color: var(--base-white-font-color);
+    text-align: center;
+    font-size: 18px;
+}
+
+.output-table td {
+    border-left: 1px solid var(--base-white-font-color);
+}
+
+.output-table tr:first-child, .output-table tr:last-child {
+    border-bottom: 1px solid var(--base-white-font-color);
+}
+
+.output-table tr:first-child {
+    background-color: var(--base-font-color);
+}
+
+.output-table td:first-child {
+    border-left: none;
+}
+
+.first-table-row {
+    border-bottom: 1px solid var(--base-white-font-color);
+}
+
+.table-container-div {
+    max-height: 100%;
+    overflow: scroll;
+}
