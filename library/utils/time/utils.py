@@ -8,4 +8,3 @@ def floorDateToTheNearestDay(date: datetime) -> datetime:
 
 def getCurrentDateTime() -> datetime:
     return datetime.strptime(time.ctime(), '%c')
-
