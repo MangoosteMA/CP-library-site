@@ -41,7 +41,7 @@ class Paper:
             lca += 1
 
         return lca
-    
+
     def isDraft(self) -> bool:
         return self.htmlName.endswith('-draft')
 
