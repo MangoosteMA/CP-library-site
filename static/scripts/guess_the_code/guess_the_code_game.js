@@ -8,10 +8,11 @@ textColoring.addRule(new KeyWordsColoringRule(["&lt;", "=", "&gt;", "+", "-", "&
                                                "&#x27;", "#", ":", "%", "/"], "rgb(235,101,164)"));
 
 // Add key words coloring rule
-textColoring.addRule(new KeyWordsColoringRule(["int", "in", "bool"], "rgb(139,233,253)"));
+textColoring.addRule(new KeyWordsColoringRule(["int", "in", "bool", "and", "or"], "rgb(139,233,253)"));
 textColoring.addRule(new KeyWordsColoringRule(["def", "for", "return", "from",
                                                "import", "if", "else", "pass"], "rgb(235,101,164)"));
 textColoring.addRule(new KeyWordsColoringRule(["True", "False"], "rgb(188,147,249)"));
+
 // Add bracket coloring rule
 import { BracketColoringRule } from "../text_editor/text_coloring_rules/bracket_coloring_rule.js";
 textColoring.addRule(new BracketColoringRule(["rgb(235,101,164)", "rgb(225,146,82)", "rgb(69,178,207)"], "rgb(255,69,69)"));

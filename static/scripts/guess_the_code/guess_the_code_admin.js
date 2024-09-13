@@ -12,6 +12,9 @@ const codeEditor = new Editor(codeTextarea, codeBackground, codeLinesDiv, textCo
 import { TextColoring } from "../text_editor/text_coloring.js";
 const testTextColoring = new TextColoring();
 
+import { KeyWordsColoringRule } from "../text_editor/text_coloring_rules/key_words_coloring_rule.js";
+testTextColoring.addRule(new KeyWordsColoringRule(["Random"], "rgb(235,101,164)"));
+
 // Create tests editor
 import { InputPreprocessor } from "../text_editor/input_preprocessor.js";
 
