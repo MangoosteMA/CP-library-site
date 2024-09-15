@@ -195,4 +195,5 @@ T count_remainders(T k, T b, T v, T m, T n) {
     \item[] {\link[href=https://judge.yosupo.jp/problem/sum_of_floor_of_linear]{Yosupo library checker (Sum of floor of linear)}}
     \item[] {\link[href=https://atcoder.jp/contests/arc111/tasks/arc111_e]{Atcoder ARC111-E}}
     \item[] {\link[href=https://atcoder.jp/contests/arc182/tasks/arc182_e]{Atcoder ARC182-E}}
+    \item[] {\link[href=https://contest.ucup.ac/contest/1195/problem/6188]{The 1st Universal Cup. Stage 10: Zhejiang. Задача E}}
 }
