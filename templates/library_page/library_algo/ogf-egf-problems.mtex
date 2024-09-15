@@ -320,5 +320,5 @@ std::vector<mint> connected_graphs(int n) {
     \item[] {\link[href=https://www.codechef.com/problems/COUNTWAY]{Codechef. Count ways}}
     \item[] {\link[href=https://www.codechef.com/problems/PPARTS]{Codechef. Parts}}
     \item[] {\link[href=https://www.hackerrank.com/contests/101hack43/challenges/k-inversion-permutations/problem]{Hacker rank. K inversion permutations}}
-    \item[] {\link[href=https://contest.ucup.ac/contest/1195/problem/6184]{The 1st Universal Cup. Stage 10: Zhejiang. Задача A.}}
+    \item[] {\link[href=https://contest.ucup.ac/contest/1195/problem/6184]{The 1st Universal Cup. Stage 10: Zhejiang. Задача A}}
 }
