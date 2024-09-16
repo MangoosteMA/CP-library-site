@@ -141,7 +141,7 @@ export function differentSide(a, b, c, d) {
 }
 
 export function onSegment(a, b, c) {
-    return Math.abs(b.sub(a).length() + c.sub(a).length() - c.sub(b).length()) < 1e-5;
+    return Math.abs(b.sub(a).length() + c.sub(a).length() - c.sub(b).length()) < EPS;
 }
 
 export function segmentsIntersect(a, b, c, d, extendCDBy=1) {
@@ -149,7 +149,7 @@ export function segmentsIntersect(a, b, c, d, extendCDBy=1) {
     vector = vector.normalize(vector.length() * (extendCDBy - 1));
     d = d.add(vector);
     c = c.sub(vector);
-    if (Math.abs(d.sub(c).cross(b.sub(a))) < 1e-5) {
+    if (Math.abs(d.sub(c).cross(b.sub(a))) < EPS) {
         return onSegment(c, a, b) && onSegment(d, a, b);
     }
     return differentSide(a, b, c, d) && differentSide(c, d, a, b);
