@@ -35,7 +35,7 @@
 
 .right-panel-div {
     width: 390px;
-    border-right: 20px solid transparent;
+    margin-right: 20px;
 }
 
 .left-panel-inside-div, .right-panel-inside-div {
