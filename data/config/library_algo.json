@@ -4,7 +4,8 @@
         "КСС": "scc",
         "КСС ofline": "scc-ofline",
         "Дп на деревьях": "dp-on-trees",
-        "Хроматическое число": "chromatic-number"
+        "Хроматическое число": "chromatic-number",
+        "Bfs порядок на дереве": "tree-bfs-ordering"
     },
     "Строки": {
         "Xor-friendly хеширование": "xor-friendly-hashing"
