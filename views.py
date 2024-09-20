@@ -168,7 +168,7 @@ def libraryFileInfoPage(papersContainer: PapersContainer, htmlName: str):
                               filePath=papersContainer.getFilePath(htmlName),
                               mtexData=papersContainer.getMtexSource(htmlName))
     except:
-        return f'Error happened while handling request to {htmlName}.'
+        abort(404)
 
 @view.route('/library-algo/<htmlName>', methods=['GET', 'POST'])
 def libraryFileInfoPageAlgo(htmlName: str):
