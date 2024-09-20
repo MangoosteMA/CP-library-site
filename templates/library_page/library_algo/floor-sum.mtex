@@ -169,6 +169,18 @@ T mod_sum(T k, T b, ll m, ll n) {
     Таким образом, данную задачу можно решить через mod сумму.
 }
 
+\details[mode=main; summary=Замечание] {
+    Зафиксируем число $x$ и рассмотрим следующую величину:
+    $$
+    \Big\lfloor \frac{x}{m} \Big\rfloor - \Big\lfloor \frac{x - v - 1}{m} \Big\rfloor 
+    $$
+    Заметим, что она равна $1$, если $(x \bmod m) \le v$, и равна $0$ иначе. Это замечание позволяет сводить данную задачу напрямую к floor сумме.
+    
+    Эту технику можно встретить в необычных местах:
+    
+    \item[] {\link[href=https://contest.ucup.ac/contest/1195/problem/6188]{The 1st Universal Cup. Stage 10: Zhejiang. Задача E.}}
+}
+
 \details[mode=main; summary=Реализация] {
 \code[language=C++] {
 /*
