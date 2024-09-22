@@ -154,6 +154,7 @@
     margin: 0;
     color: var(--base-white-font-color);
     background-color: var(--base-font-color);
+    text-align: center;
     font-size: 10px;
 }
 
