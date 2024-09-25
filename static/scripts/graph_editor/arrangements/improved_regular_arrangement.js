@@ -1,4 +1,5 @@
 import { StableArrangement }           from "./arrangement_interface.js";
+import { PERFECT_DISTANCE }            from "./arrangement_interface.js";
 import { ArrangementBuilderInterface } from "./arrangement_interface.js";
 import { ArrangementOptionInterface }  from "./arrangement_interface.js";
 
@@ -53,7 +54,7 @@ export class ImprovedRegularArrangement extends ArrangementBuilderInterface {
             dfsOrder(i);
         }
 
-        const regular = getRegularPolygon(n);
+        const regular = getRegularPolygon(n, PERFECT_DISTANCE);
         const arrangement = Array(n);
         for (let i = 0; i < n; i++) {
             arrangement[order[i]] = regular[i];

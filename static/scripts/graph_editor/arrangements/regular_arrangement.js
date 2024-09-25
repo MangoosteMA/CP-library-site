@@ -5,7 +5,7 @@ import { PERFECT_DISTANCE }            from "./arrangement_interface.js";
 
 import { Point }                       from "../geometry.js";
 
-export function getRegularPolygon(n) {
+export function getRegularPolygon(n, sideLength) {
     const arrangement = new Array(n);
     if (n == 1) {
         arrangement[0] = new Point(0, 0);
@@ -14,12 +14,12 @@ export function getRegularPolygon(n) {
 
     if (n == 2) {
         arrangement[0] = new Point(0, 0);
-        arrangement[1] = new Point(PERFECT_DISTANCE, 0);
+        arrangement[1] = new Point(sideLength, 0);
         return arrangement;
     }
 
     const ANGLE_STEP = 2 * Math.PI / n;
-    const DIAGONAL_LENGTH = PERFECT_DISTANCE / 2 / Math.sin(ANGLE_STEP / 2);
+    const DIAGONAL_LENGTH = sideLength / 2 / Math.sin(ANGLE_STEP / 2);
     var angle = -Math.PI / 2;
     for (let i = 0; i < n; i++) {
         arrangement[i] = new Point(Math.cos(angle), Math.sin(angle)).scale(DIAGONAL_LENGTH);
@@ -30,7 +30,7 @@ export function getRegularPolygon(n) {
 
 export class RegularArrangement extends ArrangementBuilderInterface {
     build(n, edges) {
-        return new StableArrangement(getRegularPolygon(n));
+        return new StableArrangement(getRegularPolygon(n, PERFECT_DISTANCE));
     }
 
     isPretty(n, edges) {
