@@ -8,7 +8,7 @@ const DEFAULT_TEXT = "Text";
 export class TextObject extends ObjectBase {
     /*
     Variables:
-    text:            html <g> element
+    text:            html <text> element
     extraPinPadding: int (5 by default)
     */
 
