@@ -26,6 +26,12 @@
     margin-right: 100px;
     min-height: 15px;
     overflow: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.library-body-inside-div::-webkit-scrollbar {
+    display: none;
 }
 
 .library-body-inside-div > * {
