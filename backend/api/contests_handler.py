@@ -74,8 +74,7 @@ def considerContestsListHtml(rootHtml: HtmlBuilder, contests: list[Contest], tit
                              formatContestDuration(contest.duration)],
                             className=COLUMS_NAMES[1:])
 
-def considerRunningContests(rootHtml: HtmlBuilder, contests: list[Contest]) -> None:
-    currentTime = getCurrentDateTime()
+def considerRunningContests(rootHtml: HtmlBuilder, contests: list[Contest], currentTime: datetime) -> None:
     runningContests = []
     for contest in contests:
         if contest.start > currentTime:
@@ -85,8 +84,7 @@ def considerRunningContests(rootHtml: HtmlBuilder, contests: list[Contest]) -> N
 
     considerContestsListHtml(rootHtml, runningContests, 'Текущие')
 
-def considerFutureContests(rootHtml: HtmlBuilder, contests: list[Contest]) -> None:
-    currentTime = getCurrentDateTime()
+def considerFutureContests(rootHtml: HtmlBuilder, contests: list[Contest], currentTime: datetime) -> None:
     firstScheduledContest = 0
     while firstScheduledContest < len(contests) and contests[firstScheduledContest].start <= currentTime:
         firstScheduledContest += 1
@@ -97,8 +95,9 @@ def considerFutureContests(rootHtml: HtmlBuilder, contests: list[Contest]) -> No
 def buildScheduleHtml(offset: int) -> str:
     contests = [shiftContestBy(contest, offset) for contest in contestsHandler.getContests()]
     contests.sort(key=lambda contest: contest.start)
+    currentTime = getCurrentDateTime() + timedelta(minutes=offset)
 
     rootHtml = HtmlBuilder()
-    considerRunningContests(rootHtml, contests)
-    considerFutureContests(rootHtml, contests)
+    considerRunningContests(rootHtml, contests, currentTime)
+    considerFutureContests(rootHtml, contests, currentTime)
     return rootHtml.htmlToStr()

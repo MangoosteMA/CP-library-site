@@ -33,7 +33,7 @@ class Contest:
                f'platform:   {self.platform}'
 
     def shiftBy(self, minutes: int) -> None:
-        delta = timedelta(seconds=minutes * 60)
+        delta = timedelta(minutes=minutes)
         self.start = self.start + delta
         if self.end is not None:
             self.end = self.end + delta
