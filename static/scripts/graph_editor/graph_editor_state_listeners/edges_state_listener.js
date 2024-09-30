@@ -25,18 +25,14 @@ class EdgesVisualizationColumn extends ColumnInterface {
         button.innerText = "Ребро";
 
         button.addEventListener("click", function() {
-            var anyNotMarkedEdge = false;
+            const renderStyles = [];
             graphEditor.edgesStateHandler.edges.forEach(edge => {
-                anyNotMarkedEdge |= !edge.isMarked();
+                renderStyles.push(edge.renderStyle);
             });
+            const majorityStyle = findMajority(renderStyles, 0);
             graphEditor.edgesStateHandler.edges.forEach(edge => {
-                if (anyNotMarkedEdge) {
-                    if (!edge.isMarked()) {
-                        edge.markOrUnmark();
-                    }
-                } else if (edge.isMarked()) {
-                    edge.markOrUnmark();
-                }
+                edge.setRenderStyle(majorityStyle);
+                edge.setNextRenderStyle();
             });
             graphEditor.edgesStateHandler.render();
             graphEditor.onNodesOrEdgesStateChange();
@@ -69,17 +65,15 @@ class EdgesVisualizationColumn extends ColumnInterface {
 
         const newEdge = new Edge(node1, node2, edge.weight, edge.directed, edgesGroup, /* fontSize: */ 12);
         newEdge.extraTextPadding = 15;
-        if (edge.isMarked()) {
-            newEdge.markOrUnmark(4);
-            if (edge.directed) {
-                node2.circle.style.fill = "rgb(25, 25, 25)";
-            }
+        newEdge.setRenderStyle(edge.renderStyle, 4);
+        if (edge.directed) {
+            node2.circle.style.fill = "rgb(25, 25, 25)";
         }
         newEdge.render(0, 1);
         newEdge.setColor("#ffffff");
 
         svg.addEventListener("click", function() {
-            edge.markOrUnmark();
+            edge.setNextRenderStyle();
             graphEditor.edgesStateHandler.render();
             graphEditor.onNodesOrEdgesStateChange();
         });

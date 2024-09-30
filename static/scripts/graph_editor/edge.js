@@ -48,6 +48,7 @@ export class Edge {
     edgeDirection:    html <path> object
     extraTextPadding: int (5 by default)
     index:            int or null
+    renderStyle:      0 <= int < 4
     */
 
     constructor(node1, node2, weight, directed, edgesGroup, fontSize) {
@@ -69,6 +70,7 @@ export class Edge {
         this.text = createText();
         this.edgeDirection = document.createElementNS(SVG_NAMESPACE, "path");
 
+        this.setRenderStyle(0);
         this.setDirected(directed);
         this.setWeight(weight);
 
@@ -92,18 +94,6 @@ export class Edge {
         }
         this.renderSimpleEdge(height, force);
         return this.#currentHeight == height;
-    }
-
-    isMarked() {
-        return this.edgeLine.style.strokeWidth != "";
-    }
-
-    markOrUnmark(strokeWidth=5) {
-        if (this.isMarked()) {
-            this.edgeLine.style.strokeWidth = "";
-        } else {
-            this.edgeLine.style.strokeWidth = strokeWidth;
-        }
     }
 
     setColor(newColor) {
@@ -159,6 +149,24 @@ export class Edge {
         return box;
     }
 
+    setNextRenderStyle() {
+        this.setRenderStyle((this.renderStyle + 1) % 4);
+    }
+
+    setRenderStyle(renderStyle, strokeWidth=5) {
+        this.renderStyle = renderStyle;
+        if (renderStyle % 2 == 0) {
+            this.edgeLine.style.strokeWidth = "";
+        } else {
+            this.edgeLine.style.strokeWidth = strokeWidth;
+        }
+        if ((renderStyle >> 1) % 2 == 0) {
+            this.edgeLine.setAttributeNS(null, "stroke-dasharray", "");
+        } else {
+            this.edgeLine.setAttributeNS(null, "stroke-dasharray", "10,5");
+        }
+    }
+
 // Private:
     #currentHeight;
 
@@ -173,7 +181,7 @@ export class Edge {
 
         this.edgeDirection.setAttributeNS(null, "fill", this.getColor());
         this.edgeDirection.setAttributeNS(null, "stroke", this.getColor());
-        this.edgeDirection.setAttributeNS(null, "stroke-width", this.isMarked() ? "5" : "2");
+        this.edgeDirection.setAttributeNS(null, "stroke-width", this.edgeLine.style.strokeWidth || "2");
 
         const arrow0 = startPoint.sub(vector.normalize(1.5));
         const arrow1 = arrow0.add(vector.normalize(LENGTH).rotateBy(Math.PI - ANGLE));
