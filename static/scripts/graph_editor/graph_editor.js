@@ -225,6 +225,7 @@ export class GraphEditor {
         this.edgesStateHandler.setDarkMode();
         this.objectsStateHandler.setDarkMode();
         this.onNodesOrEdgesStateChange();
+        this.onObjectsStateChange();
     }
 
     setLightMode() {
@@ -233,6 +234,7 @@ export class GraphEditor {
         this.edgesStateHandler.setLightMode();
         this.objectsStateHandler.setLightMode();
         this.onNodesOrEdgesStateChange();
+        this.onObjectsStateChange();
     }
 
     updateArrangementBuilder(newArrangementBuilder) {
