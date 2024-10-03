@@ -49,6 +49,10 @@
     box-sizing: border-box;
 }
 
+details:hover {
+    color: white;
+}
+
 .top-buttons {
     display: flex;
     margin-bottom: 10px;
@@ -270,22 +274,55 @@
     z-index: 228;
 }
 
-.export-button {
+.export-buttons-div {
+    width: 100px;
+    margin-left: auto;
+    margin-right: auto;
     box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.7);
-    color: var(--base-white-font-color);
-    font-family: var(--base-font-family);
-    font-size: 14px;
-    font-weight: 600;
-    border-radius: 10px;
     border: 2px solid var(--base-white-font-color);
     background-color: var(--base-font-color);
-    padding: 5px;
+    border-radius: 10px;
 }
 
-.export-button:hover {
-    background-color: var(--button-hover-color);
+.export-button, .export-single-button {
+    color: var(--base-white-font-color);
+    font-family: var(--base-font-family);
+    font-size: 15px;
+    font-weight: 600;
+    background-color: transparent;
+    border: none;
+    width: 100%;
 }
 
-.export-button:active {
-    background-color: var(--button-active-color);
+.export-buttons-div:hover .export-button {
+    color: white;
+}
+
+.export-buttons-container {
+    display: none;
+}
+
+.export-buttons-div:hover .export-buttons-container {
+    display: block;
+}
+
+.export-last-single-button {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.export-single-button {
+    text-align: center;
+    font-size: 15px;
+    padding-bottom: 5px;
+}
+
+.export-single-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transition: 0.1s;
+}
+
+.export-single-button:active {
+    background: rgba(255, 255, 255, 0.3);
+    transition: 0.1s;
 }

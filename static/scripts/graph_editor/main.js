@@ -215,11 +215,22 @@ if (darkModeButton && lightModeButton) {
     });
 }
 
-// Register exports
-import { exportToSvg } from "./exports/svg_export.js";
+// Register exports handler
+import { ExportsHandler } from "./exports_handler.js";
+
+function isDarkModeOn() {
+    return darkModeButton.style.display == "none";
+}
+const exportsHandler = new ExportsHandler(graphEditor, isDarkModeOn);
+
+// Register export to svg
 const svgExportButton = document.getElementById("export-to-svg-button");
 if (svgExportButton) {
-    svgExportButton.addEventListener("click", function() {
-        exportToSvg(mainSvg, graphEditor, darkModeButton.style.display == "none");
-    });
+    exportsHandler.registerExportToSvg(svgExportButton);
+}
+
+// Register export to svg
+const pngExportButton = document.getElementById("export-to-png-button");
+if (pngExportButton) {
+    exportsHandler.registerExportToPng(pngExportButton);
 }

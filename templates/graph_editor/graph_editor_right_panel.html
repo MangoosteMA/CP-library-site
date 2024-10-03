@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <div class="right-panel-inside-div">
     <div class="top-buttons" style="justify-content: right; transform: translateX(-5px);">
         <button class="play-pause-button" id="dark-mode-button">
@@ -15,7 +17,15 @@
             </button>
         </summary>
     </details>
-    <div style="text-align: center; margin-bottom: 20px;">
-        <button class="export-button" id="export-to-svg-button">Экспорт в svg</button>
+    <div style="margin-bottom: 20px;">
+        <div class="export-buttons-div">
+            <div style="text-align: center;">
+                <button class="export-button">Экспорт <i class="fa fa-caret-down"></i></button>
+            </div>
+            <div class="export-buttons-container">
+                <button class="export-single-button" id="export-to-svg-button">svg</button>
+                <button class="export-single-button export-last-single-button" id="export-to-png-button">png</button>
+            </div>
+        </div>
     </div>
 </div>
