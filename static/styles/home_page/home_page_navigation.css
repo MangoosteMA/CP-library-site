@@ -159,6 +159,11 @@
     transition: 0.1s;
 }
 
+.option-last-link {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
 @media (width <= 750px) {
     .title-div {
         width: 100px;
