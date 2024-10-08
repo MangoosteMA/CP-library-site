@@ -1,0 +1,207 @@
+\title[] {Min plus convolution}
+
+\details[mode=main; summary=Постановка задачи] {
+    Даны два массива $a_0$, $\ldots$, $a_{n-1}$ и $b_0$, $\ldots$, $b_{m-1}$. Требуется найти массив $c$ длины $n + m - 1$, что:
+    $$
+    c_k = \min\limits_{i + j = k} a_i + b_j
+    $$
+    Это похоже на формулу обычной свёртки (перемножение многочленов), только в этом случае, вместо суммы~--- минимум.
+}
+
+\details[mode=main; summary=Max plus convolution] {
+    Если в определении массива $c$ заменить минимум на максимум:
+    $$
+    c_k = \max\limits_{i + j = k} a_i + b_j
+    $$
+    то данная задача сводится к предыдущей, если умножить все числа на $-1$. Поэтому далее max plus convolution не будет упомянаться.
+}
+
+\center[] {<h2>Две выпуклые</h2>}
+
+\details[mode=main; summary=Теория] {
+    Предположим, что массивы $a$ и $b$ выпуклые вверх. Это означает, что верно следующее неравенство:
+    $$
+    a_{i + 1} - a_i \le a_{i+2} - a_{i+1} \iff
+    a_{i} + a_{i + 2} \ge 2a_{i+1}
+    $$
+    В этом случае, оказывается, найти массив $c$ совсем несложно.
+    
+    Давайте предположим, что $a_i + b_j = c_{i + j}$. Тогда, если $i > 0$ и $j + 1 < m$, то обязано выполняться следующее неравенство:
+    $$
+    a_{i} - a_{i - 1} < b_{j + 1} - b_{j}
+    $$
+    Если это неравенство не выполнено, то $a_{i - 1} + b_{j + 1} < a_i + b_j$.
+    
+    Аналогично, если $i + 1 < n$ и $j > 0$, то выполняется следующее неравенство:
+    $$
+    a_{i + 1} - a_i > b_{j} - b_{j - 1}
+    $$
+    Это означает, что если $c_{i + j} = a_i + b_j$, то верно следующее утверждение:
+    $$
+    c_{i + j + 1} = \min(a_i + b_{j + 1}, a_{i + 1} + b_j)
+    $$
+    Другими словами, если мы посмотрим на массивы разностей $a'_i = a_{i + 1} - a_i$ и $b'_i = b_{i + 1} - b_i$, то массив разностей $c'_i = c_{i + 1} - c_i$ равен слиянию массивов $a'$ и $b'$ в порядке неубывания значений. Это верно, так как мы заранее потребовали, чтобы массивы $a'$ и $b'$ были неубывающими.
+    
+    Таким образом, с помощью двух указателей или std::merge, можно найти массив $c$ за линейное время.
+}
+
+\details[mode=main; summary=Время работы] {
+    Время работы, как было сказано выше, линейно, то есть составляет \complexity$(n + m)$.
+}
+
+\details[mode=main; summary=Реализация] {
+\code[language=C++] {
+/*
+ ! WARNING: type T must have sufficient capacity to store the result.
+ * Returns h of size |f| + |g| - 1, such that: h_k = min_{i + j = k} f_i + g_j.
+ * Require: f and g are two convex downward arrays: f[i + 1] - f[i] <= f[i + 2] - f[i + 1].
+ * Require: f and g are not empty.
+ */
+template<typename T>
+std::vector<T> min_plus_convolution_convex_convex(const std::vector<T> &f, const std::vector<T> &g) {
+    assert(!f.empty() && !g.empty());
+    int n = f.size(), m = g.size();
+    for (int i = 0; i + 2 < n; i++) {
+        assert(f[i + 1] - f[i] <= f[i + 2] - f[i + 1] && "f is not convex");
+    }
+    for (int i = 0; i + 2 < m; i++) {
+        assert(g[i + 1] - g[i] <= g[i + 2] - g[i + 1] && "g is not convex");
+    }
+
+    std::vector<T> conv(n + m - 1);
+    for (int i = 0, j = 0; i < n && j < m;) {
+        conv[i + j] = f[i] + g[j];
+        if (j + 1 == m || (i + 1 != n && f[i + 1] - f[i] <= g[j + 1] - g[j])) {
+            i++;
+        } else {
+            j++;
+        }
+    }
+    return conv;
+}
+
+/*
+ ! WARNING: type T must have sufficient capacity to store the result.
+ * Returns h of size |f| + |g| - 1, such that: h_k = max_{i + j = k} f_i + g_j.
+ * Require: f and g are two convex upward arrays: f[i + 1] - f[i] >= f[i + 2] - f[i + 1].
+ * Require: f and g are not empty.
+ */
+template<typename T>
+std::vector<T> max_plus_convolution_convex_convex(std::vector<T> f, std::vector<T> g) {
+    for (auto &x : f) {
+        x *= -1;
+    }
+    for (auto &x : g) {
+        x *= -1;
+    }
+    return min_plus_convolution_convex_convex(f, g);
+}
+}
+}
+
+\center[] {<h2>Выпуклая и произвольная</h2>}
+
+\details[mode=main; summary=Теория] {
+    Теперь предположим, что только массив $a$ выпуклый вверх. Оказывается, что массив $c$ всё ещё несложно найти.
+    
+    Пусть $\mathrm{opt}(k)$~--- максимальное $j$, что $c_k = a_{k - j} + b_j$. Оказывается, что $\mathrm{opt}(k) \le \mathrm{opt}(k + 1)$.
+    
+    \details[summary=Доказательство] {
+        Рассмотрим два произвольных элемента $b_{j_1}$ и $b_{j_2}$, что $j_1 < j_2$.
+        
+        Утверждается, что для какого-то отрезка $[j_2, x]$ верно следующее неравенство:
+        $$
+        k \in [j_2, x] \implies b_{j_1} + a_{k - j_1} \le b_{j_2} + a_{k - j_2}
+        $$
+        А для всех больших $k$ уже верно обратное неравенство:
+        $$
+        k > x \implies b_{j_1} + a_{k - j_1} < b_{j_2} + a_{k - j_2}
+        $$
+        Другими словами, сначала оптимальнее пересчитываться через $j_1$, а потом~--- через $j_2$.
+
+        Это нетрудное следствие выпуклости массива $a$, так как из неё следует, что при увеличении $k$, величина $b_{j_1} + a_{k - j_1}$ растёт быстрее величины $b_{j_2} + a_{k - j_2}$.
+        
+        Из этого свойства уже легко следует факт, который мы хотим доказать.\qed
+    }
+    
+    Используя этот факт, можно найти массив $c$ с помощью классической разделяйки или любой другой оптимизацией, основывающийся на монотонности оптимума.
+}
+
+\details[mode=main; summary=Время работы] {
+    В данном случае, надо использовать разделяйку, из-за чего данный алгоритм работает за \complexity$((n + m) \log (n + m))$.
+}
+
+\details[mode=main; summary=Реализация] {
+\code[language=C++] {
+/*
+ ! WARNING: type T must have sufficient capacity to store the result.
+ * Returns h of size |f| + |g| - 1, such that: h_k = min_{i + j = k} f_i + g_j.
+ * Require: f is a convex downward array: f[i + 1] - f[i] <= f[i + 2] - f[i + 1].
+ * Require: f and g are not empty.
+ */
+template<typename T>
+std::vector<T> min_plus_convolution_convex_arbitrary(const std::vector<T> &f, const std::vector<T> &g) {
+    assert(!f.empty() && !g.empty());
+    int n = f.size(), m = g.size();
+    for (int i = 0; i + 2 < n; i++) {
+        assert(f[i + 1] - f[i] <= f[i + 2] - f[i + 1] && "f is not convex");
+    }
+    std::vector<T> conv(n + m - 1);
+
+    auto solve = [&](auto &&self, int l, int r, int opt_l, int opt_r) {
+        if (r <= l) {
+            return;
+        }
+
+        int mid = (l + r) / 2;
+        int cur_opt = -1;
+        for (int i = std::max(opt_l, mid - n + 1); i < opt_r && i <= mid; i++) {
+            if (cur_opt == -1 || g[cur_opt] + f[mid - cur_opt] > g[i] + f[mid - i]) {
+                cur_opt = i;
+            }
+        }
+
+        conv[mid] = g[cur_opt] + f[mid - cur_opt];
+        self(self, l, mid, opt_l, cur_opt + 1);
+        self(self, mid + 1, r, cur_opt, opt_r);
+    };
+
+    solve(solve, 0, conv.size(), 0, g.size());
+    return conv;
+}
+
+/*
+ ! WARNING: type T must have sufficient capacity to store the result.
+ * Returns h of size |f| + |g| - 1, such that: h_k = max_{i + j = k} f_i + g_j.
+ * Require: f is a convex upward array: f[i + 1] - f[i] >= f[i + 2] - f[i + 1].
+ * Require: f and g are not empty.
+ */
+template<typename T>
+std::vector<T> max_plus_convolution_convex_arbitrary(std::vector<T> f, std::vector<T> g) {
+    for (auto &x : f) {
+        x *= -1;
+    }
+    for (auto &x : g) {
+        x *= -1;
+    }
+    return min_plus_convolution_convex_arbitary(f, g);
+}
+}
+}
+
+\center[] {<h2>Общий случай</h2>}
+
+\details[mode=main; summary=Теория] {
+    Если на массивы $a$ и $b$ не накладываются дополнительные ограничения, то существует алгоритм, работающий за \complexity$(\frac{n^2}{\log n})$ (предполагаем, что $n = m$). Этот алгоритм, как можно догадаться, не очень полезный на практике.
+    
+    Мне кажется, что на практике быстрее всего ускорить обычное решение за \complexity$(nm)$ с помощью avx инструкций.
+}
+
+\center[] {<h2>Приложения</h2>}
+
+\details[mode=main; summary=Задачи] {
+    \item[] {\link[href=https://judge.yosupo.jp/problem/min_plus_convolution_convex_convex] {Yosupo library checker. Min Plus Convolution (Convex and Convex)}}
+    \item[] {\link[href=https://judge.yosupo.jp/problem/min_plus_convolution_convex_arbitrary] {Yosupo library checker. Min Plus Convolution (Convex and Arbitrary)}}
+    \item[] {\link[href=https://codeforces.com/contest/1609/problem/G]{Codeforces 1609-G}}
+    \item[] {\link[href=https://contest.ucup.ac/contest/1738/problem/9119]{The 3rd Universal Cup. Stage 4: Hongō. Задача G}}
+}
