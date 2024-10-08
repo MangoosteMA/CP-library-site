@@ -4,8 +4,7 @@ from library.utils.time import getCurrentDateTime
 
 import datetime
 import json
-
-from typing import Optional
+from typing             import Optional
 
 UTC_BASE = datetime.datetime(1970, 1, 1)
 CODEFORCES_MAIN_PAGE = 'https://codeforces.com'
@@ -27,9 +26,10 @@ def requestAPI(method: str) -> Optional[dict]:
     RESULT = 'result'
     if statusIsOk(response) and RESULT in response:
         return response[RESULT]
+
     return None
 
-def tryParseContestFromJson(contestJson: dict) -> Contest:
+def tryParseContestFromJson(contestJson: dict) -> Optional[Contest]:
     try:
         return Contest(name=contestJson['name'],
                        duration=contestJson['durationSeconds'],
@@ -39,10 +39,10 @@ def tryParseContestFromJson(contestJson: dict) -> Contest:
         print(f'Failed to parse contest. Reason: {exc}')
         return None
 
-def getContestsList() -> list[Contest]:
+def getContestsList() -> Optional[list[Contest]]:
     contestJsonList = requestAPI('contest.list')
     if contestJsonList is None:
-        return []
+        return None
 
     contests = []
     for contestJson in contestJsonList:
@@ -51,6 +51,10 @@ def getContestsList() -> list[Contest]:
             contests.append(parsedContest)
     return contests
 
-def getScheduledContestsList() -> list[Contest]:
+def getScheduledContestsList() -> Optional[list[Contest]]:
     currentTime = getCurrentDateTime()
-    return [contest for contest in getContestsList() if contest.end >= currentTime]
+    contestsList = getContestsList()
+    if contestsList is None:
+        return None
+
+    return [contest for contest in contestsList if contest.end >= currentTime]

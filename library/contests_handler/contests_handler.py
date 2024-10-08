@@ -9,7 +9,7 @@ class ContestsHandler:
     '''
     Variables:
     updateTime:            timedelta
-    platformToContestDict: dict[Platform, ]
+    platformToContestDict: dict[Platform, list[Contest]]
     contests:              list[Contest]
     contestsMutex:         Lock
     '''

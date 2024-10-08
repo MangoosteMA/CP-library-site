@@ -4,6 +4,7 @@ from library.utils.str import removeAllNonASCIISymbols
 
 from bs4               import BeautifulSoup
 from datetime          import datetime, timedelta
+from typing            import Optional
 
 ATCODER_MAIN_PAGE = 'https://atcoder.jp'
 JAPAN_UTC = timedelta(hours=9)
@@ -12,7 +13,7 @@ def parseDatetimeFromStr(time: str) -> datetime:
     return datetime.strptime(time, '%Y-%m-%d %H:%M:%S+0900')
 
 # returns contest duration in seconds or None
-def getContestDuration(link: str) -> int:
+def getContestDuration(link: str) -> Optional[int]:
     try:
         htmlCode = getPageHtmlCode(link)
         htmlParser = BeautifulSoup(htmlCode, 'html.parser')
@@ -23,7 +24,7 @@ def getContestDuration(link: str) -> int:
         print(f'Failed to get contest duration. Reason: {exc}')
         return None
 
-def tryParseScheduledContests() -> list[Contest]:
+def tryParseScheduledContests() -> Optional[list[Contest]]:
     try:
         htmlCode = getPageHtmlCode(ATCODER_MAIN_PAGE)
         htmlParser = BeautifulSoup(htmlCode, 'html.parser')
@@ -45,6 +46,7 @@ def tryParseScheduledContests() -> list[Contest]:
                                               platform=Platform.ATCODER))
             except BaseException as exc:
                 print(f'Failed to parse contest. Reason: {exc}')
+
         return parsedContests
     except BaseException as exc:
         print(f'Failed to parse contests. Reason: {exc}')
