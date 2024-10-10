@@ -13,6 +13,9 @@
     "Структуры данных": {
         "Disjoint sparse table": "disjoint-sparse-table"
     },
+    "Оптимизации дп": {
+        "Min plus convolution": "min-plus-convolution"
+    },
     "Математика": {
         "Floor сумма": "floor-sum"
     },
