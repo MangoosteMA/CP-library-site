@@ -147,6 +147,20 @@
     }
 }
 
+\details[mode=main; summary=Распределение открывающих скобок в ПСП] {
+    Пусть $C_n$~--- количество ПСП длины $2n$. Тогда количество спобочных последовательностей длины $2n$, в которых $p$-я скобка (в 0 нумерации) закрывающая, равно:
+    $$
+    \sum\limits_{m = 0}^{\min\big(n - 1, \big\lfloor \frac{p - 1}{2} \big\rfloor\big)} C_{m} \cdot C_{n - m - 1}
+    $$
+    \details[summary=Доказательство] {
+        Рассмотрим парную скобку. Пусть она имеет индекс $q < p$. Тогда подстрока $[q + 1, p - 1]$ является ПСП. Одновременно с этим, если выкинуть подстроку $[q, p]$, то оставшаяся строка тоже будет ПСП.
+        
+        В приведённой выше формуле $m$ как раз равно количеству открывающих скобок между $p$ и $q$. То есть $p - q - 1 = 2m$. Так как она суммирует это по всем возможным значениям $m$, она учитывает все ПСП, в которых $p$-я скобка закрывающая.\qed
+    }
+    
+    Данная формула позволяет, например, для каждого $p$ найти вероятность, что $p$-я скобка открывающая/закрывающая при случайном выборе ПСП за \complexity$(n)$.
+}
+
 \center[] {<h2>Приложения</h2>}
 
 \details[mode=main; summary=Задачи] {
@@ -156,4 +170,5 @@
     \item[] {\link[href=https://codeforces.com/contest/1967/problem/E1]{Codeforces 1967-E}}
     \item[] {\link[href=https://cses.fi/problemset/task/2187]{CSES. Bracket Sequences II.}}
     \item[] {\link[href=https://contest.ucup.ac/contest/1195/problem/6196]{The 1st Universal Cup. Stage 10: Zhejiang. Задача M}}
+    \item[] {\link[href=https://contest.ucup.ac/contest/1807/problem/9451]{The 3rd Universal Cup. Stage 12: Qinhuangdao. Задача B}}
 }
