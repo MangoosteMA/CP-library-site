@@ -236,4 +236,5 @@ std::vector<std::pair<int, int>> decodePruferCode(const std::vector<int> &prufer
 
 \details[mode=main; summary=Задачи] {
     \item[] {\link[href=https://atcoder.jp/contests/arc106/tasks/arc106_f]{Atcoder ARC106-F}}
+    \item[] {\link[href=https://codeforces.com/contest/1267/problem/F]{ICPC 2019–2020, NERC. Задача F}}
 }
