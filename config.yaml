@@ -1,0 +1,16 @@
+Host: localhost:10228
+LogPath: x.server
+LogLevel: 0
+
+UsersDBPath: data/users/users.db
+
+GinLogPath: x.gin
+GinSecret: TODO:_CHANGE_IT
+
+Algo:
+  ConfigPath: data/config/library_algo.json
+  Storage: data/algo
+
+Dev:
+  ConfigPath: data/config/library_dev.json
+  Storage: data/dev

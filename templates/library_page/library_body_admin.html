@@ -1,21 +1,21 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/text_editor/text_editor.css') }}" type="text/css">
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/library_page/library_body_admin.css') }}" type="text/css">
+<link rel="stylesheet" href="/static/styles/text_editor/text_editor.css" type="text/css">
+<link rel="stylesheet" href="/static/styles/library_page/library_body_admin.css" type="text/css">
 
 <div class="admin-div" style="display: none;" id="admin-div">
+    <div class="config-title">Конфиг</div>
     <div class="library-editor" id="library-editor">
         <div class="editor-lines-indexes-div" id="lines-holder-div"></div>
         <div class="editor-inside-container">
             <div class="editor-textarea-background" id="main-textarea-background"></div>
-            <textarea class="editor-textarea" id="main-textarea">{{ libraryConfig | safe }}</textarea>
+            <textarea class="editor-textarea" id="main-textarea">{% .config %}</textarea>
         </div>
     </div>
-
-    <button class="save-button" id="save-button">save</button>
+    <button class="save-button" id="save-button">Cохранить</button>
 </div>
 
-<script src="{{ url_for('static', filename='scripts/text_editor/text_coloring_rules/text_modifier.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='scripts/text_editor/text_coloring_rules/coloring_rule_interface.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='scripts/text_editor/text_coloring_rules/bracket_coloring_rule.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='scripts/text_editor/text_coloring_rules/key_words_coloring_rule.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='scripts/text_editor/input_preprocessor.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='scripts/library_page/library_body_admin.js') }}" type="module"></script>
+<script src="/static/scripts/text_editor/text_coloring_rules/text_modifier.js" type="module"></script>
+<script src="/static/scripts/text_editor/text_coloring_rules/coloring_rule_interface.js" type="module"></script>
+<script src="/static/scripts/text_editor/text_coloring_rules/bracket_coloring_rule.js" type="module"></script>
+<script src="/static/scripts/text_editor/text_coloring_rules/key_words_coloring_rule.js" type="module"></script>
+<script src="/static/scripts/text_editor/input_preprocessor.js" type="module"></script>
+<script src="/static/scripts/library_page/library_body_admin.js" type="module"></script>

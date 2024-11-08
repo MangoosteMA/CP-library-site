@@ -4,17 +4,23 @@ const renameDiv = document.getElementById("panel-rename-div");
 
 function panelSave() {
     fetch(window.location.href, {
-        method: "POST",
-        body: JSON.stringify({
-            'method': 'save',
-            'data': document.getElementById("main-textarea").value,
-        }),
+        method: 'PUT',
+        body: textarea.value,
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'text/plain; charset=UTF-8'
         }
     }).then(response => {
-        return response.text();
-    }).then(value => {
+        return response.text().then(text => ({
+            status: response.status,
+            text: text
+        }));
+    }).then(ret => {
+        if (ret.status != 200) {
+            alert(ret.text)
+            return
+        }
+
+        const value = ret.text;
         const auxDiv = document.createElement("div");
         auxDiv.innerHTML = value;
 
@@ -60,14 +66,13 @@ function cancelRename() {
     renameDiv.style.display = "none";
 }
 
-function applyRename(prevHtmlName) {
+function applyRename() {
     const form = document.getElementById("panel-rename-form");
     const elements = form.elements;
+
     fetch(window.location.href, {
-        method: "POST",
+        method: "PATCH",
         body: JSON.stringify({
-            'method': 'rename',
-            'prevHtmlName': prevHtmlName,
             'htmlName': elements['htmlName'].value,
             'fileName': elements['fileName'].value,
             'filePath': elements['filePath'].value,
@@ -75,8 +80,17 @@ function applyRename(prevHtmlName) {
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then(() => {
-        location.replace('/library-algo');
+    }).then(response => {
+        return response.text().then(text => ({
+            status: response.status,
+            text: text
+        }));
+    }).then(ret => {
+        if (ret.status != 200) {
+            alert(ret.text);
+        } else {
+            location.replace('/lib/algo');
+        }
     });
 }
 

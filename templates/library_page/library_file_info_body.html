@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="/static/styles/library_page/library_file_info.css" type="text/css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/atom-one-dark.min.css"> -->
+<link rel="stylesheet" href="/static/styles/contrib/highlight/atom_one_dark.min.css" type="text/css">
+
+<div class="body-div" id="body-div">
+    <div id="simple-div">
+        <button class="library-edit-button" id="library-edit-button">
+            Edit
+        </button>
+        <div class="library-body-inside-div">
+            {% .fileInfo %}
+        </div>
+    </div>
+
+    {% if .admin %}
+        <div style="display: none;" id="admin-div">
+            {% template "library_file_info_admin.html" . %}
+        </div>
+    {% end %}
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'] ],
+        processEscapes: true
+        },
+        "HTML-CSS": { availableFonts: ["TeX"] }
+    });
+</script>
+
+<!-- <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script> -->
+<script src="/static/scripts/contrib/highlight/highlight.js"></script>
+<script src="/static/scripts/library_page/library_file_info.js"></script>
+<script>hljs.highlightAll();</script>

@@ -2,12 +2,12 @@
 <html>
 <head>
     <title>Библиотека</title>
-    {% include "head_template.html" %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/library_page/library_page.css') }}" type="text/css">
+    {% template "head_template.html" %}
+    <link rel="stylesheet" href="/static/styles/library_page/library_page.css" type="text/css">
 </head>
 <body>
-    {% include "home_page/home_page_navigation.html" %}
-    {% include "library_page/library_body.html" %}
-    {% include "home_page/home_page_footer.html" %}
+    {% template "home_page_navigation.html" . %}
+    {% template "library_body.html" . %}
+    {% template "home_page_footer.html" . %}
 </body>
 </html>

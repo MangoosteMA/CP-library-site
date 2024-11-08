@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/login_page/login_page_body.css') }}" type="text/css">
+<link rel="stylesheet" href="/static/styles/login_page/login_page_body.css" type="text/css">
 
 <div class="login-body-div">
     <div class="login-body-inside-div">
@@ -13,7 +13,7 @@
                 <input class="data-input" type="password" name="password">
             </div>
             <input class="submit-input" type="submit" value="Bход">
-            <div class="error-div" id="error-div">{{ error }}</div>
+            <div class="error-div" id="error-div"></div>
             <div class="register-link-div">
                 <a href="/register" class="register-link">Регистрация</a>
             </div>
@@ -29,15 +29,19 @@
             method: "POST",
             body: new FormData(form),
         }).then(response => {
-            return response.text();
-        }).then(message => {
-            if (message.length == 0) {
+            return response.text().then(text => ({
+                status: response.status,
+                message: text
+            }));
+        }).then(ret => {
+            if (ret.status == 200) {
                 location.replace("/");
+                return
             }
 
             const errorsContainer = document.getElementById("error-div");
             if (errorsContainer != null) {
-                errorsContainer.innerText = message;
+                errorsContainer.innerText = ret.message;
             }
         });
     }

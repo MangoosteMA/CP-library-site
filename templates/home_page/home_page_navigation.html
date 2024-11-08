@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/home_page/home_page_navigation.css') }}" type="text/css">
+<link rel="stylesheet" href="/static/styles/home_page/home_page_navigation.css" type="text/css">
 
 <nav class="main-nav" id="main-nav">
     <div class="title-div">
@@ -9,8 +9,8 @@
         <div class="option-link-div">
             <button class="option-button">Библиотека <i class="fa fa-caret-down"></i></button>
             <div class="navigation-link-options-div">
-                <a class="option-link" href="/library-algo">Алгоритмы</a>
-                <a class="option-link option-last-link" href="/library-dev">Разработка</a>
+                <a class="option-link" href="/lib/algo">Алгоритмы</a>
+                <a class="option-link option-last-link" href="/lib/dev">Разработка</a>
             </div>
         </div>
         <div class="option-link-div" style="margin-right: 0px;">
@@ -21,8 +21,8 @@
         </div>
     </div>
     <div class="sing-in-up-div">
-        {% if loggedIn %}
-            <a onclick="logOut()" class="sign-in-up-link log-out-link">{{ username }}</a>
+        {% if .loggedIn %}
+            <a onclick="logOut()" class="sign-in-up-link log-out-link">{% .username %}</a>
             <script>
                 function logOut() {
                     fetch("/log-out", { method: "POST", }).then(response => {
@@ -34,7 +34,7 @@
             </script>
         {% else %}
             <a href="/login" class="sign-in-up-link">Вход</a>
-        {% endif %}
+        {% end %}
     </div>
 </nav>
 

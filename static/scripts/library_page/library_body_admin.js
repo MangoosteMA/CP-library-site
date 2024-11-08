@@ -22,9 +22,17 @@ const background = document.getElementById("main-textarea-background");
 const linesDiv = document.getElementById("lines-holder-div");
 const editor = new Editor(textarea, background, linesDiv, textColoring, new InputPreprocessor(['{']));
 
+// Prettify json
+textarea.value = JSON.stringify(JSON.parse(textarea.value), null, 4);
+
 // Handle edit button
-const editButton = document.getElementById("library-edit-button");
+const editButton = document.createElement("button");
+editButton.innerText = "Edit";
+editButton.className = "library-edit-button";
 editButton.style.display = "block";
+
+const libraryBody = document.getElementById("library-div");
+libraryBody.insertBefore(editButton, libraryBody.firstChild);
 
 editButton.addEventListener("click", () => {
     document.getElementById("simple-div").style.display = "none";
@@ -32,25 +40,26 @@ editButton.addEventListener("click", () => {
     editor.build();
 });
 
+// Handle save button
 const saveButton = document.getElementById("save-button");
 
 saveButton.addEventListener("click", () => {
     fetch(window.location.href, {
-        method: "POST",
+        method: "PUT",
         body: textarea.value,
         headers: {
             "Content-type": "text/plain; charset=UTF-8"
         }
     }).then(response => {
-        if (response.status == 200) {
+        return response.text().then(text => ({
+            status: response.status,
+            text: text
+        }));
+    }).then(ret => {
+        if (ret.status == 200) {
             location.reload();
-            return;
+        } else {
+            alert(ret.text);
         }
-
-        const prevBackgroundColor = saveButton.style.backgroundColor;
-        saveButton.style.backgroundColor = "red";
-        setTimeout(() => {
-            saveButton.style.backgroundColor = prevBackgroundColor;
-        }, 1200);
     });
 });

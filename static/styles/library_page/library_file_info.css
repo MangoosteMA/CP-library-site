@@ -1,8 +1,8 @@
 @import "../base_styles.css";
 
 :root {
-    --default-tab-size-main: 28px;
-    --default-tab-size-simple: 23px;
+    --default-tab-size-main: 30px;
+    --default-tab-size-simple: 20px;
 }
 
 .body-div {

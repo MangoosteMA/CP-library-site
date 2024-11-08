@@ -1,9 +1,9 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/text_editor/text_editor.css') }}" type="text/css">
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/library_page/library_file_info_admin.css') }}" type="text/css">
+<link rel="stylesheet" href="/static/styles/text_editor/text_editor.css" type="text/css">
+<link rel="stylesheet" href="/static/styles/library_page/library_file_info_admin.css" type="text/css">
 
 <div class="half-half-div">
     <div class="left-half-div">
-        <div class="library-title-div" style="padding-bottom: 0;">{{ htmlName }}</div>
+        <div class="library-title-div" style="padding-bottom: 0;">{% .htmlName %}</div>
         <div class="library-editor-outer">
             <div class="editor-buttons-holder">
                 <button class="editor-button" onclick="panelSave()">сохранить</button>
@@ -16,19 +16,19 @@
                     <table>
                         <tr>
                             <td><span>Html name:</span></td>
-                            <td><input type="text" name="htmlName" value="{{ htmlName }}"></td>
+                            <td><input type="text" name="htmlName" value="{% .htmlName %}"></td>
                         </tr>
                         <tr>
                             <td><span>File name:</span></td>
-                            <td><input type="text" name="fileName" value="{{ fileName }}"></td>
+                            <td><input type="text" name="fileName" value="{% .fileName %}"></td>
                         </tr>
                         <tr>
                             <td><span>File path:</span></td>
-                            <td><input type="text" name="filePath" value="{{ filePath }}"></td>
+                            <td><input type="text" name="filePath" value="{% .filePath %}"></td>
                         </tr>
                     </table>
                 </form>
-                <button class="panel-rename-button" onclick="applyRename('{{ htmlName }}')">
+                <button class="panel-rename-button" onclick="applyRename()">
                     Применить
                 </button>
                 <button class="panel-rename-button" onclick="cancelRename()">
@@ -40,23 +40,23 @@
                 <div class="editor-lines-indexes-div" id="lines-holder-div"></div>
                 <div class="editor-inside-container">
                     <div class="editor-textarea-background" id="main-textarea-background"></div>
-                    <textarea class="editor-textarea" id="main-textarea">{{ mtexData | safe }}</textarea>
+                    <textarea class="editor-textarea" id="main-textarea">{% .mtexSource %}</textarea>
                 </div>
             </div>
         </div>
     </div>
     <div class="right-half-div">
         <div class="library-body-inside-div admin-fileinfo-div" id="admin-fileinfo-div">
-            {{ fileInfo | safe }}
+            {% .fileInfo %}
         </div>
     </div>
 </div>
 
-<script src="{{ url_for('static', filename='scripts/text_editor/text_coloring_rules/text_modifier.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='scripts/text_editor/text_coloring_rules/coloring_rule_interface.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='scripts/text_editor/text_coloring_rules/bracket_coloring_rule.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='scripts/text_editor/text_coloring_rules/key_words_coloring_rule.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='scripts/text_editor/input_preprocessor.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='scripts/text_editor/editor.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='scripts/library_page/library_file_info_admin.js') }}" type="module"></script>
-<script src="{{ url_for('static', filename='scripts/library_page/panel.js') }}"></script>
+<script src="/static/scripts/text_editor/text_coloring_rules/text_modifier.js" type="module"></script>
+<script src="/static/scripts/text_editor/text_coloring_rules/coloring_rule_interface.js" type="module"></script>
+<script src="/static/scripts/text_editor/text_coloring_rules/bracket_coloring_rule.js" type="module"></script>
+<script src="/static/scripts/text_editor/text_coloring_rules/key_words_coloring_rule.js" type="module"></script>
+<script src="/static/scripts/text_editor/input_preprocessor.js" type="module"></script>
+<script src="/static/scripts/text_editor/editor.js" type="module"></script>
+<script src="/static/scripts/library_page/library_file_info_admin.js" type="module"></script>
+<script src="/static/scripts/library_page/panel.js"></script>

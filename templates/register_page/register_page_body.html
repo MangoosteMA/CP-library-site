@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='styles/login_page/login_page_body.css') }}" type="text/css">
+<link rel="stylesheet" href="/static/styles/login_page/login_page_body.css" type="text/css">
 
 <div class="login-body-div">
     <div class="login-body-inside-div">
@@ -37,15 +37,19 @@
             method: "POST",
             body: new FormData(form),
         }).then(response => {
-            return response.text();
-        }).then(message => {
-            if (message.length == 0) {
+            return response.text().then(text => ({
+                status: response.status,
+                message: text
+            }));
+        }).then(ret => {
+            if (ret.status == 200) {
                 location.replace("/");
+                return
             }
 
             const errorsContainer = document.getElementById("error-div");
             if (errorsContainer != null) {
-                errorsContainer.innerText = message;
+                errorsContainer.innerText = ret.message;
             }
         });
     }

@@ -2,12 +2,12 @@
 <html>
 <head>
     <title>Login</title>
-    {% include "head_template.html" %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/home_page/home_page.css') }}" type="text/css">
+    {% template "head_template.html" %}
+    <link rel="stylesheet" href="/static/styles/home_page/home_page.css" type="text/css">
 </head>
 <body>
-    {% include "home_page/home_page_navigation.html" %}
-    {% include "login_page/login_page_body.html" %}
-    {% include "home_page/home_page_footer.html" %}
+    {% template "home_page_navigation.html" . %}
+    {% template "login_page_body.html" . %}
+    {% template "home_page_footer.html" . %}
 </body>
 </html>

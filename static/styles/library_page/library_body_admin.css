@@ -5,28 +5,50 @@
     margin-right: auto;
     margin-top: 30px;
     width: 600px;
+    background-color: var(--base-font-color);
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-bottom: 10px;
+    border-radius: 15px;
+    box-shadow: 0px 0px 3px 2px rgba(0, 0, 0, 0.9);
+}
+
+.library-editor {
+    border: 1px solid var(--base-white-font-color);
+}
+
+.config-title {
+    text-align: center;
+    font-family: var(--base-font-family);
+    color: var(--base-white-font-color);
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: 25px;
+    font-weight: 600;
 }
 
 .save-button {
-    margin-top: 10px;
-    border-radius: 10px;
-    background-color: rgb(43, 207, 2);
-    border: none;
-    display: block;
+    margin-top: 8px;
     position: relative;
     left: 50%;
+    font-size: 15px;
     transform: translateX(-50%);
-    font-size: 14px;
-    font-weight: 500;
-    width: 60px;
+    color: var(--base-white-font-color);
+    font-size: 15px;
+    text-align: center;
+    background-color: var(--base-font-color);
+    box-shadow: 0px 0px 4px rgba(255, 255, 255, 0.4);
+    border: 1px solid var(--base-white-font-color);
+    border-radius: 8px;
+    width: 100px;
 }
 
 .save-button:hover {
-    box-shadow: 0px 0px 1px 1px rgba(43, 207, 2, 0.7);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .save-button:active {
-    background-color: rgb(49, 158, 21);
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 .editor-lines-indexes-div {
