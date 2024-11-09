@@ -29,7 +29,7 @@ func setupGinSession(router *gin.Engine, secret string) {
 func registerViews(router *gin.Engine) {
 	router.GET("/", views.HomepageGET)
 	router.POST("/log-out", views.LogOut)
-	router.GET("/secrets/login-secrets", views.LogSecretsGET)
+	router.GET("/secret/login-secrets", views.LogSecretsGET)
 
 	router.GET("/login", views.LoginPageGET)
 	router.POST("/login", views.LoginPagePOST)
