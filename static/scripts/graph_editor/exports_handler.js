@@ -8,15 +8,21 @@ export class ExportsHandler {
     }
 
     registerExportToSvg(exportToSvgButton) {
-        this.registerExportButton(exportToSvgButton, () => {
+        this.registerExportButton(exportToSvgButton, true, () => {
             this.exportToSvg();
         });
     }
 
     registerExportToPng(exportToPngButton) {
-        this.registerExportButton(exportToPngButton, () => {
+        this.registerExportButton(exportToPngButton, true, () => {
             this.exportToPng();
-        })
+        });
+    }
+
+    registerExportToURL(exportToURLButton) {
+        this.registerExportButton(exportToURLButton, false, () => {
+            this.exportToURL();
+        });
     }
 
 // Private:
@@ -35,12 +41,16 @@ export class ExportsHandler {
         this.#graphEditor.shiftNodesBy(this.#shiftVector);
     }
 
-    registerExportButton(button, handler) {
+    registerExportButton(button, prepare, handler) {
         const exportsHandler = this;
         button.addEventListener("click", () => {
-            exportsHandler.prepareExport();
+            if (prepare) {
+                exportsHandler.prepareExport();
+            }
             handler();
-            exportsHandler.exportAftercare();
+            if (prepare) {
+                exportsHandler.exportAftercare();
+            }
         });
     }
 
@@ -108,5 +118,13 @@ export class ExportsHandler {
         const source = this.getSerializedSvg();
         const file = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
         image.src = URL.createObjectURL(file);
+    }
+
+    exportToURL() {
+        const object = this.#graphEditor.encodeJson();
+        const graphData = JSON.stringify(object);
+        const encoded = encodeURIComponent(graphData);
+        navigator.clipboard.writeText(window.location.origin + window.location.pathname + "?data=" + encoded);
+        alert("copied");
     }
 }

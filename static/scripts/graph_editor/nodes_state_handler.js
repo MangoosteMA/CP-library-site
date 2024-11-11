@@ -206,6 +206,22 @@ export class NodesStateHandler {
         });
     }
 
+    encodeJson() {
+        const objects = [];
+        this.sortedNodes().forEach(node => {
+            objects.push(node.encodeJson());
+        });
+        return objects;
+    }
+
+    decodeJson(data) {
+        this.nodes = new Map();
+        data.forEach(node => {
+            const newNode = this.createNode(node['l']);
+            newNode.setCoordinates(new Point(node['x'] * this.box.maxX, node['y'] * this.box.maxY));
+        });
+    }
+
 // Private:
     #radius;
     #fontSize;
@@ -215,8 +231,11 @@ export class NodesStateHandler {
             console.log("Did not create a node. [Duplicate]");
             return;
         }
+
         console.log("Creating node with label", label);
-        this.nodes.set(label, new Node(label, this.#radius, this.group, this.box, this.#fontSize));
+        const node = new Node(label, this.#radius, this.group, this.box, this.#fontSize);
+        this.nodes.set(label, node);
+        return node;
     }
 
     handleShiftIndexesUpdate(newNodes) {
@@ -224,7 +243,7 @@ export class NodesStateHandler {
             return false;
         }
         var same;
-        [-1, 1].every(shift => {
+        [-1, 0, 1].every(shift => {
             same = true;
             const newNodesMap = new Map();
             this.nodes.forEach((node, label) => {

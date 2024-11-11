@@ -1,7 +1,8 @@
 import { Edge }               from "./edge.js";
 import { getRadiusStep }      from "./edge.js";
 import { getPointSide }       from "./geometry.js";
-import { NodesStateHandler }   from "./nodes_state_handler.js";
+import { EdgeInfo }           from "./nodes_and_edges_parser.js";
+import { NodesStateHandler }  from "./nodes_state_handler.js";
 import { randomInt }          from "./utils.js";
 import { uniteBoundingBoxes } from "./utils.js";
 import { RandomInt }          from "./random.js";
@@ -37,8 +38,8 @@ export class EdgesStateHandler {
         this.#randomSeed = randomInt(0, (1 << 30));
     }
 
-    updateEdgesSet(newEdges, nodesStateHandler, darkMode) {
-        if (!this.findAnyUpdates(newEdges, nodesStateHandler)) {
+    updateEdgesSet(newEdges, darkMode) {
+        if (!this.findAnyUpdates(newEdges)) {
             return false;
         }
 
@@ -217,18 +218,36 @@ export class EdgesStateHandler {
         return boundingBox;
     }
 
+    encodeJson() {
+        const edges = [];
+        this.edges.forEach(edge => {
+            edges.push(edge.encodeJson());
+        });
+        return edges;
+    }
+
+    decodeJson(data, darkMode) {
+        const newEdges = [];
+        data.forEach(edge => {
+            newEdges.push(new EdgeInfo(edge['v'], edge['u'], edge['d'], edge['w']));
+        });
+
+        this.edges = [];
+        this.updateEdgesSet(newEdges, darkMode);
+    }
+
 // Pravate:
     #fontSize;   // int
     #randomSeed; // int
 
-    findAnyUpdates(newEdges, nodesStateHandler) {
+    findAnyUpdates(newEdges) {
         if (this.edges.length != newEdges.length) {
             return true;
         }
         for (let i = 0; i < this.edges.length; i++) {
             if (this.edges[i].weight != newEdges[i].weight
-             || !this.edges[i].node1.getCircle().center.equalTo(nodesStateHandler.get(newEdges[i].node1).getCircle().center)
-             || !this.edges[i].node2.getCircle().center.equalTo(nodesStateHandler.get(newEdges[i].node2).getCircle().center)) {
+             || !this.edges[i].node1.getCircle().center.equalTo(this.nodesStateHandler.get(newEdges[i].node1).getCircle().center)
+             || !this.edges[i].node2.getCircle().center.equalTo(this.nodesStateHandler.get(newEdges[i].node2).getCircle().center)) {
                 return true;
             }
         }

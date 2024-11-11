@@ -133,7 +133,7 @@ export class GraphEditor {
             });
         }
         var updated = this.nodesStateHandler.updateNodesSet(newNodes, this.#darkModeColor);
-        updated |= this.edgesStateHandler.updateEdgesSet(newEdges, this.nodesStateHandler, this.#darkModeColor != null);
+        updated |= this.edgesStateHandler.updateEdgesSet(newEdges, this.#darkModeColor != null);
         this.onNodesOrEdgesStateChange();
         if (updated) {
             this.play();
@@ -263,6 +263,35 @@ export class GraphEditor {
     shiftNodesBy(vector) {
         this.nodesStateHandler.shiftNodesBy(vector);
         this.renderEdgesAndObjects(true);
+    }
+
+    encodeJson() {
+        return {
+            nodes: this.nodesStateHandler.encodeJson(),
+            edges: this.edgesStateHandler.encodeJson(),
+        };
+    }
+
+    decodeJson(data, editor) {
+        const nodes = data['nodes'];
+        const edges = data['edges'];
+        this.nodesStateHandler.decodeJson(nodes);
+        this.edgesStateHandler.decodeJson(edges, this.#darkModeColor != null);
+
+        var newTextareaValue = "";
+        edges.forEach(edge => {
+            newTextareaValue += edge['v'] + ' ' + edge['u'];
+            if (edge['w']) {
+                newTextareaValue += ' ' + edge['w'];
+            }
+            newTextareaValue += '\n';
+        });
+
+        nodes.forEach(node => {
+            newTextareaValue += node['l'] + '\n';
+        });
+
+        editor.changeValue(newTextareaValue);
     }
 
 // Private:

@@ -30,7 +30,6 @@ function resizeGraphEditor() {
     graphEditor.resize(0, newHeight);
     const newWidth = Math.max(minWidth, svgDiv.clientWidth - svgDiv.clientTop);
     graphEditor.resize(newWidth, newHeight);
-    graphEditor.play();
 }
 window.addEventListener("load", resizeGraphEditor);
 window.addEventListener("resize", resizeGraphEditor);
@@ -233,4 +232,18 @@ if (svgExportButton) {
 const pngExportButton = document.getElementById("export-to-png-button");
 if (pngExportButton) {
     exportsHandler.registerExportToPng(pngExportButton);
+}
+
+// Register export to url
+const urlExportButton = document.getElementById("export-to-url-button");
+if (urlExportButton) {
+    exportsHandler.registerExportToURL(urlExportButton);
+}
+
+// Unpack the graph
+const urlParameters = new URLSearchParams(new URL(window.location.href).search);
+const data = urlParameters.get("data");
+if (data) {
+    const decoded = decodeURIComponent(data);
+    graphEditor.decodeJson(JSON.parse(decoded), graphTextarea);
 }

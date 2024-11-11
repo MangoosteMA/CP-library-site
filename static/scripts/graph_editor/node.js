@@ -86,8 +86,8 @@ export class Node extends DraggableObject {
     }
 
     getCircle() {
-        const x = this.circle.getAttribute("cx");
-        const y = this.circle.getAttribute("cy");
+        const x = parseFloat(this.circle.getAttribute("cx"));
+        const y = parseFloat(this.circle.getAttribute("cy"));
         return new Circle(new Point(x, y), this.circle.getAttribute("r"));
     }
 
@@ -140,5 +140,14 @@ export class Node extends DraggableObject {
             box = uniteBoundingBoxes(box, this.text.getBBox());
         }
         return box;
+    }
+
+    encodeJson() {
+        const center = this.getCenter();
+        return {
+            l: this.label,
+            x: center.x / this.box.maxX,
+            y: center.y / this.box.maxY,
+        };
     }
 }

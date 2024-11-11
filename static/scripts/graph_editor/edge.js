@@ -286,4 +286,13 @@ export class Edge {
         this.text.setAttributeNS(null, "x", circle.center.x);
         this.text.setAttributeNS(null, "y", circle.center.y - 2 * majorRadius - 10);
     }
+
+    encodeJson() {
+        return {
+            v: this.node1.label,
+            u: this.node2.label,
+            d: this.directed,
+            w: this.weight,
+        };
+    }
 }
