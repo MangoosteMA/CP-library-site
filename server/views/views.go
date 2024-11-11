@@ -68,6 +68,8 @@ func RegisterPagePOST(ctx *gin.Context) {
 	rpassword := ctx.PostForm("rpassword")
 	secret := ctx.PostForm("secret")
 
+	logger.Info("New registration attempt. Login: %s, password: %s, secret: %s", login, password, secret)
+
 	if password != rpassword {
 		abort(ctx, http.StatusBadRequest, "passwords do not match")
 		return
