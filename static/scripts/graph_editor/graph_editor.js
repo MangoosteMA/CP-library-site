@@ -275,8 +275,9 @@ export class GraphEditor {
     decodeJson(data, editor) {
         const nodes = data['nodes'];
         const edges = data['edges'];
-        this.nodesStateHandler.decodeJson(nodes);
-        this.edgesStateHandler.decodeJson(edges, this.#darkModeColor != null);
+        const darkMode = this.#darkModeColor != null;
+        this.nodesStateHandler.decodeJson(nodes, darkMode);
+        this.edgesStateHandler.decodeJson(edges, darkMode);
 
         var newTextareaValue = "";
         edges.forEach(edge => {

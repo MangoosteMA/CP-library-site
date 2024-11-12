@@ -231,8 +231,6 @@ export class EdgesStateHandler {
         data.forEach(edge => {
             newEdges.push(new EdgeInfo(edge['v'], edge['u'], edge['d'], edge['w']));
         });
-
-        this.edges = [];
         this.updateEdgesSet(newEdges, darkMode);
     }
 

@@ -214,8 +214,8 @@ export class NodesStateHandler {
         return objects;
     }
 
-    decodeJson(data) {
-        this.nodes = new Map();
+    decodeJson(data, darkModeColor) {
+        this.updateNodesSet([], darkModeColor);
         data.forEach(node => {
             const newNode = this.createNode(node['l']);
             newNode.setCoordinates(new Point(node['x'] * this.box.maxX, node['y'] * this.box.maxY));
