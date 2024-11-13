@@ -201,11 +201,144 @@ T count_remainders(T k, T b, T v, T m, T n) {
 }
 }
 
+\center[] {<h2>Min of mod of linear</h2>}
+
+\details[mode=main; summary=Введение] {
+    Научимся находить по числам $n, m > 0$ и $0 \le k, b < m$ следующую величину:
+    $$
+    \min\limits_{x=0}^{n - 1}\ (kx + b) \bmod m
+    $$
+    Очевидно, что если уметь искать приведённую выше величину, то можно находить следующее:
+    $$
+    \max\limits_{x=0}^{n-1}\ (kx + b) \bmod m
+    $$
+    Тем не менее, далее мы будем находить эти величины друг через друга, а не наивно сводить одну к другой.
+}
+
+\details[mode=main; summary=Теория] {
+    Рассмотрим последовательность чисел $b$, $b + k$, $b + 2k$, $\ldots$, $b + (n - 1)k$. Так же разобьём все неотрицательные числа на блоки $[0, m)$, $[m, 2m)$ и так далее. Заметим, что минимум по модулю $m$ может достигаться только в числах, лежащих в блоке, отличном от блока, в котором лежит предыдущее число. То есть нам интересны только минимальные числа в каждом из блоков.
+    
+    Так же, с помощью простой формулы, если $b \ge k$, найдём первое число в этой последовательности, лежащее в блоке $[m, 2m)$. Если таких чисел нет (например $k=0$ или $n$ слишком маленькое), то искомый минимум равен $b$, а иначе, можно не рассматривать все числа до этого. Таким образом, можем считать, что $b < k$.
+    
+    Рассмотрим минимальные числа в каждом из блоков $b = a_0$, $a_1$, $\ldots$, $a_{t-1}$ по модулю $m$ (то есть $0 \le a_i < m$). Не трудно видеть, что на самом деле $0 \le a_i < k$. Более того:
+    $$
+    a_i - (m \bmod k) \equiv a_{i + 1} (\bmod k)
+    $$
+    Таким образом, данную задачу можно свести к аналогичной со следующими параметрами:
+    $$
+    \begin{matrix}
+    n' = t\\
+    m' = k\\
+    k' = -(m \bmod k)\\
+    b' = a_0\\
+    \end{matrix}
+    $$
+    Это позволяет находить искомую величину за \complexity$(\log \min (k, m))$. В таком алгоритме есть небольшая проблема: чтобы найти $t$ надо перемножить $n$ и $k$, для чего понадобится на порядок больший тип данных. Ниже описан способ этого избежать.
+    
+    Давайте немного поменяем задачу и введём ещё два параметра:
+
+    \itemize[] {
+        \item[] {
+            $p$~--- стоимость, которую мы платим за каждое из чисел последовательности $b$, $b + k$, $\ldots$
+        }
+        \item[] {
+            $q$~--- дополнительная стоимость, которую мы платим за каждое из чисел, блок которого отличается от блока предыдущего числа.
+        }
+    }
+    
+    То есть мы описываем такой процесс:
+    
+    \itemize[] {
+        \item[] {
+            Изначально у нас есть $n$ монет и число $b$.
+        }
+        \item[] {
+            Пока у нас остались монеты, мы заменяем $b$ на $(b + k) \bmod m$ и платим за это $p$ монет. При том, если $b + k \ge m$ (то есть модуль переполнился), то мы платим ещё $q$ монет.
+        }
+        \item[] {
+            Надо найти минимальное число $b$ в процессе алгоритма.
+        }
+    }
+    
+    Чтобы решить исходную задачу, достаточно взять $p = 1$ и $q = 0$. Само собой, мы предполагаем, что $p, q \ge 0$. Теперь заметим, что чтобы перейти от $a_i$ к $a_{i+1}$ надо сделать либо $d = \lfloor\frac{m}{k}\rfloor$ шагов, либо $d + 1$ шаг. Более того:
+    
+    \itemize[] {
+        \item[] {
+            Если $a_{i + 1} = a_{i} - (m \bmod k)$, то надо сделать $d$ шагов.
+        }
+        \item[] {
+            Если $a_{i + 1} = a_{i} + k - (m \bmod k)$, то надо сделать $d + 1$ шаг.
+        }
+    }
+    
+    То есть, если в задаче, к которой мы свели исходную, произошло переполнение, то надо заплатить дополнительно за один шаг нашего алгоритма. Тут переполнение происходит не при переходе через $m$, а при переходе через $0$ (так как мы вычитаем, а не прибавляем). Если мы домножим шаг и стартовое значение на $-1$ по модулю $k$, то платить придётся за переход через $m$, а не через $0$, но уже надо будет найти не минимум, а максимум. Поэтому предполагается, параллельно решить аналогичную задачу для поиска максимума с такими же дополнительными параметрами $p$ и $q$. Случаи будут аналогичными.
+    
+    Почему же здесь нет проблем с переполнением? Если посмотреть на реализацию, то самая большая величина, которая может возникнуть в процессе вычислений равна $m p + q$. Но по индукции можно доказать, что $mp + q \ge m'p' + q'$ при переходе к аналогичной задаче. Изначально $p = 1$ и $q = 0$, поэтому эти числа не будут превышать $m$.
+}
+
+\details[mode=main; summary=Время работы] {
+    Аналогично доказательству floor sum, алгоритм сделает столько же итераций, сколько и алгоритм Евклида для чисел $k$ и $m$. Таким образом, время работы можно оценить, как \complexity$(\log \min(k, m))$.
+}
+
+\details[mode=main; summary=Реализация] {
+\code[language=C++] {
+/*
+ * Returns min_{x=0}^{n - 1} (kx + b) mod m
+ * Require: n, m > 0, 0 <= b, k < m
+ */
+template<typename T>
+T min_of_mod_of_linear(T n, T m, T k, T b, T step_cost = 1, T overflow_cost = 0);
+
+/*
+ * Returns max_{x=0}^{n - 1} (kx + b) mod m
+ * Require: n, m > 0, 0 <= b, k < m
+ */
+template<typename T>
+T max_of_mod_of_linear(T n, T m, T k, T b, T step_cost = 1, T overflow_cost = 0);
+
+template<typename T>
+T max_of_mod_of_linear(T n, T m, T k, T b, T step_cost, T overflow_cost) {
+    if (k == 0) {
+        return b;
+    }
+    if (b < m - k) {
+        T steps = (m - b - 1) / k;
+        T cost = step_cost * steps;
+        if (cost >= n) {
+            return k * ((n - 1) / step_cost) + b;
+        }
+        n -= cost;
+        b += steps * k;
+    }
+    return m - 1 - min_of_mod_of_linear(n, k, m % k, m - 1 - b, (m / k) * step_cost + overflow_cost, step_cost);
+}
+
+template<typename T>
+T min_of_mod_of_linear(T n, T m, T k, T b, T step_cost, T overflow_cost) {
+    if (k == 0) {
+        return b;
+    }
+    if (b >= k) {
+        T steps = (m - b + k - 1) / k;
+        T cost = step_cost * steps + overflow_cost;
+        if (cost >= n) {
+            return b;
+        }
+        n -= cost;
+        b += steps * k - m;
+    }
+    return k - 1 - max_of_mod_of_linear(n, k, m % k, k - 1 - b, (m / k) * step_cost + overflow_cost, step_cost);
+}
+}
+}
+
 \center[] {<h2>Приложения</h2>}
 
 \details[mode=main; summary=Задачи] {
-    \item[] {\link[href=https://judge.yosupo.jp/problem/sum_of_floor_of_linear]{Yosupo library checker. Sum of floor of linear}}
+    \item[] {\link[href=https://judge.yosupo.jp/problem/sum_of_floor_of_linear]{Yosupo library checker. Sum of Floor of linear}}
+    \item[] {\link[href=https://judge.yosupo.jp/problem/min_of_mod_of_linear]{Yosupo library checker. Min of Mod of linear}}
     \item[] {\link[href=https://atcoder.jp/contests/arc111/tasks/arc111_e]{Atcoder ARC111-E}}
     \item[] {\link[href=https://atcoder.jp/contests/arc182/tasks/arc182_e]{Atcoder ARC182-E}}
     \item[] {\link[href=https://contest.ucup.ac/contest/1195/problem/6188]{The 1st Universal Cup. Stage 10: Zhejiang. Задача E}}
+    \item[] {\link[href=https://contest.ucup.ac/contest/1817/problem/9526]{The 3rd Universal Cup. Stage 14: Harbin. Задача H}}
 }
