@@ -126,7 +126,7 @@ T floor_sum(T k, T b, T m, T n) {
  * Require: m > 0, n >= 0.
  */
 template<typename T>
-T mod_sum(T k, T b, ll m, ll n) {
+T mod_sum(T k, T b, T m, T n) {
     k = (k % m + m) % m;
     b = (b % m + m) % m;
     return n * (n - 1) / 2 * k + n * b - m * floor_sum(k, b, m, n);
