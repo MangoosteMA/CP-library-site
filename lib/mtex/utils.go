@@ -114,7 +114,7 @@ func rtrimText(text string) string {
 	return trimmedText
 }
 
-func processParagraphs(text string) string {
+func processText(text string) string {
 	runes := make([]rune, 0, len(text))
 	for _, value := range text {
 		runes = append(runes, value)
@@ -138,11 +138,6 @@ func processParagraphs(text string) string {
 	}
 
 	return processed
-}
-
-func processText(text string) string {
-	text = rtrimText(text)
-	return processParagraphs(text)
 }
 
 func compileDfs(source string, pureText bool) *html_builder.HTMLBuilder {
