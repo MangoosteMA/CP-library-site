@@ -22,6 +22,7 @@
     "Комбинаторика": {
         "Скобочные последовательности": "combinatorics-bracket-sequences",
         "Деревья": "combinatorics-on-trees",
+        "Перестановки": "combinatorics-permutations",
         "Полезные формулы": "combinatorics-formulas"
     },
     "Многочлены": {
