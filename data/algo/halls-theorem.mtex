@@ -97,10 +97,11 @@
 \center[]{<h2>Приложения</h2>}
 
 \details[mode=main; summary=Задачи] {
-    \item[] {\link[href=https://atcoder.jp/contests/arc106/tasks/arc106_e]{Atcoder ARC106-E}}
     \item[] {\link[href=https://codeforces.com/contest/1965/problem/F]{Codeforces 1965-F}}
-    \item[] {\link[href=https://codeforces.com/contest/1835/problem/F]{Codeforces 1835-F}}
+    \item[] {\link[href=https://codeforces.com/contest/1949/problem/B]{Codeforces 1949-B}}
     \item[] {\link[href=https://codeforces.com/contest/1866/problem/D]{Codeforces 1866-D}}
+    \item[] {\link[href=https://codeforces.com/contest/1835/problem/F]{Codeforces 1835-F}}
     \item[] {\link[href=https://atcoder.jp/contests/arc161/tasks/arc161_f]{Atcoder ARC161-F}}
+    \item[] {\link[href=https://atcoder.jp/contests/arc106/tasks/arc106_e]{Atcoder ARC106-E}}
     \item[] {\link[href=https://atcoder.jp/contests/abc215/tasks/abc215_h]{Atcoder ABC215-H}}
 }
