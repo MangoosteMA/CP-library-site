@@ -11,7 +11,7 @@ textColoring.addRule(new KeyWordsColoringRule(["$"], "rgb(225,146,82)"));
 
 // Add mtex key words coloring rule
 textColoring.addRule(new KeyWordsColoringRule(["\\title", "\\code", "\\details",
-                                               "\\link", "\\itemize", "\\item", "\\center"], "rgb(139,233,253)"));
+                                               "\\link", "\\itemize", "\\enumerate", "\\item", "\\center"], "rgb(139,233,253)"));
 
 // Add utf symbols coloring rule
 textColoring.addRule(new KeyWordsColoringRule(["\\complexity", "\\implies", "\\qed"], "rgb(225,146,82)"));
