@@ -1,4 +1,6 @@
-\title[]{Floor сумма}
+\title[] {Mod of linear}
+
+\center[] {<h2>Floor сумма</h2>}
 
 \details[mode=main; summary=Введение] {
     Хочется по числам $k \ge 0$, $b \ge 0$, $n \ge 0$ и $m > 0$ находить такую сумму эффективно:
