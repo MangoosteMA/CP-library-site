@@ -15,9 +15,13 @@
     overflow-y: scroll;
 }
 
+.library-editor {
+    height: max(625px, calc(100vh - 300px));
+    box-sizing: border-box;
+}
+
 .left-half-div, .right-half-div {
-    height: 800px;
-    max-height: 700px;
+    max-height: calc(max(625px, calc(100vh - 300px)) + 80px);
 }
 
 .library-editor-outer {
