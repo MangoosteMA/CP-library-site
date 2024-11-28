@@ -73,7 +73,7 @@
     background-color: rgba(255, 255, 255, 0.4);
 }
 
-.panel-rename-div {
+.panel-rename-div, .panel-images-div {
     overflow: scroll;
     padding-top: 10px;
     padding-left: 10px;
@@ -93,4 +93,8 @@ input[type=text] {
     background-color: transparent;
     margin-top: 2px;
     margin-bottom: 2px;
+}
+
+form {
+    margin-bottom: 5px;
 }

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"sync"
@@ -146,6 +147,23 @@ func (container *PapersContainer) UpdateMtex(htmlName string, mtex []byte) error
 	return err
 }
 
+func (container *PapersContainer) GetImageStoragePath(htmlName, imageName string) string {
+	return filepath.Join(container.storage, fmt.Sprintf("%s-%s", htmlName, imageName))
+}
+
+func (container *PapersContainer) getImagesFilesList(htmlName string) []string {
+	return searchImages(container.storage, htmlName)
+}
+
+func (container *PapersContainer) GetImagesList(htmlName string) []string {
+	images := make([]string, 0)
+	for _, imageFullName := range container.getImagesFilesList(htmlName) {
+		imageBaseName := getImageBaseName(htmlName, imageFullName)
+		images = append(images, imageBaseName)
+	}
+	return images
+}
+
 func (container *PapersContainer) writeConfig(newConfig *jsonmap.Map) error {
 	content, err := json.MarshalIndent(newConfig, "", "    ")
 	if err != nil {
@@ -216,6 +234,16 @@ func (container *PapersContainer) RenamePaper(htmlName string, args *RenameArgum
 
 	if err := paper.Rename(args); err != nil {
 		return err
+	}
+
+	for _, imageFullName := range container.getImagesFilesList(htmlName) {
+		imageName := getImageBaseName(htmlName, imageFullName)
+		oldImagePath := container.GetImageStoragePath(htmlName, imageName)
+		newImagePath := container.GetImageStoragePath(args.HTMLName, imageName)
+
+		if err := os.Rename(oldImagePath, newImagePath); err != nil {
+			logger.Error("Failed to move image %s to %s while renaming paper %s. Reason: %s", oldImagePath, newImagePath, htmlName, err)
+		}
 	}
 
 	if err := container.rebuildConfig(); err != nil {

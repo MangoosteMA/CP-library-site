@@ -47,11 +47,17 @@ func registerViews(router *gin.Engine) {
 
 	router.GET("/lib/algo/:html", views.LibAlgoFileInfoGET)
 	router.PUT("/lib/algo/:html", views.LibAlgoFileInfoPUT)
+	router.POST("/lib/algo/:html", views.LibAlgoFileInfoPOST)
 	router.PATCH("/lib/algo/:html", views.LibAlgoFileInfoPATCH)
+	router.DELETE("/lib/algo/:html", views.LibAlgoFileInfoDELETE)
+	router.GET("/lib/algo/:html/:image", views.LibAlgoFileInfoImageGET)
 
 	router.GET("/lib/dev/:html", views.LibDevFileInfoGET)
 	router.PUT("/lib/dev/:html", views.LibDevFileInfoPUT)
+	router.POST("/lib/dev/:html", views.LibDevFileInfoPOST)
 	router.PATCH("/lib/dev/:html", views.LibDevFileInfoPATCH)
+	router.DELETE("/lib/dev/:html", views.LibDevFileInfoDELETE)
+	router.GET("/lib/dev/:html/:image", views.LibDevFileInfoImageGET)
 }
 
 func Start(config *config.TConfig) {

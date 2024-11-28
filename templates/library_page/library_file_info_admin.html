@@ -9,6 +9,7 @@
                 <button class="editor-button" onclick="panelSave()">сохранить</button>
                 <button class="editor-button" onclick="panelExit()">выйти</button>
                 <button class="editor-button" onclick="panelRename()">переименовать</button>
+                <button class="editor-button" onclick="panelImages()">изображения</button>
             </div>
 
             <div class="panel-rename-div" id="panel-rename-div" style="display: none;">
@@ -28,12 +29,44 @@
                         </tr>
                     </table>
                 </form>
-                <button class="panel-rename-button" onclick="applyRename()">
+                <button class="panel-rename-button" onclick="panelApplyRename()">
                     Применить
                 </button>
-                <button class="panel-rename-button" onclick="cancelRename()">
+                <button class="panel-rename-button" onclick="panelOpenEditor()">
                     Отменить
                 </button>
+            </div>
+
+            <div class="panel-images-div" id="panel-images-div" style="display: none;">
+                <form id="panel-new-image-form">
+                    <table>
+                        <tr>
+                            <td><span>Image Name:</span></td>
+                            <td><input type="text" name="imageName"></td>
+                        </tr>
+                        <tr>
+                            <td><span>Image file:</span></td>
+                            <td><input type="file" name="imageFile"></td>
+                        </tr>
+                    </table>
+                </form>
+                <button class="panel-rename-button" onclick="panelSaveImage()">
+                    Сохранить
+                </button>
+                <button class="panel-rename-button" onclick="panelOpenEditor()">
+                    Отменить
+                </button>
+                <div style="margin-top: 10px;">Загруженные изображения:</div>
+                <ul style="margin-top: 10px">
+                    {% range $val := .images %}
+                        <li>
+                            <a href="./{% $.htmlName %}/{% $val %}" target="_blank" style="color: inherit;">{% $.htmlName %}/{% $val %}</a>
+                            <button onclick="panelDeleteImage('{% $val %}')" style="margin-left: 5px;">
+                                Удалить
+                            </button>
+                        </li>
+                    {% end %}
+                </ul>
             </div>
 
             <div class="library-editor" id="library-editor">

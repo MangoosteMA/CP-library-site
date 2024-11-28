@@ -1,7 +1,10 @@
 package views
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
+	"os"
 
 	"cp-library-site/lib/logger"
 	"cp-library-site/lib/users"
@@ -45,6 +48,15 @@ func abort(ctx *gin.Context, status int, message string) {
 		logger.Warn("aborting request with status %d and message: \"%s\"", status, message)
 	}
 	ctx.String(status, message)
+}
+
+func sendFile(ctx *gin.Context, filePath string) {
+	if _, err := os.Stat(filePath); errors.Is(err, os.ErrNotExist) {
+		abort(ctx, http.StatusNotFound, fmt.Sprintf("File %s not found", filePath))
+		return
+	}
+
+	ctx.File(filePath)
 }
 
 func createNewUserSession(ctx *gin.Context, user *users.User) error {

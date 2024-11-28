@@ -2,7 +2,6 @@ package views
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -106,12 +105,7 @@ func GraphEditorPageGET(ctx *gin.Context) {
 
 func ImagesGET(ctx *gin.Context) {
 	filePath := "data/images/" + ctx.Param("image")
-	if _, err := os.Stat(filePath); errors.Is(err, os.ErrNotExist) {
-		abort(ctx, http.StatusNotFound, fmt.Sprintf("File %s not found", filePath))
-		return
-	}
-
-	ctx.File(filePath)
+	sendFile(ctx, filePath)
 }
 
 func ScheduledContestsGET(ctx *gin.Context) {
@@ -213,6 +207,7 @@ func libFileInfoGET(ctx *gin.Context, container *papers.PapersContainer) {
 			"fileName":   paper.Name,
 			"filePath":   strings.Join(paper.ParentFolders, "/"),
 			"mtexSource": template.HTML(string(paper.MtexSource)),
+			"images":     container.GetImagesList(name),
 		})
 	}
 
@@ -239,6 +234,32 @@ func libFileInfoPUT(ctx *gin.Context, container *papers.PapersContainer) {
 	}
 
 	logger.Info("mtex source of %s is successfully updated", name)
+	libFileInfoGET(ctx, container)
+}
+
+func libFileInfoPOST(ctx *gin.Context, container *papers.PapersContainer) {
+	if !ensureIsAdmin(ctx) {
+		return
+	}
+
+	image, err := ctx.FormFile("imageFile")
+	if err != nil {
+		abort(ctx, http.StatusBadRequest, fmt.Sprintf("[libFileInfoPOST] failed to upload image. Reason %s", err))
+		return
+	}
+
+	imageName := ctx.PostForm("imageName")
+	name := ctx.Param("html")
+
+	imagePath := container.GetImageStoragePath(name, imageName)
+	if err := ctx.SaveUploadedFile(image, imagePath); err != nil {
+		message := fmt.Sprintf("[libFileInfoPOST] failed to upload image. Reason: %s", err)
+		logger.Error(message)
+		abort(ctx, http.StatusBadRequest, message)
+		return
+	}
+
+	logger.Info("new image uploaded: %s", imagePath)
 	libFileInfoGET(ctx, container)
 }
 
@@ -271,6 +292,34 @@ func libFileInfoPATCH(ctx *gin.Context, container *papers.PapersContainer) {
 	abort(ctx, http.StatusOK, "OK")
 }
 
+func libFileInfoDELETE(ctx *gin.Context, container *papers.PapersContainer) {
+	if !ensureIsAdmin(ctx) {
+		return
+	}
+
+	imageName, err := ctx.GetRawData()
+	if err != nil {
+		abort(ctx, http.StatusBadRequest, fmt.Sprintf("[libFileInfoDELETE] failed to delete image. Reason %s", err))
+		return
+	}
+
+	imagePath := container.GetImageStoragePath(ctx.Param("html"), string(imageName))
+	if err := os.Remove(imagePath); err != nil {
+		message := fmt.Sprintf("[libFileInfoDELETE] failed to delete image %s. Reason: %s", imagePath, err)
+		logger.Error(message)
+		abort(ctx, http.StatusBadRequest, message)
+		return
+	}
+
+	logger.Info("image %s is removed", imagePath)
+	libFileInfoGET(ctx, container)
+}
+
+func libFileInfoImageGET(ctx *gin.Context, container *papers.PapersContainer) {
+	imagePath := container.GetImageStoragePath(ctx.Param("html"), ctx.Param("image"))
+	sendFile(ctx, imagePath)
+}
+
 func LibAlgoFileInfoGET(ctx *gin.Context) {
 	libFileInfoGET(ctx, papers.AlgoContainer)
 }
@@ -279,8 +328,20 @@ func LibAlgoFileInfoPUT(ctx *gin.Context) {
 	libFileInfoPUT(ctx, papers.AlgoContainer)
 }
 
+func LibAlgoFileInfoPOST(ctx *gin.Context) {
+	libFileInfoPOST(ctx, papers.AlgoContainer)
+}
+
 func LibAlgoFileInfoPATCH(ctx *gin.Context) {
 	libFileInfoPATCH(ctx, papers.AlgoContainer)
+}
+
+func LibAlgoFileInfoDELETE(ctx *gin.Context) {
+	libFileInfoDELETE(ctx, papers.AlgoContainer)
+}
+
+func LibAlgoFileInfoImageGET(ctx *gin.Context) {
+	libFileInfoImageGET(ctx, papers.AlgoContainer)
 }
 
 func LibDevFileInfoGET(ctx *gin.Context) {
@@ -291,6 +352,18 @@ func LibDevFileInfoPUT(ctx *gin.Context) {
 	libFileInfoPUT(ctx, papers.DevContainer)
 }
 
+func LibDevFileInfoPOST(ctx *gin.Context) {
+	libFileInfoPOST(ctx, papers.DevContainer)
+}
+
 func LibDevFileInfoPATCH(ctx *gin.Context) {
 	libFileInfoPATCH(ctx, papers.DevContainer)
+}
+
+func LibDevFileInfoDELETE(ctx *gin.Context) {
+	libFileInfoDELETE(ctx, papers.AlgoContainer)
+}
+
+func LibDevFileInfoImageGET(ctx *gin.Context) {
+	libFileInfoImageGET(ctx, papers.AlgoContainer)
 }

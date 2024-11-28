@@ -10,6 +10,8 @@ func MakeToken(tokenName string, args *map[string]string) IToken {
 		return NewDetailsToken(args)
 	case ENUMERATE_TOKEN:
 		return NewEnumerateToken()
+	case IMAGE_TOKEN:
+		return NewImageToken(args)
 	case ITEM_TOKEN:
 		return NewItemToken()
 	case ITEMIZE_TOKEN:

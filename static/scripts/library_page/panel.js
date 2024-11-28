@@ -1,6 +1,8 @@
 const textarea = document.getElementById("main-textarea");
 const editorDiv = document.getElementById("library-editor");
 const renameDiv = document.getElementById("panel-rename-div");
+const imagesDiv = document.getElementById("panel-images-div");
+var activeDiv = editorDiv;
 
 function panelSave() {
     fetch(window.location.href, {
@@ -20,9 +22,8 @@ function panelSave() {
             return
         }
 
-        const value = ret.text;
         const auxDiv = document.createElement("div");
-        auxDiv.innerHTML = value;
+        auxDiv.innerHTML = ret.text;
 
         const ID = "admin-fileinfo-div";
         const newSrouce = auxDiv.getElementsByClassName(ID);
@@ -56,17 +57,25 @@ function panelExit() {
     location.reload();
 }
 
+function openNewDiv(div) {
+    activeDiv.style.display = "none";
+    div.style.display = "";
+    activeDiv = div;
+}
+
 function panelRename() {
-    editorDiv.style.display = "none";
-    renameDiv.style.display = "";
+    openNewDiv(renameDiv);
 }
 
-function cancelRename() {
-    editorDiv.style.display = "";
-    renameDiv.style.display = "none";
+function panelOpenEditor() {
+    openNewDiv(editorDiv);
 }
 
-function applyRename() {
+function panelImages() {
+    openNewDiv(imagesDiv);
+}
+
+function panelApplyRename() {
     const form = document.getElementById("panel-rename-form");
     const elements = form.elements;
 
@@ -90,6 +99,55 @@ function applyRename() {
             alert(ret.text);
         } else {
             location.replace('/lib/algo');
+        }
+    });
+}
+
+function updateImageDivContent(innerHTML) {
+    const auxDiv = document.createElement("div");
+    auxDiv.innerHTML = innerHTML;
+
+    const newImagesContent = auxDiv.getElementsByClassName("panel-images-div");
+    if (newImagesContent.length == 1) {
+        imagesDiv.innerHTML = newImagesContent[0].innerHTML;
+    }
+}
+
+function panelSaveImage() {
+    const form = document.getElementById("panel-new-image-form");
+    const formData = new FormData(form);
+    
+    fetch(window.location.href, {
+        method: 'POST',
+        body: formData,
+    }).then(response => {
+        return response.text().then(text => ({
+            status: response.status,
+            text: text,
+        }));
+    }).then(ret => {
+        if (ret.status != 200) {
+            alert(ret.text);
+        } else {
+            updateImageDivContent(ret.text);
+        }
+    });
+}
+
+function panelDeleteImage(imageName) {
+    fetch(window.location.href, {
+        method: 'DELETE',
+        body: imageName,
+    }).then(response => {
+        return response.text().then(text => ({
+            status: response.status,
+            text: text,
+        }));
+    }).then(ret => {
+        if (ret.status != 200) {
+            alert(ret.text);
+        } else {
+            updateImageDivContent(ret.text);
         }
     });
 }
