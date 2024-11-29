@@ -5,10 +5,12 @@
         "КСС ofline": "scc-ofline",
         "Дп на деревьях": "dp-on-trees",
         "Хроматическое число": "chromatic-number",
-        "Bfs порядок на дереве": "tree-bfs-ordering"
+        "Bfs порядок на дереве": "tree-bfs-ordering",
+        "Паросочетание в произвольном графе": "general-matching-draft"
     },
     "Строки": {
-        "Xor-friendly хеширование": "xor-friendly-hashing"
+        "Xor-friendly хеширование": "xor-friendly-hashing",
+        "ALCS": "alcs"
     },
     "Структуры данных": {
         "Disjoint sparse table": "disjoint-sparse-table"

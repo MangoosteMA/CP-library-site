@@ -1,0 +1,434 @@
+\title[] {ALCS}
+
+\details[mode=main; summary=Постановка задачи] {
+    Даны две строки: $s$ длины $n$ и $t$ длины $m$. Для каждой подстроки $t_l\ldots t_r$ ($1 \le l \le r \le m$) требуется найти $\mathrm{LCS}(s, t_l\ldots t_r)$.
+    
+    Здесь $\mathrm{LCS}(a, b)$~--- это наибольшая общая подпоследовательность строк $a$ и $b$. Обратим внимание, что подпоследовательность и подстрока~--- это разные вещи.
+}
+
+\details[mode=main; summary=Замечание] {
+    Существует простое решение этой задачи за \complexity$(n^2 m)$. Иногда это уже достаточно быстро, например если $n$ маленькое.
+    
+    Существует способ улучшить время работы до \complexity$(\frac{n^2m}{\omega})$, где $\omega$~--- машинное слово. Но решение, описанное ниже, позволяет решать данную задачу за \complexity$((n + m) \cdot m)$, то есть быстрее наивных решений.
+}
+
+\details[mode=main; summary=Решение] { 
+    Для начала сформулируем задачу по-другому. Построим ориентированный граф-сетку из $(n + 1) \cdot (m + 1)$ вершин. Из вершины $(x, y)$ $(0 \le x \le n, 0 \le y \le m)$ проведём ориентированные рёбра в следующие вершины:
+    
+    \itemize[] {
+        \item[] {
+            В вершину $(x + 1, y)$, если она существует.
+        }
+        \item[] {
+            В вершину $(x, y + 1)$, если она существует.
+        }
+        \item[] {
+            В вершину $(x + 1, y + 1)$, если она существует и $s_x = t_y$ (всё в ноль нумерации).
+        }
+    }
+    
+    Например, для строки $s =$ \<<abca\>> и строки $t =$ \<<aba\>> граф будет выглядеть следующим образом:
+    
+    \center[] {
+        \image[name=alcs/example-graph.png; height=300px;] {}
+    }
+    
+    Нетрудно видеть, что $\mathrm{LCS}(s, t_l \ldots t_r)$ равно максимальному количеству диагональных рёбер на пути из вершины $(0, l)$ в вершину $(n, r + 1)$.
+    
+    \details[summary=Пояснение] {
+        Переход по каждому диагональному ребру соответствует равным символам, поэтому набор переходов на любом пути соответствует двум равным подпоследовательностям.
+        
+        Другими словами, данный граф является графом переходов квадратной динамики, считающей $\mathrm{LCS}$.
+    }
+    
+    Рассмотрим матрицу $f$ размера $m \times m$, где:
+    $$
+    f_{l, r}
+    =
+    \begin{cases}
+    0, \text{ если $l > r$}\\
+    \mathrm{LCS}(s, t_l \ldots t_r), \text{ если $l \le r$}
+    \end{cases}
+    $$
+    Это матрица ответа, которую мы хотим найти.
+    
+    Данная матрица обладает таким свойством: соседние по стороне элементы отличаются не больше чем на $1$. Более того, если рассмотреть какую-то строку этой матрицы, то значения будут не убывать. Аналогично, если посмотреть на столбец этой матрицы, то значения будут не возрастать, если смотреть сверху вниз. Эти свойства очевидны, их доказательство опущено. Рассмотрим более интересные свойства этой матрицы.
+    
+    <b>Лемма 1.</b> Матрица $f$ не может содержать подматрицу следующего вида:
+    $$
+    \begin{pmatrix}
+    x & x + 1\\
+    x & x
+    \end{pmatrix}
+    $$
+    \details[summary=Доказательство] {
+        Разберёмся, что означают элементы этой подматрицы:
+
+        \itemize[] {
+            \item[] {
+                Верхний левый элемент данной подматрица равен максимальной длине пути из вершины $(0, l)$ в вершину $(n, r)$. Здесь и далее длина пути определяется, как количество диагональных рёбер.
+            }
+            \item[] {
+                Верхний правый элемент равен максимальной длине пути из вершины $(0, l)$ в вершину $(n, r + 1)$.
+            }
+            \item[] {
+                Нижний левый элемент равен максимальной длине пути из вершины $(0, l + 1)$ в вершину $(n, r)$.
+            }
+            \item[] {
+                Нижний правый элемент равен максимальной длине пути из вершины $(0, l + 1)$ в вершину $(n, r + 1)$.
+            }
+        }
+
+        Обозначим данные максимальные пути за $A$, $B$, $C$ и $D$ соответственно. То есть $|A| = |C| = |D| = x$ и $|B| = x + 1$.
+        
+        Пути $B$ и $C$ пересекаются. Выберем любую точку пересечения. Пусть она разбивает путь $B$ на $B_1 + B_2$ и путь $C$ на $C_1 + C_2$. Тогда путь $B_1 + C_2$ это путь из $(0, l)$ в $(n, r)$. То есть $B_1 + C_2 \le |A| = x$. Аналогично $C_1 + B_2 \le |D| = x$. Сложим два этих неравенства и получим:
+        $$
+        (B_1 + C_2) + (C_1 + B_2) \le |A| + |D|
+        $$
+        $$
+        |B| + |C| \le |A| + |D|
+        $$
+        $$
+        2x + 1 \le 2x
+        $$
+        Получили противоречие.\qed
+    }
+    
+    <b>Лемма 2.</b> Если $a < b$ и $c = d$, то матрица $f$ не может содержать подматрицу такого вида:
+    $$
+    \begin{pmatrix}
+    a & b\\
+    c & d
+    \end{pmatrix}
+    $$
+    \details[summary=Доказательство] {
+        Так как соседние элементы отличаются не больше чем на $1$ \implies $b = a + 1$. Более того, $c \le a$ и $d \le b$ \implies $a = c = d$, так как элементы не могут отличаться больше чем на $1$. То есть такая подматрица имеет вид
+        $$
+        \begin{pmatrix}
+        x & x + 1\\
+        x & x\\
+        \end{pmatrix}
+        $$
+        Мы уже доказали, что такого не может быть.\qed
+    }
+    <b>Лемма 3.</b> Если $a = c$ и $b > d$, то матрица $f$ не может содержать подматрицу такого вида:
+    $$
+    \begin{pmatrix}
+    a & b\\
+    c & d
+    \end{pmatrix}
+    $$
+    Доказательство данной леммы полностью аналогично предыдущей.
+    
+    Уже может стать немного страшно, но осталось совсем немного. Зафиксируем вершину $(x, y)$ ($0 \le x < n, 0 \le y < m$) и определим следующее:
+    
+    \itemize[] {
+        \item[] {
+            $A_i$~--- длина максимального пути из $(0, i)$ в вершину $(x, y)$.
+        }
+        \item[] {
+            $B_i$~--- длина максимального пути из $(0, i)$ в вершину $(x, y + 1)$.
+        }
+        \item[] {
+            $B_i$~--- длина максимального пути из $(0, i)$ в вершину $(x + 1, y)$.
+        }
+        \item[] {
+            $D_i$~--- длина максимального пути из $(0, i)$ в вершину $(x + 1, y + 1)$.
+        }
+    }
+    
+    Из леммы 2 следует, что существует такое число $h(x, y)$, что:
+    $$
+    \begin{cases}
+    a_0 = b_0\\
+    \ldots\\
+    a_{h(x, y) - 1} = b_{h(x, y) - 1}\\
+    a_{h(x, y)} < b_{h(x, y)}\\
+    \ldots\\
+    a_{y} < b_{y}\\
+    \end{cases}
+    $$
+    \details[summary=Доказательство] {
+        Если $x = n$, то $a_i = f_{i, y - 1}$ и $b_i = f_{i, y}$. Лемма 2 гласит, что не может быть такого, что $a_i < b_i$ и $a_{i + 1} = b_{i + 1}$. То есть сначала идут равенства, а потом неравенства.
+        
+        Так как свойство выполнено для нижнего слоя вершин, то аналогично оно и выполнено для всех остальных слоёв.\qed
+    }
+    
+    Аналогично, с помощью леммы 3 можно показать, что существует такое число $v(x, y)$, что:
+   $$
+    \begin{cases}
+    a_0 < c_0\\
+    \ldots\\
+    a_{v(x, y) - 1} < c_{v(x, y) - 1}\\
+    a_{v(x, y)} = c_{v(x, y)}\\
+    \ldots\\
+    a_{y} = c_{y}\\
+    \end{cases}
+    $$
+    
+    Научимся, зная $h(x, y)$ и $v(x, y)$, находить $h(x + 1, y)$ и $v(x, y + 1)$. В качестве базы динамики возьмём $h(0, i) = i + 1$ и $v(i, 0) = 0$.
+    
+    На данном этапе должно стать ясно, что осталось только рассмотреть несколько случаев. Сначала рассмотрим 4 случая:
+    
+    \enumerate[] {
+        \item[] {
+            $
+            \begin{cases}
+            a_i = b_i = x\\
+            a_i < c_i = x + 1\\
+            \end{cases}
+            \implies
+            d_i = x + 1
+            \implies
+            \begin{cases}
+            c_i = d_i\\
+            b_i < d_i\\
+            \end{cases}
+            $
+        }
+        \item[] {
+            $
+            \begin{cases}
+            a_i < b_i = x + 1\\
+            a_i < c_i = x + 1\\
+            \end{cases}
+            \implies
+            d_i = x + 1
+            \implies
+            \begin{cases}
+            c_i = d_i\\
+            b_i = d_i\\
+            \end{cases}            
+            $
+        }
+        \item[] {
+            $
+            \begin{cases}
+            a_i = b_i = x\\
+            a_i = c_i = x\\
+            \end{cases}
+            $
+            
+            В данном случае, если между вершинами $(x, y)$ и $(x + 1, y + 1)$ есть ребро, то:
+            $$
+            d_i = x + 1
+            \implies
+            \begin{cases}
+            c_i < d_i\\
+            b_i < d_i\\
+            \end{cases}
+            $$
+            Если ребра нет, то:
+            $$
+            d_i = x
+            \implies
+            \begin{cases}
+            c_i = d_i\\
+            b_i = d_i\\
+            \end{cases}
+            $$
+        }
+        \item[] {
+            $
+            \begin{cases}
+            a_i < b_i = x + 1\\
+            a_i = c_i = x\\
+            \end{cases}
+            \implies
+            d_i = x + 1
+            \implies
+            \begin{cases}
+            c_i < d_i\\
+            b_i = d_i\\
+            \end{cases}
+            $
+        }
+    }
+    
+    Осталось только понять, в каком порядке надо рассмотреть эти случаи:
+    
+    \itemize[] {
+        \item[] {
+            Если $v(x, y) \le h(x, y)$, то случаи идут в таком порядке: $1 \to 3 \to 4$. То есть, если есть диагональное ребро, то:
+            $$
+            h(x + 1, y) = v(x, y)\\
+            v(x, y + 1) = h(x, y)
+            $$
+            Если диагонального ребра нет, то:
+            $$
+            h(x + 1, y) = h(x, y)\\
+            v(x, y + 1) = v(x, y)
+            $$
+        }
+        \item[] {
+            Если $h(x, y) < v(x, y)$, то случаи идут в таком порядке: $1 \to 2 \to 4$. В этом случае, нетрудно видеть, что:
+            $$
+            h(x + 1, y) = v(x, y)\\
+            v(x, y + 1) = h(x, y)
+            $$
+        }
+    }
+    
+    Таким образом, для всех вершин $(x, y)$ мы можем найти $v(x, h)$ и $h(x, y)$. Далее, восстановить матрицу $f$ можно, например, следующим образом:
+    $$
+    f_{l,\ r} =
+    \begin{cases}
+    f_{l,\ r - 1}, \text{ если $l < h(n, r)$}\\
+    f_{l,\ r - 1} + 1, \text{ если $l \ge h(n, r)$}\\
+    \end{cases}
+    $$
+}
+
+\details[mode=main; summary=Время работы] {
+    Поиск $v(x, y)$ и $h(x, y)$ работает за \complexity$(nm)$, а восстановление ответа за \complexity$(m^2)$. Таким образом время работы составляет \complexity$((n + m) \cdot m)$.
+}
+
+\details[mode=main; summary=Реализация] {
+\code[language=C++] {
+/*
+ * T is an array-like type.
+ * Returns an array lcs of size |t| times |t| where lcs[l][r] = LCS(s, t[l..r]).
+ */
+template<typename T>
+std::vector<std::vector<int>> alcs(const T &s, const T &t) {
+    int n = s.size(), m = t.size();
+    std::vector<std::vector<int>> vertical(n, std::vector<int>(m + 1));
+    std::vector<std::vector<int>> horizontal(n + 1, std::vector<int>(m));
+
+    for (int j = 0; j < m; j++) {
+        horizontal[0][j] = j + 1;
+        for (int i = 0; i < n; i++) {
+            int v = vertical[i][j], h = horizontal[i][j];
+            if (v > h || s[i] == t[j]) {
+                horizontal[i + 1][j] = v;
+                vertical[i][j + 1] = h;
+            } else {
+                horizontal[i + 1][j] = h;
+                vertical[i][j + 1] = v;
+            }
+        }
+    }
+
+    std::vector<std::vector<int>> lcs(m, std::vector<int>(m));
+    for (int i = 0; i < m; i++) {
+        for (int j = i; j < m; j++) {
+            lcs[i][j] = (i == j ? 0 : lcs[i][j - 1]) + (i >= horizontal[n][j]);
+        }
+    }
+    return lcs;
+}
+}
+}
+
+\center[] {<h2>Улучшение</h2>}
+
+\details[mode=main; summary=Постановка задачи] {
+    Даны две строки $s$ и $t$. Поступают запросы, описывающиеся тремя числами $a$, $b$ и $c$. Требуется находить $\mathrm{LCS}(s_0 \ldots s_{a - 1}, t_b \ldots t_{c})$.
+}
+
+\details[mode=main; summary=Решение] {
+    Это нетрудное улучшение описанной выше задачи. Сначала посчитаем $h(x, y)$ и $v(x, y)$ для строк $s$ и $t$. Заметим, что если оставить только первые $k$ слоёв графа сетки, то получится аналогичный граф, но для строк $s_0 \ldots s_{k - 2}$ и $t$.
+    
+    Выше мы поняли, что $\mathrm{LCS}(s, t_b \ldots t_c)$ равно количеству $b \le y \le c$, что $h(n, y) \le b$.
+    
+    Таким образом, $\mathrm{LCS}(s_0 \ldots s_{a - 1}, t_b \ldots t_c)$ равно количеству $b \le y \le c$, что $h(a, y) \le b$. То есть ответ на искомый запрос эквивалентен количеству чисел меньше данного на отрезке. Это известная задача, которую например можно решать с помощью merge sort tree.
+}
+
+\details[mode=main; summary=Время работы] {
+    Если решать данную задачу с помощью merge sort tree, то построение данной структуры занимает \complexity$(|s| |t| \log |t|)$, а ответ на запрос работает за \complexity$(\log^2 |t|)$ или \complexity$(\log |t|)$ в зависимости от реализации.
+}
+
+\details[mode=main; summary=Реализация] {
+\code[language=C++] {
+/*
+ * T is an array-like type.
+ * Zero based.
+ * Requires O(|s| * |t|) memory.
+ * This implementation is not very fast and can be improved if queries are offline.
+ */
+template<typename T>
+class prefix_lcs {
+private:
+    class merge_sort_tree {
+    private:
+        int n;
+        std::vector<std::vector<int>> tree;
+
+        int find(const std::vector<int> &a, int val) {
+            return upper_bound(a.begin(), a.end(), val) - a.begin();
+        }
+
+    public:
+        merge_sort_tree(const std::vector<int> &a = {}) : n(a.size()), tree(2 * n) {
+            for (int i = 0; i < n; i++) {
+                tree[n + i] = {a[i]};
+            }
+            for (int i = n - 1; i > 0; i--) {
+                tree[i].resize(tree[i << 1].size() + tree[i << 1 | 1].size());
+                std::merge(tree[i << 1].begin(), tree[i << 1].end(),
+                           tree[i << 1 | 1].begin(), tree[i << 1 | 1].end(), tree[i].begin());
+            }
+        }
+
+        // Returns the number of elements in [l, r) that are <= val.
+        int query(int l, int r, int val) {
+            int res = 0;
+            for (l += n, r += n; l < r; l >>= 1, r >>= 1) {
+                if (l & 1) {
+                    res += find(tree[l++], val);
+                }
+                if (r & 1) {
+                    res += find(tree[--r], val);
+                }
+            }
+            return res;
+        }
+    };
+
+    int n, m;
+    std::vector<merge_sort_tree> tree;
+
+public:
+    prefix_lcs() {}
+
+    prefix_lcs(const T &s, const T &t) : n(s.size()), m(t.size()), tree(n + 1) {
+        std::vector<std::vector<int>> vertical(n, std::vector<int>(m + 1));
+        std::vector<std::vector<int>> horizontal(n + 1, std::vector<int>(m));
+
+        for (int j = 0; j < m; j++) {
+            horizontal[0][j] = j + 1;
+            for (int i = 0; i < n; i++) {
+                int v = vertical[i][j], h = horizontal[i][j];
+                if (v > h || s[i] == t[j]) {
+                    horizontal[i + 1][j] = v;
+                    vertical[i][j + 1] = h;
+                } else {
+                    horizontal[i + 1][j] = h;
+                    vertical[i][j + 1] = v;
+                }
+            }
+        }
+
+        for (int i = 0; i <= n; i++) {
+            tree[i] = merge_sort_tree(horizontal[i]);
+        }
+    }
+
+    /*
+     * Returns LCS(s[0 : pref], t[l : r]).
+     * Complexity: O(log^2 (r - l)) with a small constant.
+     */
+    int query(int pref, int l, int r) {
+        return tree[pref].query(l, r, l);
+    }
+};
+}
+}
+
+\center[] {<h2>Приложения</h2>}
+
+\details[mode=main; summary=Задачи] {
+     \item[] {\link[href=https://judge.yosupo.jp/problem/prefix_substring_lcs]{Yosupo library checker. Prefix-Substring LCS}}
+     \item[] {\link[href=https://codeforces.com/gym/101237/problem/G]{Winter Petrozavodsk Camp 2013-2014, Moscow SU Trinity Contest. Задача G}}
+     \item[] {\link[href=https://codeforces.com/gym/103652/problem/F]{Summer Petrozavodsk Camp, 2019, Day 8. Задача F}}
+}
