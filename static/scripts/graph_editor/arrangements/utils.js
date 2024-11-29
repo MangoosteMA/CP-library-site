@@ -70,3 +70,18 @@ export function buildGraph(n, edges, considerDirection=true) {
     });
     return graph;
 }
+
+export function createTextarea() {
+    const textarea = document.createElement("textarea");
+    textarea.setAttribute("class", "nodes-textarea");
+    textarea.style.marginLeft = "8px";
+    return textarea;
+}
+
+export function createTextareaDiv() {
+    const div = document.createElement("div");
+    div.innerText = "Дерево DFS с корнем в ";
+    div.style.verticalAlign = "middle";
+    div.style.lineHeight = "25px";
+    return div;
+}

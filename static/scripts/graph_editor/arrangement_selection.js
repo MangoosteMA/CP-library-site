@@ -1,5 +1,6 @@
 import { DefaultArrangementOption }            from "./arrangements/arrangement_interface.js";
 import { DfsTreeArrangementOption }            from "./arrangements/dfs_tree_arrangement.js";
+import { GridArrangementOption }               from "./arrangements/grid_arrangement.js";
 import { ImprovedRegularArrangementOption }    from "./arrangements/improved_regular_arrangement.js";
 import { IterativeArrangementOption }          from "./arrangements/iterative_arrangement.js";
 import { LineArrangementOption }               from "./arrangements/line_arrangement.js";
@@ -29,7 +30,8 @@ export class ArrangementSelection {
                         new TopSortArrangementArrangementOption()                    ,
                         new LineArrangementOption()                                  ,
                         new IterativeArrangementOption(graphEditor.nodesStateHandler),
-                        new PlanarArrangementOption()                                ];
+                        new PlanarArrangementOption()                                ,
+                        new GridArrangementOption()                                  ];
 
         this.selectedOption = this.options[0];
 

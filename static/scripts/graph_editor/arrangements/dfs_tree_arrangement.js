@@ -9,6 +9,8 @@ import { getUniqueEdges }              from "./utils.js";
 import { buildGraph }                  from "./utils.js";
 import { getComponents }               from "./utils.js";
 import { isDirected }                  from "./utils.js";
+import { createTextarea }              from "./utils.js";
+import { createTextareaDiv }           from "./utils.js";
 
 class Data {
     constructor(index, point) {
@@ -127,13 +129,9 @@ export class DfsTreeArrangementOption extends ArrangementOptionInterface {
         super(new DfsTreeArrangement());
         this.#nodesStateHandler = nodesStateHandler;
         this.setNewRoot("1");
-        this.#textarea = null;
     }
 
     getArrangementBuilder() {
-        if (this.#textarea) {
-            this.setNewRoot(this.#textarea.value);
-        }
         return super.getArrangementBuilder();
     }
 
@@ -141,9 +139,7 @@ export class DfsTreeArrangementOption extends ArrangementOptionInterface {
         const outsideDiv = document.createElement("div");
         outsideDiv.style.display = "flex";
 
-        const textarea = document.createElement("textarea");
-        textarea.setAttribute("class", "nodes-textarea");
-        textarea.style.marginLeft = "8px";
+        const textarea = createTextarea();
         textarea.value = this.#root;
 
         const option = this;
@@ -151,12 +147,9 @@ export class DfsTreeArrangementOption extends ArrangementOptionInterface {
             option.setNewRoot(textarea.value);
             callback();
         });
-        this.#textarea = textarea;
 
-        const div = document.createElement("div");
+        const div = createTextareaDiv();
         div.innerText = "Дерево DFS с корнем в ";
-        div.style.verticalAlign = "middle";
-        div.style.lineHeight = "25px";
 
         outsideDiv.appendChild(div);
         outsideDiv.appendChild(textarea);
@@ -166,7 +159,6 @@ export class DfsTreeArrangementOption extends ArrangementOptionInterface {
 // Private:
     #root;
     #nodesStateHandler;
-    #textarea;
 
     setNewRoot(newRoot) {
         this.#root = newRoot;
