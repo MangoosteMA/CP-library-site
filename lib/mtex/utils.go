@@ -54,7 +54,8 @@ func parseArguments(text string) *map[string]string {
 		if splitter == -1 {
 			continue
 		}
-		args[strings.TrimSpace(argument[:splitter])] = strings.TrimSpace(argument[splitter+1:])
+		value := strings.TrimSpace(argument[splitter+1:])
+		args[strings.TrimSpace(argument[:splitter])] = applyDefines(value)
 	}
 	return &args
 }
@@ -115,6 +116,8 @@ func rtrimText(text string) string {
 }
 
 func processText(text string) string {
+	text = applyDefines(text)
+
 	runes := make([]rune, 0, len(text))
 	for _, value := range text {
 		runes = append(runes, value)
