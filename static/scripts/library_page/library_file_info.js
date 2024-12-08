@@ -11,3 +11,17 @@ function copyCode(codeSectionId) {
         }
     }
 }
+
+function openAllSections() {
+    const div = document.getElementById("body-div");
+    for (const details of div.querySelectorAll("details")) {
+        details.open = true;
+    }
+}
+
+for (const title of document.getElementsByClassName("library-title-div")) {
+    title.style.cursor = "pointer";
+    title.addEventListener("click", () => {
+        openAllSections();
+    });
+}
