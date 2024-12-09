@@ -1,3 +1,5 @@
+const bodyDiv = document.getElementById("body-div");
+
 function copyCode(codeSectionId) {
     var codeSection = document.getElementById(codeSectionId);
     if (codeSection != null) {
@@ -13,15 +15,28 @@ function copyCode(codeSectionId) {
 }
 
 function openAllSections() {
-    const div = document.getElementById("body-div");
-    for (const details of div.querySelectorAll("details")) {
+    for (const details of bodyDiv.querySelectorAll("details")) {
         details.open = true;
+    }
+}
+
+function closeAllSections() {
+    for (const details of bodyDiv.querySelectorAll("details")) {
+        details.open = false;
     }
 }
 
 for (const title of document.getElementsByClassName("library-title-div")) {
     title.style.cursor = "pointer";
     title.addEventListener("click", () => {
-        openAllSections();
+        var anyClosed = false;
+        for (const details of bodyDiv.querySelectorAll("details")) {
+            anyClosed |= !details.open;
+        }
+        if (anyClosed) {
+            openAllSections();
+        } else {
+            closeAllSections();
+        }
     });
 }
