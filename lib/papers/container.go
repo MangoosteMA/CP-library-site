@@ -210,6 +210,11 @@ func (container *PapersContainer) rebuildConfig() error {
 		return err
 	}
 
+	container.draftsFreeConfig, err = buildDraftsFreeConfig(container.papers)
+	if err != nil {
+		return err
+	}
+
 	return container.writeConfig(newConfig)
 }
 
