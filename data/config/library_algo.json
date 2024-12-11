@@ -6,6 +6,7 @@
         "Дп на деревьях": "dp-on-trees",
         "Хроматическое число": "chromatic-number",
         "Bfs порядок на дереве": "tree-bfs-ordering",
+        "Потоки": "flows",
         "Паросочетание в произвольном графе": "general-matching-draft"
     },
     "Строки": {
