@@ -23,6 +23,8 @@ type TConfig struct {
 
 	Algo TPapersConfig `yaml:"Algo"`
 	Dev  TPapersConfig `yaml:"Dev"`
+
+	GuessTheCodeDBPath string `yaml:"GuessTheCodeDBPath"`
 }
 
 func ReadConfig(configPath string) *TConfig {

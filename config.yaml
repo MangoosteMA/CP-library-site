@@ -14,3 +14,5 @@ Algo:
 Dev:
   ConfigPath: data/config/library_dev.json
   Storage: data/dev
+
+GuessTheCodeDBPath: "data/guess_the_code/games.db"

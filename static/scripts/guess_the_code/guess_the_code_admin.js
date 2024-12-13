@@ -42,20 +42,24 @@ editButton.addEventListener("click", () => {
 const saveButton = document.getElementById("save-admin-button");
 saveButton.addEventListener("click", () => {
     fetch(window.location.href, {
-        method: "POST",
+        method: 'PATCH',
         body: JSON.stringify({
-            'method': 'update_game',
             'code': codeTextarea.value,
-            'testsDescriber': testTextarea.value,
+            'testsDescribtor': testTextarea.value,
         }),
         headers: {
             'Content-Type': 'application/json'
         }
     }).then(response => {
-        if (response.status == 200) {
-            alert('Saved');
+        return response.text().then(text => ({
+            status: response.status,
+            text: text
+        }));
+    }).then(ret => {
+        if (ret.status != 200) {
+            alert("OK!");
         } else {
-            alert('Didn\'t save');
+            alert(ret.text);
         }
     });
 });

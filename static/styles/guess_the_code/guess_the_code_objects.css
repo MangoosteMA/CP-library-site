@@ -1,6 +1,6 @@
 @import "../base_styles.css";
 
-.true-verdict-div, .false-verdict-div, .error-verdict-div, .none-verdict-div {
+.true-verdict-div, .false-verdict-div, .error-verdict-div, .none-verdict-div, .simple-verdict-div {
     display: inline-block;
     width: 70px;
     border-radius: 70px;
@@ -25,4 +25,8 @@
 
 .none-verdict-div {
     background-color: rgb(188, 147, 249);
+}
+
+.simple-verdict-div {
+    background-color: rgb(119, 187, 247);
 }

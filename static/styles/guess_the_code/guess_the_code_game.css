@@ -175,16 +175,29 @@
     border-left: 1px solid var(--base-white-font-color);
 }
 
+.output-table tr {
+    cursor: pointer;
+}
+
 .output-table tr:first-child, .output-table tr:last-child {
     border-bottom: 1px solid var(--base-white-font-color);
 }
 
 .output-table tr:first-child {
     background-color: var(--base-font-color);
+    cursor: inherit;
 }
 
 .output-table td:first-child {
     border-left: none;
+}
+
+.output-table tr:first-child:hover {
+    background-color: var(--base-font-color);
+}
+
+.output-table tr:hover, .output-table-active-row {
+    background-color: rgba(255, 255, 255, 0.10);
 }
 
 .first-table-row {

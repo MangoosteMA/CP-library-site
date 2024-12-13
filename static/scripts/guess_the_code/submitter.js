@@ -1,8 +1,11 @@
-import { Test }              from "./test.js";
-import { createTrueVerict }  from "./utils.js";
-import { createFalseVerict } from "./utils.js";
-import { createErrorVerict } from "./utils.js";
-import { createNoneVerict }  from "./utils.js";
+import { Test }                from "./test.js";
+import { createTrueVerict }    from "./utils.js";
+import { createFalseVerict }   from "./utils.js";
+import { createErrorVerict }   from "./utils.js";
+import { createNoneVerict }    from "./utils.js";
+import { createSimpleVerdict } from "./utils.js";
+
+const ACTIVE_ROW_STYLE = "output-table-active-row";
 
 export class Submitter {
     /*
@@ -12,6 +15,8 @@ export class Submitter {
     outputTable:   html <table> element
     tests:         list[Test]
     firstRowHtml:  html <tr> element
+    activeRow:     html <tr> element
+    activeTest:    int
     */
 
     constructor(codeTextarea, variablesForm, outputTable) {
@@ -25,6 +30,24 @@ export class Submitter {
             firstRow = firstRow.nextSibling;
         }
         this.firstRowHtml = firstRow.innerHTML;
+        this.activeRow = null;
+        this.activeTest = null;
+
+        window.addEventListener("keydown", (event) => {
+            if (this.activeRow == null) {
+                return;
+            }
+            if (event.key === 'Backspace' || event.key === 'Delete') {
+                this.deleteActiveTest();
+            } else if (event.key === 'ArrowUp') {
+                this.moveActiveTestUp();
+            } else if (event.key === 'ArrowDown') {
+                this.moveActiveTestDown();
+            } else {
+                return;
+            }
+            event.preventDefault();
+        });
     }
 
     registerAddTestButton(addTestButton) {
@@ -51,47 +74,87 @@ export class Submitter {
 // Private:
     addTest() {
         const elements = this.variablesForm.elements;
-        const a = parseInt(elements['a'].value, 0);
-        const b = parseInt(elements['b'].value, 0);
-        const c = parseInt(elements['c'].value, 0);
+        const a = parseInt(elements['a'].value);
+        const b = parseInt(elements['b'].value);
+        const c = parseInt(elements['c'].value);
+
+        if (isNaN(a) || isNaN(b) || isNaN(c)) {
+            alert("a, b and c must be integers");
+            return;
+        }
 
         fetch(window.location.href, {
-            method: "POST",
+            method: 'POST',
             body: JSON.stringify({
                 'method': 'add_test',
-                'a': a, 'b': b, 'c': c,
+                'a': String(a),
+                'b': String(b),
+                'c': String(c),
             }),
             headers: {
                 'Content-Type': 'application/json'
             }
         }).then(response => {
-            return response.text();
-        }).then(value => {
-            const test = new Test(a, b, c, value, null);
+            if (response.status == 200) {
+                return response.json().then(json => ({
+                    status: response.status,
+                    json: json,
+                }));
+            }
+
+            return response.text().then(text => ({
+                status: response.status,
+                text: text,
+            }));
+        }).then(ret => {
+            if (ret.status != 200) {
+                alert("Error: " + ret.text);
+                return;
+            }
+
+            const test = new Test(a, b, c, ret.json.result, null);
             this.appendTest(test);
         });
     }
 
     runCode() {
-        var tests = [];
-        this.tests.forEach(test => {
-            tests.push({'a': test.a, 'b': test.b, 'c': test.c});
+        var content = "";
+        this.tests.forEach((test, i) => {
+            if (i > 0) {
+                content += ";";
+            }
+            content += String(test.a) + ";" + String(test.b) + ";" + String(test.c)
         });
 
         fetch(window.location.href, {
-            method: "POST",
+            method: 'POST',
             body: JSON.stringify({
-                'method': 'run_code',
+                'method': 'run',
                 'code': this.codeTextarea.value,
-                'tests': tests,
+                'tests': content,
             }),
             headers: {
                 'Content-Type': 'application/json'
             }
         }).then(response => {
-            return response.text();
-        }).then(values => {
-            const parsedArray = values.split(",");
+            if (response.status == 200) {
+                return response.json().then(json => ({
+                    status: response.status,
+                    json: json,
+                }));
+            }
+
+            return response.text().then(text => ({
+                status: response.status,
+                text: text,
+            }));
+        }).then(ret => {
+            if (ret.status != 200) {
+                alert("Error: " + ret.text);
+                return;
+            }
+            
+            const parsedArray = ret.json.result;
             for (let i = 0; i < parsedArray.length; i++) {
                 this.tests[i].codeOutput = parsedArray[i];
             }
@@ -101,7 +164,7 @@ export class Submitter {
 
     submit() {
         fetch(window.location.href, {
-            method: "POST",
+            method: 'POST',
             body: JSON.stringify({
                 'method': 'submit',
                 'code': this.codeTextarea.value,
@@ -125,6 +188,33 @@ export class Submitter {
         this.render();
     }
 
+    deleteActiveTest() {
+        this.tests.splice(this.activeTest, 1);
+        this.activeRow = null;
+        this.activeTest = -1;
+        this.render();
+    }
+
+    moveActiveTestUp() {
+        if (this.activeTest == 0) {
+            return;
+        }
+        [this.tests[this.activeTest - 1], this.tests[this.activeTest]] =
+            [this.tests[this.activeTest], this.tests[this.activeTest - 1]];
+        this.activeTest -= 1;
+        this.render();
+    }
+
+    moveActiveTestDown() {
+        if (this.activeTest + 1 >= this.tests.length) {
+            return;
+        }
+        [this.tests[this.activeTest + 1], this.tests[this.activeTest]] =
+            [this.tests[this.activeTest], this.tests[this.activeTest + 1]];
+        this.activeTest += 1;
+        this.render();
+    }
+
     render() {
         this.outputTable.innerHTML = "";
 
@@ -132,8 +222,27 @@ export class Submitter {
         firstRow.innerHTML = this.firstRowHtml;
         this.outputTable.appendChild(firstRow);
 
-        this.tests.forEach(test => {
+        this.tests.forEach((test, index) => {
             const row = document.createElement("tr");
+            if (this.activeTest == index) {
+                this.activeRow = row;
+                row.classList.add(ACTIVE_ROW_STYLE);
+            }
+
+            row.addEventListener("click", () => {
+                if (this.activeRow == row) {
+                    this.activeRow = null;
+                    this.activeTest = -1;
+                    row.classList.remove(ACTIVE_ROW_STYLE);
+                } else {
+                    if (this.activeRow != null) {
+                        this.activeRow.classList.remove(ACTIVE_ROW_STYLE);
+                    }
+                    this.activeRow = row;
+                    this.activeTest = index;
+                    row.classList.add(ACTIVE_ROW_STYLE);
+                }
+            });
 
             [test.a, test.b, test.c].forEach(value => {
                 const tableCell = document.createElement("td");
@@ -143,14 +252,16 @@ export class Submitter {
 
             [test.correctOutput, test.codeOutput].forEach(value => {
                 const tableCell = document.createElement("td");
-                if (value == "0") {
+                if (value == "False") {
                     tableCell.appendChild(createFalseVerict());
-                } else if (value == "1") {
+                } else if (value == "True") {
                     tableCell.appendChild(createTrueVerict());
-                } else if (value == "2") {
+                } else if (value == "error") {
                     tableCell.appendChild(createErrorVerict());
-                } else {
+                } else if (value == null || value == "None") {
                     tableCell.appendChild(createNoneVerict());
+                } else {
+                    tableCell.appendChild(createSimpleVerdict(value));
                 }
                 row.appendChild(tableCell);
             });

@@ -58,6 +58,11 @@ func registerViews(router *gin.Engine) {
 	router.PATCH("/lib/dev/:html", views.LibDevFileInfoPATCH)
 	router.DELETE("/lib/dev/:html", views.LibDevFileInfoDELETE)
 	router.GET("/lib/dev/:html/:image", views.LibDevFileInfoImageGET)
+
+	router.GET("/apps/guess-the-code/new-game", views.GuessTheCodeNewGameGET)
+	router.GET("/apps/guess-the-code/game/:gameId", views.GuessTheCodeGameGET)
+	router.PATCH("/apps/guess-the-code/game/:gameId", views.GuessTheCodeGamePATCH)
+	router.POST("/apps/guess-the-code/game/:gameId", views.GuessTheCodeGamePOST)
 }
 
 func Start(config *config.TConfig) {

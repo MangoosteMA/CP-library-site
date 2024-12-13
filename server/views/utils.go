@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 
 	"cp-library-site/lib/logger"
 	"cp-library-site/lib/users"
@@ -52,7 +53,7 @@ func abort(ctx *gin.Context, status int, message string) {
 
 func sendFile(ctx *gin.Context, filePath string) {
 	if _, err := os.Stat(filePath); errors.Is(err, os.ErrNotExist) {
-		abort(ctx, http.StatusNotFound, fmt.Sprintf("File %s not found", filePath))
+		abort(ctx, http.StatusNotFound, fmt.Sprintf("file %s not found", filePath))
 		return
 	}
 
@@ -95,7 +96,16 @@ func isAdmin(ctx *gin.Context) bool {
 func ensureIsAdmin(ctx *gin.Context) bool {
 	admin := isAdmin(ctx)
 	if !admin {
-		abort(ctx, http.StatusForbidden, "Action is only allowed for admins")
+		abort(ctx, http.StatusForbidden, "action is only allowed for admins")
 	}
 	return admin
+}
+
+func getGuessTheCodeGameId(ctx *gin.Context) (uint, error) {
+	gameId, err := strconv.Atoi(ctx.Param("gameId"))
+	if err != nil {
+		abort(ctx, http.StatusNotFound, "there is not such game")
+		return 0, err
+	}
+	return uint(gameId), nil
 }

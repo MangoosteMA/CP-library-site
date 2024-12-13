@@ -25,3 +25,10 @@ export function createNoneVerict() {
     div.innerText = "none";
     return div;
 }
+
+export function createSimpleVerdict(value) {
+    const div = document.createElement("div");
+    div.classList.add("simple-verdict-div");
+    div.innerText = String(value);
+    return div;
+}

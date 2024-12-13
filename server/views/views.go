@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"cp-library-site/contests_parser"
+	"cp-library-site/lib/guess_the_code"
 	"cp-library-site/lib/logger"
 	"cp-library-site/lib/papers"
 	"cp-library-site/lib/users"
@@ -366,4 +367,138 @@ func LibDevFileInfoDELETE(ctx *gin.Context) {
 
 func LibDevFileInfoImageGET(ctx *gin.Context) {
 	libFileInfoImageGET(ctx, papers.AlgoContainer)
+}
+
+func GuessTheCodeNewGameGET(ctx *gin.Context) {
+	if !ensureIsAdmin(ctx) {
+		return
+	}
+
+	gameId, err := guess_the_code.NewGame()
+	if err != nil {
+		message := fmt.Sprintf("[GuessTheCodeNewGamePOST] to create new Game. Reason: %s", err)
+		logger.Error(message)
+		abort(ctx, http.StatusBadRequest, message)
+		return
+	}
+
+	ctx.Redirect(http.StatusCreated, fmt.Sprintf("/apps/guess-the-code/game/%d", gameId))
+}
+
+func GuessTheCodeGameGET(ctx *gin.Context) {
+	gameId, err := getGuessTheCodeGameId(ctx)
+	if err != nil {
+		return
+	}
+
+	args := &gin.H{
+		"gameId": gameId,
+	}
+
+	if isAdmin(ctx) {
+		game, err := guess_the_code.GetGame(uint(gameId))
+		if err != nil {
+			abort(ctx, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		mergeArguments(args, &gin.H{
+			"gameCode":        template.HTML(game.MainCode),
+			"testsDescribtor": template.HTML(game.TestsDescriptor),
+		})
+	}
+
+	htmlResponse(ctx, "guess_the_code_game.html", args)
+}
+
+func GuessTheCodeGamePATCH(ctx *gin.Context) {
+	if !ensureIsAdmin(ctx) {
+		return
+	}
+
+	gameId, err := getGuessTheCodeGameId(ctx)
+	if err != nil {
+		return
+	}
+
+	type Content struct {
+		Code            string `json:"code"`
+		TestsDescribtor string `json:"testsDescribtor"`
+	}
+
+	var content Content
+	if err := ctx.ShouldBindJSON(&content); err != nil {
+		message := fmt.Sprintf("[GuessTheCodeGamePATCH] incorrect request. Error: %s", err)
+		logger.Warn(message)
+		abort(ctx, http.StatusBadRequest, message)
+		return
+	}
+
+	if err := guess_the_code.ModifyGame(gameId, guess_the_code.Game{
+		MainCode:        content.Code,
+		TestsDescriptor: content.TestsDescribtor,
+	}); err != nil {
+		message := fmt.Sprintf("[GuessTheCodeGamePATCH] failed to update the game #%d. Reason: %s", gameId, err)
+		logger.Error(message)
+		abort(ctx, http.StatusInternalServerError, message)
+		return
+	}
+
+	abort(ctx, http.StatusOK, "OK")
+}
+
+func GuessTheCodeGamePOST(ctx *gin.Context) {
+	user := sessionUser(ctx)
+	if user == nil {
+		abort(ctx, http.StatusForbidden, "you must be logged in.")
+		return
+	}
+
+	var content map[string]string
+	if err := ctx.ShouldBindJSON(&content); err != nil {
+		abort(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	gameId, err := getGuessTheCodeGameId(ctx)
+	if err != nil {
+		return
+	}
+
+	method := content["method"]
+	if method == "add_test" {
+		a := content["a"]
+		b := content["b"]
+		c := content["c"]
+
+		value, err := guess_the_code.GetTestAnswer(gameId, a, b, c)
+		if err != nil {
+			abort(ctx, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"result": value,
+		})
+	} else if method == "run" {
+		code := content["code"]
+		tests := content["tests"]
+		values := strings.Split(tests, ";")
+
+		result := make([]string, 0, len(values)/3)
+		for i := 0; i+3 <= len(values); i += 3 {
+			output, err := guess_the_code.ExecuteCode(code, values[i], values[i+1], values[i+2])
+			if err != nil {
+				abort(ctx, http.StatusInternalServerError, err.Error())
+				return
+			}
+			result = append(result, output)
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"result": result,
+		})
+	} else {
+		abort(ctx, http.StatusBadRequest, "incorrect method")
+	}
 }
