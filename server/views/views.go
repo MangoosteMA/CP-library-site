@@ -395,13 +395,13 @@ func GuessTheCodeGameGET(ctx *gin.Context) {
 		"gameId": gameId,
 	}
 
-	if isAdmin(ctx) {
-		game, err := guess_the_code.GetGame(uint(gameId))
-		if err != nil {
-			abort(ctx, http.StatusBadRequest, err.Error())
-			return
-		}
+	game, err := guess_the_code.GetGame(uint(gameId))
+	if err != nil {
+		abort(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
 
+	if isAdmin(ctx) {
 		mergeArguments(args, &gin.H{
 			"gameCode":        template.HTML(game.MainCode),
 			"testsDescribtor": template.HTML(game.TestsDescriptor),
