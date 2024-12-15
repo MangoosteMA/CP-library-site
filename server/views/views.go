@@ -483,16 +483,12 @@ func GuessTheCodeGamePOST(ctx *gin.Context) {
 	} else if method == "run" {
 		code := content["code"]
 		tests := content["tests"]
-		values := strings.Split(tests, ";")
+		args := strings.Split(tests, ";")
 
-		result := make([]string, 0, len(values)/3)
-		for i := 0; i+3 <= len(values); i += 3 {
-			output, err := guess_the_code.ExecuteCode(code, values[i], values[i+1], values[i+2])
-			if err != nil {
-				abort(ctx, http.StatusInternalServerError, err.Error())
-				return
-			}
-			result = append(result, output)
+		result, err := guess_the_code.ExecuteCodeMany(code, args)
+		if err != nil {
+			abort(ctx, http.StatusInternalServerError, err.Error())
+			return
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{

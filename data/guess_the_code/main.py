@@ -6,12 +6,15 @@ def main():
     module = importlib.import_module(module_name)
     check = getattr(module, 'check')
 
-    try:
-        res = check(int(argv[2]), int(argv[3]), int(argv[4]))
-    except:
-        res = 'error'
+    i = 2
+    while i + 3 <= len(argv):
+        try:
+            res = check(int(argv[i]), int(argv[i + 1]), int(argv[i + 2]))
+        except:
+            res = 'error'
 
-    print(res, end='')
+        print(res)
+        i += 3
 
 if __name__ == '__main__':
     main()
