@@ -44,6 +44,15 @@ func GetTestAnswer(gameId uint, a, b, c string) (string, error) {
 	return ExecuteCode(game.MainCode, a, b, c)
 }
 
+func CheckCorrectness(code string, gameId uint) (string, error) {
+	game, err := GetGame(gameId)
+	if err != nil {
+		return "", err
+	}
+
+	return ExecuteCheckFunction(code, game.MainCode, game.TestsDescriptor)
+}
+
 func NewGame() (uint, error) {
 	newGame := Game{
 		MainCode:        "def check(a: int, b: int, c: int) -> bool:\n    pass",

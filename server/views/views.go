@@ -494,6 +494,17 @@ func GuessTheCodeGamePOST(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"result": result,
 		})
+	} else if method == "submit" {
+		code := content["code"]
+		message, err := guess_the_code.CheckCorrectness(code, gameId)
+		if err != nil {
+			abort(ctx, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": message,
+		})
 	} else {
 		abort(ctx, http.StatusBadRequest, "incorrect method")
 	}

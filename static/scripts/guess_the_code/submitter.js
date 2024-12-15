@@ -173,12 +173,22 @@ export class Submitter {
                 'Content-Type': 'application/json'
             }
         }).then(response => {
-            return response.text();
-        }).then(value => {
-            if (value.trim() == 'True') {
-                alert('OK!');
+            if (response.status == 200) {
+                return response.json().then(json => ({
+                    status: response.status,
+                    json: json,
+                }));
+            }
+
+            return response.text().then(text => ({
+                status: response.status,
+                text: text,
+            }));
+        }).then(ret => {
+            if (ret.status != 200) {
+                alert("Error: " + ret.text);
             } else {
-                alert('Wrong')
+                alert(ret.json.message);
             }
         });
     }
