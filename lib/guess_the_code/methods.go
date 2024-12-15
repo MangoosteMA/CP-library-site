@@ -55,8 +55,8 @@ func CheckCorrectness(code string, gameId uint) (string, error) {
 
 func NewGame() (uint, error) {
 	newGame := Game{
-		MainCode:        "def check(a: int, b: int, c: int) -> bool:\n    pass",
-		TestsDescriptor: "Random [1:100] [1:100] [1:100]",
+		MainCode:        "def check(a: int, b: int, c: int):\n    pass",
+		TestsDescriptor: "Random 20 [1:100] [1:100] [1:100]",
 	}
 
 	if err := db.Create(&newGame).Error; err != nil {
