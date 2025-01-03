@@ -113,7 +113,7 @@ xhr.onload = () => {
     const now = Date.now();
 
     contests.forEach(contest => {
-        if (contest['start'] + contest['duration'] > now) {
+        if (contest['start'] < now / 1000) {
             runningContests.push(contest);
         } else {
             upcomingContests.push(contest);
