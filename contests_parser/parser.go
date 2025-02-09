@@ -2,6 +2,7 @@ package contests_parser
 
 import (
 	"sync"
+	"time"
 
 	"cp-library-site/lib/common"
 	"cp-library-site/lib/logger"
@@ -14,9 +15,14 @@ var (
 
 func GetScheduledContestsList() []*common.Contest {
 	contests := make([]*common.Contest, 0)
+	now := time.Now()
 	mt.RLock()
 	for _, platformContests := range contestsMap {
-		contests = append(contests, platformContests...)
+		for _, contest := range platformContests {
+			if contest.End().After(now) {
+				contests = append(contests, contest)
+			}
+		}
 	}
 	mt.RUnlock()
 	return contests
